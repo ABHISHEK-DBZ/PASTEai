@@ -1,56 +1,71 @@
-# 🛡️ PASTE — AI-Powered Product Intelligence & Trust Engine
+# 🛡️ PASTE — Industrial Product Intelligence & Trust Engine
 
 <div align="center">
 
 ![PASTE Banner](https://img.shields.io/badge/PASTE-AI%20Product%20Intelligence-059669?style=for-the-badge&logo=shield&logoColor=white)
 
-**Deterministic • Traceable • Zero-Hallucination • Commerce-Ready**
+**Deterministic • Fully Traceable • Zero-Hallucination • Commerce-Ready**
 
-[![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17%20%2B%20pgvector-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org)
 [![VLM](https://img.shields.io/badge/VLM-Qwen2--VL%20%2F%20llama.cpp-7C3AED?style=flat-square)](https://github.com/QwenLM/Qwen2-VL)
-[![GS1](https://img.shields.io/badge/Export-GS1%20CSV%20%26%20JSON--LD-F59E0B?style=flat-square)](https://schema.org/Product)
-[![Tests](https://img.shields.io/badge/Tests-16%2F16%20Passed-10B981?style=flat-square&logo=pytest&logoColor=white)](tests/test_trust_model.py)
+[![GS1 Standard](https://img.shields.io/badge/Standards-GS1%20CSV%20%7C%20JSON--LD-F59E0B?style=flat-square)](https://schema.org/Product)
+[![Tests Passing](https://img.shields.io/badge/Tests-16%2F16%20Passed-10B981?style=flat-square&logo=pytest&logoColor=white)](tests/test_trust_model.py)
+[![License: MIT](https://img.shields.io/badge/License-MIT-gray.svg?style=flat-square)](LICENSE)
 
-[⚡ Quickstart](#-quickstart) • [📐 Architecture](#-5-stage-pipeline-architecture) • [🎛️ Trust Formula](#-mathematical-trust-model) • [🖥️ Dashboard](#-human-in-the-loop-hitl-review-console) • [📊 RAG vs PASTE](#-why-generic-rag-fails-in-industrial-commerce)
+[Key Features](#-key-features) • [Architecture](#-system-architecture) • [Trust Model](#-the-mathematical-trust-model) • [Review Console](#-human-in-the-loop-hitl-workspace) • [API Reference](#-api-endpoints) • [Quickstart](#-quickstart--installation)
 
 </div>
 
 ---
 
-## 🎯 Executive Summary & The Problem
+## 📌 Overview
 
-Industrial manufacturers manage millions of mission-critical SKUs trapped inside unstructured PDFs, CAD exports, vendor ERP sheets, and photos. 
+Industrial manufacturers manage millions of mission-critical product records trapped across heterogeneous datasheets, CAD drawings, ERP dumps, and catalogs. 
 
-- **The Danger of RAG Chatbots:** Generic LLMs and vector RAG **hallucinate** specifications (e.g. guessing `24V DC` instead of `220V AC`, or inventing non-existent IP ratings) with zero provenance. In industrial operations, **one wrong spec destroys machinery or causes catastrophic safety hazards**.
-- **The PASTE Solution:** Every single attribute is tagged **`PROVED`**, **`INFERRED`**, **`HUMAN`**, or **`UNKNOWN`**. Every spec carries a mathematical confidence score and coordinates pointing back to source evidence. The system is explicitly **allowed to refuse** rather than hallucinate.
+Traditional RAG and LLM chatbots often **hallucinate** critical specifications (e.g. converting `24V DC` to `220V AC` or inventing non-existent IP ratings) without any provenance trail. In industrial commerce and procurement, a single incorrect spec can cause equipment destruction, severe safety violations, and costly returns.
 
-> 🌟 **North Star:** *"Never present an inferred value as a fact."*
+**PASTE (Prove · Assert · Separate · Trace · Evaluate)** is a high-precision, deterministic product intelligence engine. Every emitted attribute is categorized into an explicit provenance state (**`PROVED`**, **`INFERRED`**, **`HUMAN`**, or **`UNKNOWN`**), carries a computed confidence score, and contains exact coordinates pointing back to source evidence. The system is architecturally **permitted to refuse** rather than guess.
+
+> 🌟 **Guiding Principle:** *"Never present an inferred value as a fact."*
 
 ---
 
-## ⚖️ Why Generic RAG Fails in Industrial Commerce
+## ✨ Key Features
 
-| Capability | Generic RAG / LLM Chatbot | 🛡️ PASTE Trust Engine |
+- 📄 **Multi-Modal Document Ingestion:** Ingests PDF datasheets, CAD exports, technical drawings, images, and raw part numbers. Content is indexed via SHA-256 for strictly idempotent processing.
+- 🔬 **Dual-Pass VLM Extraction:** Runs two independent layout-aware extraction passes (via local Qwen2-VL / llama.cpp or rule-based fallback). Discrepancies collapse into a `DISPUTE` state for human sign-off.
+- 📐 **Deterministic Normalization:** Automatically standardizes units (`kW → W`, `Celsius → °C`, `bar → Pa`) and aliases to canonical industrial taxonomies.
+- 🚫 **Physical Reality Gates:** Validates extracted numbers against strict physical boundaries (voltage envelopes, operating temperatures, IP rating enums).
+- 🧩 **Sibling-SKU Knowledge Graph:** Propagates verified series attributes to incomplete sibling records, strictly tagging them as `INFERRED` and capping confidence at $\le 0.70$.
+- 🔍 **Exception-Only HITL Review Console:** Side-by-side verification interface where operators inspect document evidence, perform inline corrections, and certify records.
+- 📦 **Commerce-Ready Dual Export:** Direct export to **schema.org `JSON-LD`** (with complete provenance trails) and **GS1-compliant CSV** for enterprise PIM/ERP systems.
+- ⚡ **Realtime Event Streaming:** Live updates across worker processes and frontend clients using Server-Sent Events (`/api/v1/events`) and Redis Pub/Sub.
+
+---
+
+## 📊 RAG vs. PASTE Comparison
+
+| Feature | Generic RAG / LLM Chatbot | 🛡️ PASTE Engine |
 |---|---|---|
-| **Missing Attributes** | ❌ Hallucinates plausible values with no source | ✅ **Refuses gracefully; tagged `UNKNOWN`** |
-| **Attribute Provenance** | ❌ Black-box summary with no citations | ✅ **Page number, layout bounding box, authority %** |
-| **Physical Validation** | ❌ Allows absurd inputs (e.g. 100,000V DC sensor) | ✅ **Deterministic industrial physical reality gates** |
-| **Inferred Sibling Data** | ❌ Blurs facts and guesses together | ✅ **Explicitly tagged `INFERRED` & capped at ≤0.70** |
-| **Conflicting Sources** | ❌ Averages conflicting values into wrong data | ✅ **Flags `DISPUTE` state → routes to human queue** |
-| **Export Formats** | ❌ Unstructured markdown / plain text | ✅ **GS1 CSV & schema.org `JSON-LD` native** |
+| **Missing Attributes** | Hallucinates plausible values with no source | **Graceful refusal; explicitly tagged `UNKNOWN`** |
+| **Attribute Provenance** | Unstructured black-box summary | **Document coordinate, page number, authority %** |
+| **Physical Validation** | None (allows impossible values) | **Deterministic physical reality boundary checks** |
+| **Inferred Sibling Data** | Presented with equal weight as facts | **Explicitly tagged `INFERRED` & capped at ≤0.70** |
+| **Contradictory Sources** | Averages conflicting facts together | **Flags `DISPUTE` state $\rightarrow$ routed to human queue** |
+| **Export Formats** | Markdown text or arbitrary JSON | **GS1 CSV & schema.org `JSON-LD` native** |
 
 ---
 
-## 📐 5-Stage Pipeline Architecture
+## 📐 System Architecture
 
 ```
-[ Ingest Studio: PDF / image / part # ]
+[ Ingest: PDF / Image / Part # / URL ]
                    │
                    ▼
 ┌────────────────────────────────────────────────────────┐
-│  STAGE 1: Ingest & Content-Hash                        │
+│  STAGE 1: Ingestion & Content Hashing                  │
 │  SHA-256 content addressing • Strictly idempotent      │
 └──────────────────────────┬─────────────────────────────┘
                            ▼
@@ -62,8 +77,8 @@ Industrial manufacturers manage millions of mission-critical SKUs trapped inside
                            ▼
 ┌────────────────────────────────────────────────────────┐
 │  STAGE 3: Deterministic Normalizer                     │
-│  Unit conversion (kW→W, °C, V, A) • Alias mapping       │
-│  Physical constraint validation (enums, voltage bounds)│
+│  Unit standardization (kW, °C, V, A) • Alias mapping   │
+│  Physical constraint validation (enums, ranges)        │
 └──────────────────────────┬─────────────────────────────┘
                            ▼
 ┌────────────────────────────────────────────────────────┐
@@ -74,7 +89,7 @@ Industrial manufacturers manage millions of mission-critical SKUs trapped inside
                            ▼
 ┌────────────────────────────────────────────────────────┐
 │  STAGE 5: Trust Routing Gate & Verification            │
-│  Computes conf(field) = Strength × Authority × Agree   │
+│  conf(field) = Strength × Authority × Agreement        │
 └──────────────┬───────────────────┬─────────────────────┘
                │                   │
       conf ≥ 0.90 (PROVED)   Disputes / Inferred / Violations / <0.90
@@ -89,20 +104,20 @@ Industrial manufacturers manage millions of mission-critical SKUs trapped inside
 
 ---
 
-## 🎛️ Mathematical Trust Model
+## 🎛️ The Mathematical Trust Model
 
-Confidence is **never** estimated by prompt engineering. It is calculated via an explicit deterministic formula:
+Confidence is **never** generated through prompt estimation. It is calculated via an explicit deterministic formula:
 
 $$\mathbf{Confidence(field) = Extraction\_Strength \times Source\_Authority \times Multi\_Source\_Agreement}$$
 
-### 1. Factor Weights Table
+### Factor Weights
 
 | Factor | Value | Condition |
 |---|:---:|---|
 | **Extraction Strength** | `1.0` | Two independent VLM passes agree exactly (Corroborated) |
-| | `0.8` | Near-match (numerical/unit normalized equivalence) |
+| | `0.8` | Near-match (normalized numeric/unit equivalence) |
 | | `0.5` | Single-pass extraction succeeded |
-| | `0.4` | Passes disagree → **Forced Human Review / Dispute** |
+| | `0.4` | Passes disagree $\rightarrow$ **Forced Human Review / Dispute** |
 | **Source Authority** | `1.0` | Official Manufacturer Datasheet / CAD |
 | | `0.7` | Distributor / Secondary Catalog |
 | | `0.5` | Sibling-SKU Knowledge Graph Inference |
@@ -110,118 +125,93 @@ $$\mathbf{Confidence(field) = Extraction\_Strength \times Source\_Authority \tim
 | **Agreement** | `1.0` | $\ge 2$ Independent sources agree |
 | | `0.7` | Single source citation |
 
-### 2. Gating & Routing Priority Rules
-1. **`UNKNOWN`** $\rightarrow$ Never published; displayed as insufficient evidence.
-2. **Pass Disagreement (`extraction_strength < 0.5`)** $\rightarrow$ Forced Human Review.
-3. **`INFERRED`** $\rightarrow$ Confidence hard-capped at **$\le 0.70$**; **never auto-exports**.
-4. **Conflicting Sources** $\rightarrow$ **`DISPUTE`** state (never averaged).
+### Routing Priority Engine (First Match Wins)
+1. **`UNKNOWN`** $\rightarrow$ Never published; marked as insufficient evidence.
+2. **Conflicting Sources** $\rightarrow$ **`DISPUTE`** state (never averaged).
+3. **Pass Disagreement (`extraction_strength < 0.5`)** $\rightarrow$ Forced Human Review.
+4. **`INFERRED`** $\rightarrow$ Confidence hard-capped at **$\le 0.70$**; **never auto-exports**.
 5. **Physical Constraint Violation** $\rightarrow$ Forced Human Review.
 6. **`conf ≥ 0.90` (PROVED)** $\rightarrow$ **Auto-Approved $\rightarrow$ Export Ready**.
 7. **`0.50 ≤ conf < 0.90`** $\rightarrow$ **Borderline Review Queue**.
 
 ---
 
-## 🖥️ Human-in-the-Loop (HITL) Review Console
+## 🖥️ Human-in-the-Loop (HITL) Workspace
 
-The PASTE Frontend is built with an **enterprise-grade light aesthetic** and a **live HTML5 Physics Canvas**:
+The PASTE Console provides a modern, light-theme interface with an interactive **HTML5 Physics Canvas**:
 
-<div align="center">
-
-```
-┌──────────────────────────────────────────────────────────────────────────────────┐
-│  PASTE Engine v1.1     [Overview] [5-Stage] [Calculator] [HITL Queue (3)]  ● Live│
-├──────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                  │
-│   PRODUCT REVIEW: Acme Industrial Motor X-100                                    │
-│   Manufacturer: Acme Industrial  •  Total Fields: 7                              │
-│                                                                                  │
-│  ┌───────────────────────────────┐  ┌─────────────────────────────────────────┐  │
-│  │ DOCUMENT PROVENANCE           │  │ FIELD SPECIFICATION & CERTIFICATION     │  │
-│  │                               │  │                                         │  │
-│  │ page_1 (Authority: 100%)      │  │ Voltage Rating [PROVED] [95% AUTO]      │  │
-│  │ ┌───────────────────────────┐ │  │ [ 220V AC       ] [ V                 ] │  │
-│  │ │ Rated Voltage: 220V AC    │ │  │                                         │  │
-│  │ │ Rated Current: 4.5A       │ │  │ Operating Temperature [PROVED] [95%]    │  │
-│  │ │ Operating Temp: -20~70°C  │ │  │ [ -20 to 70°C   ] [ °C                ] │  │
-│  │ └───────────────────────────┘ │  │                                         │  │
-│  │                               │  │ Mounting Flange [INFERRED] [65% REVIEW] │  │
-│  │ Sibling KG Ref: X-105         │  │ [ B14 Face      ] [                   ] │  │
-│  │ Inferred flange geometry      │  │ [ Accept ]  [ Save & Certify ] [ Reject]│  │
-│  └───────────────────────────────┘  └─────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────────────────────────┘
-```
-
-</div>
-
-### Frontend Features:
-- ⚛️ **Interactive Node Physics Canvas:** Real-time dynamic visual mesh representing attribute extraction and verification forces.
-- 🎛️ **Live Confidence Simulator:** Interactive tactile controls that simulate the mathematical formula in real-time.
-- 📋 **Exception-Only HITL Queue:** Filter by *Dispute, Inferred, Constraint Alert, Borderline*.
-- 🔍 **Side-by-Side Detail Inspector:** Compare raw extracted OCR/VLM snippets against editable canonical fields.
-- 📡 **Live Real-time Telemetry:** Instant queue updates over Server-Sent Events (`/api/v1/events`).
+- **Realtime Telemetry:** Live SSE streaming updates for queue status and background workers.
+- **Interactive Confidence Simulator:** Live formula calculator demonstrating exact routing decisions.
+- **Side-by-Side Inspector:** Split view comparing raw OCR/VLM document citations against editable canonical fields.
+- **Action Certification:** Accept, manually edit (`HUMAN` certification), or reject individual attributes.
 
 ---
 
-## ⚡ Quickstart
+## 🚀 Quickstart & Installation
 
 ### Prerequisites
 - Python 3.12+ (or Docker & Docker Compose)
-- PostgreSQL 16+ (with `pgvector` enabled)
+- PostgreSQL 16+ (with `pgvector` extension)
 
-### Option A: Local Dev (Recommended)
+### 1. Local Setup
 
 ```bash
-# 1. Clone repository
+# Clone the repository
 git clone https://github.com/ABHISHEK-DBZ/Aegis-AI.git
 cd hackathon-paste
 
-# 2. Set up virtual environment
+# Create and activate virtual environment
 python -m venv .venv
-.venv/Scripts/activate  # On Linux/macOS: source .venv/bin/activate
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
 
-# 3. Environment configuration
+# Configure environment
 cp .env.example .env
 
-# 4. Start local PostgreSQL cluster & run server
-.venv/Scripts/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+# Start FastAPI application
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-### Option B: Docker Compose
+### 2. Docker Setup
 
 ```bash
 docker compose up -d --build
 ```
 
+- **Dashboard UI:** `http://localhost:8000/`
+- **Interactive Swagger Docs:** `http://localhost:8000/docs`
+- **Realtime SSE Stream:** `http://localhost:8000/api/v1/events`
+
 ---
 
-## 🧪 Smoke Test & Verification
+## 📡 API Endpoints
 
-### 1. Ingest a Sample Technical Datasheet
+### Ingestion & Products
+- `POST /api/v1/products/upload` — Upload datasheet (PDF/Image) with metadata.
+- `GET /api/v1/products` — List all products with confidence distributions.
+- `GET /api/v1/products/{id}` — Retrieve detailed product record and field provenance.
+- `POST /api/v1/products/{id}/reprocess` — Re-run 5-stage pipeline on original source.
+
+### Human-in-the-Loop (HITL) Review
+- `GET /api/v1/review/queue` — Query pending review queue with severity filters (`dispute`, `forced_review`, `constraint_violation`, `inferred`, `borderline`).
+- `GET /api/v1/review/fields/{field_id}` — Get field-level provenance, citations, and product context.
+- `PATCH /api/v1/review/fields/{field_id}` — Accept, edit, or reject an individual attribute.
+- `POST /api/v1/review/bulk` — Perform bulk approval/rejection operations.
+
+### Commerce Exports
+- `GET /api/v1/products/{id}/export/jsonld` — Export as schema.org `JSON-LD` Product with full provenance metadata.
+- `GET /api/v1/products/{id}/export/gs1_csv` — Export as GS1-compliant CSV row.
+
+---
+
+## 🧪 Test Suite
+
+The trust model is verified by a 16-point automated unit test suite covering confidence formulas, all routing rules, unit normalizers, and constraint checks.
+
 ```bash
-curl -X POST http://localhost:8000/api/v1/products/upload \
-  -F "file=@sample_datasheet.pdf" \
-  -F "manufacturer=Acme Industrial" \
-  -F "part_number=X-100"
-```
-
-### 2. Check Review Queue
-```bash
-curl http://localhost:8000/api/v1/review/queue
-```
-
-### 3. Export Commerce-Ready Records
-```bash
-# JSON-LD (schema.org/Product with full provenance)
-curl http://localhost:8000/api/v1/products/{product_id}/export/jsonld
-
-# GS1-Compliant CSV
-curl http://localhost:8000/api/v1/products/{product_id}/export/gs1_csv
-```
-
-### 4. Run Automated Test Suite
-```bash
-.venv/Scripts/python -m pytest tests/test_trust_model.py -v
+python -m pytest tests/test_trust_model.py -v
 ```
 
 ```
@@ -242,49 +232,37 @@ tests/test_trust_model.py::test_validate_constraints_ip_bad PASSED       [ 87%]
 tests/test_trust_model.py::test_validate_constraints_voltage_range PASSED [ 93%]
 tests/test_trust_model.py::test_normalize_extraction_produces_fields PASSED [100%]
 
-======================= 16 passed, 4 warnings in 4.13s ========================
+======================= 16 passed in 0.28s ========================
 ```
 
 ---
 
-## 📂 Repository Structure
+## 📂 Project Structure
 
 ```
 ├── app/
 │   ├── main.py             # FastAPI entrypoint, lifespan, CORS, static routes
 │   ├── config.py           # Pydantic settings & environment configuration
 │   ├── db.py               # Async SQLAlchemy engine + session factory
-│   ├── models.py           # ORM schemas, FieldType, and Pydantic models
+│   ├── models.py           # ORM schemas, FieldType enum, Pydantic models
 │   ├── trust_model.py      # Mathematical confidence formula & routing engine
-│   ├── vlm.py              # 2-Pass VLM client (llama.cpp) & pdfplumber fallback
-│   ├── pipeline.py         # Full 5-stage ingestion, normalization & export
-│   ├── routes.py           # Ingestion, products, batches, and export routes
-│   ├── review_routes.py    # HITL queue, field-level inspection & certification
+│   ├── vlm.py              # Dual-pass VLM client (llama.cpp) & pdfplumber fallback
+│   ├── pipeline.py         # Full 5-stage ingestion, normalization & export pipeline
+│   ├── routes.py           # Ingestion, products, batches, and export endpoints
+│   ├── review_routes.py    # HITL queue, field inspection & audit trail endpoints
 │   ├── events.py           # Realtime event bus (SSE + Redis Pub/Sub)
 │   └── worker.py           # Background RQ worker for scalable queue processing
 ├── frontend/
-│   └── index.html          # Enterprise Light Review Dashboard with Physics Canvas
+│   └── index.html          # Enterprise Review Console with HTML5 Physics Canvas
 ├── tests/
-│   └── test_trust_model.py # Comprehensive 16-point trust model unit test suite
-├── PASTE-PRD.md            # Complete Product Requirement Document
-├── docker-compose.yml      # Multi-container orchestration (API, Worker, DB, Redis)
-└── requirements.txt        # Python production dependencies
+│   └── test_trust_model.py # Automated trust model test suite
+├── init.sql                # PostgreSQL + pgvector schema initialization
+├── docker-compose.yml      # Container orchestration (API, Worker, DB, Redis)
+└── requirements.txt        # Production dependencies
 ```
 
 ---
 
-## 🏆 Hackathon Demo Script (3-Minute Judge Walkthrough)
+## 📄 License
 
-1. **The Core Hook:** Show the interactive confidence simulator on the home page — drag sliders to demonstrate how conflicting passes collapse into `DISPUTE`.
-2. **1-Click Ingest:** Click **"Run Acme X-100 Demo Ingest"** to parse the datasheet across the 5-stage deterministic engine.
-3. **Inspect Provenance:** Navigate to the **HITL Review Queue**, click on an attribute, and showcase the exact PDF page citation and authority score.
-4. **Export Commerce Ready:** Trigger the **JSON-LD / GS1 CSV** export to demonstrate zero-friction PIM/ERP readiness.
-
----
-
-<div align="center">
-
-**Built for the Industrial Commerce AI Hackathon**  
-*PASTE: Prove • Assert • Separate • Trace • Evaluate*
-
-</div>
+This project is licensed under the [MIT License](LICENSE).

@@ -72,7 +72,7 @@ class Product(Base):
     part_number: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
     manufacturer: Mapped[Optional[str]] = mapped_column(String(256), nullable=True)
     category: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
-    status: Mapped[ProductStatus] = mapped_column(Enum(ProductStatus), nullable=False, default=ProductStatus.PENDING, index=True)
+    status: Mapped[ProductStatus] = mapped_column(String(32), nullable=False, default=ProductStatus.PENDING, index=True)
     confidence_distribution: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
@@ -121,7 +121,7 @@ class Batch(Base):
     name: Mapped[str] = mapped_column(String(256), nullable=False)
     total_products: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     processed_products: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    status: Mapped[BatchStatus] = mapped_column(Enum(BatchStatus), nullable=False, default=BatchStatus.QUEUED)
+    status: Mapped[BatchStatus] = mapped_column(String(32), nullable=False, default=BatchStatus.QUEUED)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
