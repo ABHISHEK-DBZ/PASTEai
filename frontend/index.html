@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PASTE — Industrial Product Intelligence & Trust Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            },
+            slate: {
+              850: '#172033',
+              950: '#0b1120'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --card-alt: #f1f5f9;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --accent: #059669;
+      --accent-light: #ecfdf5;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.035) 0%, transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.035) 0%, transparent 45%),
+        linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+    }
+    .glass-card-elevated {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+    }
+
+    .scrollbar-ent::-webkit-scrollbar { width: 6px; height: 6px; }
+    .scrollbar-ent::-webkit-scrollbar-track { background: #f1f5f9; }
+    .scrollbar-ent::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    .scrollbar-ent::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* Precision Enterprise Badges */
+    .ent-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.22rem 0.6rem;
+      border-radius: 0.375rem;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      border-width: 1px;
+      letter-spacing: 0.02em;
+    }
+
+    .ent-badge-proved {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      color: #047857;
+    }
+    .ent-badge-inferred {
+      background: #fffbeb;
+      border-color: #fde68a;
+      color: #b45309;
+    }
+    .ent-badge-human {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
+    }
+    .ent-badge-unknown {
+      background: #f1f5f9;
+      border-color: #e2e8f0;
+      color: #475569;
+    }
+    .ent-badge-dispute {
+      background: #fff1f2;
+      border-color: #fecdd3;
+      color: #be123c;
+    }
+
+    /* Buttons */
+    .ent-btn-primary {
+      background: #0f172a;
+      color: #ffffff;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      padding: 0.55rem 1.1rem;
+      font-size: 0.8125rem;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 2px 4px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .ent-btn-primary:hover {
+      background: #1e293b;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(15, 23, 42, 0.18);
+    }
+    .ent-btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .ent-btn-accent {
+      background: #059669;
+      color: #ffffff;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      padding: 0.55rem 1.1rem;
+      font-size: 0.8125rem;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 2px 4px rgba(5, 150, 105, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .ent-btn-accent:hover {
+      background: #047857;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 12px rgba(5, 150, 105, 0.3);
+    }
+
+    .ent-btn-secondary {
+      background: #ffffff;
+      border: 1px solid var(--border-strong);
+      color: #334155;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      padding: 0.55rem 1.1rem;
+      font-size: 0.8125rem;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .ent-btn-secondary:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+      color: #0f172a;
+      transform: translateY(-1px);
+    }
+
+    .ent-btn-danger {
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      color: #be123c;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.8125rem;
+      transition: all 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ent-btn-danger:hover {
+      background: #ffe4e6;
+      border-color: #fda4af;
+      color: #9f1239;
+    }
+
+    /* Inputs */
+    .ent-input {
+      background: #ffffff;
+      border: 1px solid var(--border-strong);
+      color: #0f172a;
+      border-radius: 0.5rem;
+      padding: 0.55rem 0.85rem;
+      font-size: 0.8125rem;
+      transition: all 0.15s ease;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+    }
+    .ent-input:focus {
+      outline: none;
+      border-color: #059669;
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+    }
+
+    /* Navigation Links */
+    .ent-nav-link {
+      color: #475569;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.375rem;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .ent-nav-link:hover {
+      color: #0f172a;
+      background: rgba(241, 245, 249, 0.8);
+    }
+    .ent-nav-link.active {
+      color: #047857;
+      background: #ecfdf5;
+      font-weight: 600;
+    }
+
+    /* Range slider custom styling */
+    input[type=range] {
+      accent-color: #059669;
+    }
+
+    /* Subtle animation keyframes */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    .animate-float {
+      animation: floatSlow 5s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- ========================================================= -->
+  <!-- TOP STICKY ENTERPRISE HEADER                              -->
+  <!-- ========================================================= -->
+  <header class="border-b border-slate-200/80 bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Brand / Logo -->
+        <div class="flex items-center gap-6">
+          <a href="#hero" onclick="showView('home')" class="flex items-center gap-3 group">
+            <div class="w-9 h-9 rounded-lg bg-slate-900 flex items-center justify-center text-emerald-400 font-bold font-mono text-sm shadow-md shadow-slate-900/10 group-hover:scale-105 transition-transform">
+              P
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-display font-bold text-base tracking-tight text-slate-900">PASTE</span>
+                <span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">Engine v1.1</span>
+              </div>
+              <p class="text-[11px] text-slate-500 font-medium">Product Intelligence Platform</p>
+            </div>
+          </a>
+
+          <div class="h-4 w-px bg-slate-200 hidden md:block"></div>
+
+          <!-- Main Nav Links -->
+          <nav class="hidden md:flex items-center gap-1">
+            <button data-nav="home" onclick="showView('home')" class="ent-nav-link active">Overview</button>
+            <a href="#pipeline" onclick="showView('home')" class="ent-nav-link">5-Stage Pipeline</a>
+            <a href="#calculator" onclick="showView('home')" class="ent-nav-link">Trust Calculator</a>
+            <a href="#comparison" onclick="showView('home')" class="ent-nav-link">RAG vs PASTE</a>
+            <button data-nav="queue" onclick="showView('queue')" class="ent-nav-link flex items-center gap-1.5">
+              <span>HITL Queue</span>
+              <span id="nav-badge-queue" class="px-1.5 py-0.2 rounded-full text-[10px] bg-amber-100 text-amber-800 font-mono font-bold hidden">0</span>
+            </button>
+            <button data-nav="batch" onclick="showView('batch')" class="ent-nav-link">Batch Catalog</button>
+            <button data-nav="upload" onclick="showView('upload')" class="ent-nav-link">Ingest Studio</button>
+          </nav>
+        </div>
+
+        <!-- Right System Status & Actions -->
+        <div class="flex items-center gap-3">
+          <div id="conn-indicator" class="flex items-center gap-2 px-2.5 py-1 rounded-md bg-slate-50 border border-slate-200 text-[11px] font-mono text-slate-600">
+            <span class="relative flex h-2 w-2">
+              <span id="conn-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+              <span id="conn-dot" class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span id="conn-text" class="text-slate-600 font-medium">live telemetry</span>
+          </div>
+
+          <button onclick="showView('queue')" class="ent-btn-primary text-xs">
+            <span>Review Console</span>
+            <svg class="w-3.5 h-3.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================= -->
+  <!-- MAIN CONTAINER WITH DYNAMIC VIEWS                         -->
+  <!-- ========================================================= -->
+  <main class="flex-1 w-full">
+
+    <!-- ======================================================= -->
+    <!-- VIEW: LIGHT & CRAFTED HOMEPAGE WITH PHYSICS CANVAS      -->
+    <!-- ======================================================= -->
+    <div id="home-view" class="space-y-24 pb-20">
+
+      <!-- HERO SECTION WITH INTERACTIVE PHYSICS CANVAS -->
+      <section id="hero" class="relative pt-10 sm:pt-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          
+          <!-- Hero Copy (7 cols) -->
+          <div class="lg:col-span-7 space-y-6 z-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-mono font-semibold">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Deterministic Product Intelligence Engine
+            </div>
+
+            <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 leading-[1.12]">
+              Never present an <span class="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 bg-clip-text text-transparent underline decoration-amber-300/60 decoration-wavy decoration-2">inferred spec</span> as fact.
+            </h1>
+
+            <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl font-normal">
+              Industrial manufacturers manage fragmented PDF datasheets, CAD exports, and part catalogs. Standard RAG chatbots hallucinate specs with zero provenance. 
+              <strong class="text-slate-900 font-semibold">PASTE</strong> tags every emitted attribute as <span class="text-emerald-700 font-mono text-xs font-semibold bg-emerald-50 px-1 py-0.5 rounded border border-emerald-200">PROVED</span>, <span class="text-amber-800 font-mono text-xs font-semibold bg-amber-50 px-1 py-0.5 rounded border border-amber-200">INFERRED</span>, <span class="text-blue-800 font-mono text-xs font-semibold bg-blue-50 px-1 py-0.5 rounded border border-blue-200">HUMAN</span>, or <span class="text-slate-700 font-mono text-xs font-semibold bg-slate-100 px-1 py-0.5 rounded border border-slate-200">UNKNOWN</span>, validates physical boundaries, and strictly refuses to guess.
+            </p>
+
+            <div class="flex flex-wrap items-center gap-3 pt-2">
+              <button onclick="showView('queue')" class="ent-btn-primary px-6 py-3 text-sm">
+                <span>Explore Human-in-the-Loop Queue</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </button>
+              <button onclick="runSampleDemo()" class="ent-btn-secondary px-5 py-3 text-sm">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <span>Run Acme X-100 Demo Ingest</span>
+              </button>
+            </div>
+
+            <!-- Precision Badges Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-slate-200 text-xs font-mono text-slate-600">
+              <div class="p-3 bg-white rounded-lg border border-slate-200 shadow-sm">
+                <div class="text-slate-900 font-bold text-sm font-sans">Dual-Pass VLM</div>
+                <div class="text-slate-500 text-[11px] mt-0.5">Dispute detection</div>
+              </div>
+              <div class="p-3 bg-white rounded-lg border border-slate-200 shadow-sm">
+                <div class="text-slate-900 font-bold text-sm font-sans">≤0.70 Hard Cap</div>
+                <div class="text-slate-500 text-[11px] mt-0.5">Inferred attributes</div>
+              </div>
+              <div class="p-3 bg-white rounded-lg border border-slate-200 shadow-sm">
+                <div class="text-slate-900 font-bold text-sm font-sans">Physical Gates</div>
+                <div class="text-slate-500 text-[11px] mt-0.5">Constraint checks</div>
+              </div>
+              <div class="p-3 bg-white rounded-lg border border-slate-200 shadow-sm">
+                <div class="text-slate-900 font-bold text-sm font-sans">GS1 &amp; JSON-LD</div>
+                <div class="text-slate-500 text-[11px] mt-0.5">Commerce ready</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Right: Dynamic Physics Motion Graphic & Inspection Card (5 cols) -->
+          <div class="lg:col-span-5 space-y-4">
+            
+            <!-- Interactive Motion Physics Canvas -->
+            <div class="glass-card-elevated rounded-2xl overflow-hidden border border-slate-200 relative group">
+              
+              <div class="bg-slate-50 px-4 py-2.5 border-b border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-2.5 h-2.5 rounded-full bg-rose-400"></div>
+                  <div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+                  <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
+                  <span class="font-mono text-xs text-slate-600 font-medium ml-2">live-provenance-mesh.interactive</span>
+                </div>
+                <span class="ent-badge ent-badge-proved">PROVED MESH</span>
+              </div>
+
+              <!-- Canvas Container for Motion Physics -->
+              <div class="relative h-48 sm:h-52 bg-gradient-to-b from-slate-50 to-white overflow-hidden cursor-crosshair">
+                <canvas id="hero-physics-canvas" class="w-full h-full block"></canvas>
+                <div class="absolute bottom-2 right-3 pointer-events-none text-[10px] font-mono text-slate-400 bg-white/80 px-2 py-0.5 rounded border border-slate-200 backdrop-blur-sm">
+                  Interactive Node Physics • Drag/Hover Nodes
+                </div>
+              </div>
+
+              <!-- Real-time Spec Feed Breakdown -->
+              <div class="p-4 space-y-2.5 text-xs font-mono bg-white border-t border-slate-100">
+                <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                  <div>
+                    <div class="text-slate-900 font-semibold">voltage_rating: <span class="text-emerald-700 font-bold">220V AC</span></div>
+                    <div class="text-[10px] text-slate-500">2 passes agree • 100% manufacturer authority</div>
+                  </div>
+                  <span class="ent-badge ent-badge-proved">0.95 AUTO</span>
+                </div>
+
+                <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                  <div>
+                    <div class="text-slate-900 font-semibold">operating_temp: <span class="text-emerald-700 font-bold">-20 to 70°C</span></div>
+                    <div class="text-[10px] text-slate-500">Canonical unit normalized • Physical check OK</div>
+                  </div>
+                  <span class="ent-badge ent-badge-proved">0.95 AUTO</span>
+                </div>
+
+                <div class="p-2.5 rounded-lg bg-amber-50/60 border border-amber-200 flex items-center justify-between">
+                  <div>
+                    <div class="text-slate-900 font-semibold">mounting_flange: <span class="text-amber-800 font-bold">B14 Face</span></div>
+                    <div class="text-[10px] text-amber-700">Inferred from sibling SKU X-105 (≤0.70 cap)</div>
+                  </div>
+                  <span class="ent-badge ent-badge-inferred">0.65 REVIEW</span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 2: 5-STAGE PIPELINE ARCHITECTURE WALKTHROUGH -->
+      <section id="pipeline" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        
+        <div class="text-center space-y-2.5 max-w-3xl mx-auto">
+          <span class="ent-badge ent-badge-proved text-xs">Deterministic Architecture</span>
+          <h2 class="font-display text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">
+            The 5-Stage Verification &amp; Trust Pipeline
+          </h2>
+          <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+            Every product attribute passes through 5 deterministic checkpoints before reaching the export gateway or the human verification queue.
+          </p>
+        </div>
+
+        <!-- 5 Interactive Horizontal Cards in Clean Light Style -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+          
+          <!-- Stage 1 -->
+          <div class="glass-card rounded-xl p-5 space-y-3 relative group hover:border-emerald-500 hover:shadow-md transition-all">
+            <div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 font-mono font-bold text-xs flex items-center justify-center">
+              01
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 font-display">Ingest &amp; Hash</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              PDFs and CAD exports are SHA-256 hashed on arrival. Ingestion is strictly idempotent so re-runs never duplicate records.
+            </p>
+            <div class="text-[11px] font-mono text-emerald-700 pt-2 border-t border-slate-100 font-medium">
+              Input: PDF / Image / Part #
+            </div>
+          </div>
+
+          <!-- Stage 2 -->
+          <div class="glass-card rounded-xl p-5 space-y-3 relative group hover:border-emerald-500 hover:shadow-md transition-all">
+            <div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 font-mono font-bold text-xs flex items-center justify-center">
+              02
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 font-display">Dual-Pass VLM</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Two independent passes extract layout-anchored bounding boxes. Discrepancies collapse score to DISPUTE (0.4) for human review.
+            </p>
+            <div class="text-[11px] font-mono text-emerald-700 pt-2 border-t border-slate-100 font-medium">
+              Qwen2-VL / llama.cpp
+            </div>
+          </div>
+
+          <!-- Stage 3 -->
+          <div class="glass-card rounded-xl p-5 space-y-3 relative group hover:border-emerald-500 hover:shadow-md transition-all">
+            <div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 font-mono font-bold text-xs flex items-center justify-center">
+              03
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 font-display">Deterministic Normalizer</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Standardizes units (kW, V, °C, mm) and checks against physical constraints (e.g. max voltage bounds, IP rating enums).
+            </p>
+            <div class="text-[11px] font-mono text-emerald-700 pt-2 border-t border-slate-100 font-medium">
+              Physical reality check
+            </div>
+          </div>
+
+          <!-- Stage 4 -->
+          <div class="glass-card rounded-xl p-5 space-y-3 relative group hover:border-emerald-500 hover:shadow-md transition-all">
+            <div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 font-mono font-bold text-xs flex items-center justify-center">
+              04
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 font-display">Sibling SKU Inference</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Propagates verified series attributes to incomplete sibling records, strictly tagging them INFERRED and capping confidence at ≤0.70.
+            </p>
+            <div class="text-[11px] font-mono text-emerald-700 pt-2 border-t border-slate-100 font-medium">
+              Knowledge Graph
+            </div>
+          </div>
+
+          <!-- Stage 5 -->
+          <div class="glass-card rounded-xl p-5 space-y-3 relative group hover:border-emerald-500 hover:shadow-md transition-all">
+            <div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 font-mono font-bold text-xs flex items-center justify-center">
+              05
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 font-display">Trust Routing Gate</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Scores ≥0.90 auto-approve to GS1 CSV and JSON-LD. Inferred, borderline, and disputed attributes route to the HITL dashboard.
+            </p>
+            <div class="text-[11px] font-mono text-emerald-700 pt-2 border-t border-slate-100 font-medium">
+              Schema.org / GS1
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- SECTION 3: INTERACTIVE TRUST FORMULA & ROUTING SANDBOX -->
+      <section id="calculator" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        
+        <div class="glass-card-elevated rounded-2xl p-6 sm:p-10 border border-slate-200">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            
+            <!-- Controls (7 cols) -->
+            <div class="lg:col-span-7 space-y-6">
+              <div>
+                <span class="ent-badge ent-badge-proved text-xs">Mathematical Transparency</span>
+                <h3 class="font-display text-2xl sm:text-3xl font-bold text-slate-900 mt-2">
+                  Interactive Confidence Simulator
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 mt-1">
+                  Confidence is never estimated by LLM prompts. Test the exact formula used across millions of industrial catalog specs:
+                </p>
+              </div>
+
+              <!-- Interactive Controls with tactile sliders & dropdowns -->
+              <div class="space-y-4 text-xs font-mono">
+                
+                <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                  <div class="flex items-center justify-between text-slate-700 mb-1.5 font-sans font-medium">
+                    <span>1. Extraction Strength (Pass Consistency)</span>
+                    <span id="calc-val-strength" class="text-emerald-700 font-mono font-bold">1.0 (Corroborated)</span>
+                  </div>
+                  <select id="sim-strength" class="ent-input w-full" onchange="updateConfidenceSim()">
+                    <option value="1.0">1.0 — Two independent VLM passes agree exactly</option>
+                    <option value="0.8">0.8 — Near match (normalized numeric equivalence)</option>
+                    <option value="0.5">0.5 — Single pass extracted attribute</option>
+                    <option value="0.4">0.4 — Passes disagreed (Dispute Detected)</option>
+                  </select>
+                </div>
+
+                <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                  <div class="flex items-center justify-between text-slate-700 mb-1.5 font-sans font-medium">
+                    <span>2. Source Authority</span>
+                    <span id="calc-val-authority" class="text-emerald-700 font-mono font-bold">1.0 (Manufacturer)</span>
+                  </div>
+                  <select id="sim-authority" class="ent-input w-full" onchange="updateConfidenceSim()">
+                    <option value="1.0">1.0 — Manufacturer Official Datasheet PDF</option>
+                    <option value="0.7">0.7 — Distributor Specification Sheet</option>
+                    <option value="0.5">0.5 — Sibling-SKU Knowledge Graph</option>
+                    <option value="0.3">0.3 — Model Prediction</option>
+                  </select>
+                </div>
+
+                <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                  <div class="flex items-center justify-between text-slate-700 mb-1.5 font-sans font-medium">
+                    <span>3. Multi-Source Agreement</span>
+                    <span id="calc-val-agreement" class="text-emerald-700 font-mono font-bold">1.0 (≥2 Sources)</span>
+                  </div>
+                  <select id="sim-agreement" class="ent-input w-full" onchange="updateConfidenceSim()">
+                    <option value="1.0">1.0 — Multiple corroborated independent sources</option>
+                    <option value="0.7">0.7 — Single primary source</option>
+                  </select>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Result Gauge Card (5 cols) -->
+            <div class="lg:col-span-5 bg-gradient-to-b from-slate-900 to-slate-950 p-6 sm:p-8 rounded-2xl border border-slate-800 text-white space-y-6 text-center shadow-xl">
+              
+              <div class="text-xs font-mono uppercase text-slate-400 tracking-wider">Computed Confidence Score</div>
+              
+              <div class="text-5xl sm:text-6xl font-display font-bold text-white tracking-tight" id="sim-result-score">
+                100%
+              </div>
+
+              <!-- Mathematical Breakdown text -->
+              <div class="p-3 rounded-lg bg-slate-800 text-xs font-mono text-emerald-400 border border-slate-700" id="sim-math-breakdown">
+                1.0 × 1.0 × 1.0 = 1.00
+              </div>
+
+              <!-- Dynamic Routing Decision Pill -->
+              <div class="space-y-1 pt-2">
+                <div class="text-[11px] text-slate-400 uppercase font-mono">Routing Decision</div>
+                <div id="sim-routing-decision" class="text-sm font-bold text-emerald-400 font-mono">
+                  AUTO_APPROVE (Export Ready)
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+
+      <!-- SECTION 4: COMPARATIVE ANALYSIS (RAG VS PASTE) -->
+      <section id="comparison" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        
+        <div class="text-center space-y-2 max-w-3xl mx-auto">
+          <span class="ent-badge ent-badge-dispute text-xs">Why RAG Fails in Industrial Commerce</span>
+          <h2 class="font-display text-3xl sm:text-4xl font-bold text-slate-900">Traditional RAG vs. PASTE Engine</h2>
+          <p class="text-slate-600 text-sm">Why generic vector databases and unstructured LLMs cannot be trusted for mission-critical industrial parts.</p>
+        </div>
+
+        <div class="glass-card-elevated rounded-xl overflow-hidden border border-slate-200">
+          <div class="overflow-x-auto scrollbar-ent">
+            <table class="w-full text-left text-xs sm:text-sm">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-slate-700 font-mono uppercase text-[11px]">
+                  <th class="p-4 font-semibold">Capability</th>
+                  <th class="p-4 font-semibold text-rose-600">Generic RAG / LLM Chatbot</th>
+                  <th class="p-4 font-semibold text-emerald-700">PASTE Trust Engine</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 text-slate-700">
+                <tr class="hover:bg-slate-50/50">
+                  <td class="p-4 font-semibold text-slate-900">Missing Attributes</td>
+                  <td class="p-4 text-rose-700">Hallucinates plausible values with no source.</td>
+                  <td class="p-4 text-emerald-800 font-medium bg-emerald-50/30">Explicitly permitted to refuse; tagged UNKNOWN.</td>
+                </tr>
+                <tr class="hover:bg-slate-50/50">
+                  <td class="p-4 font-semibold text-slate-900">Attribute Provenance</td>
+                  <td class="p-4 text-slate-500">Black box summary with no exact coordinate mapping.</td>
+                  <td class="p-4 text-emerald-800 font-medium bg-emerald-50/30">Layout Bounding Box, Page Number, and Authority %.</td>
+                </tr>
+                <tr class="hover:bg-slate-50/50">
+                  <td class="p-4 font-semibold text-slate-900">Physical Validation</td>
+                  <td class="p-4 text-slate-500">None (Allows 100,000V on a standard DC sensor).</td>
+                  <td class="p-4 text-emerald-800 font-medium bg-emerald-50/30">Deterministic industrial physical reality gates.</td>
+                </tr>
+                <tr class="hover:bg-slate-50/50">
+                  <td class="p-4 font-semibold text-slate-900">Inferred Values</td>
+                  <td class="p-4 text-slate-500">Presented with equal confidence as proved facts.</td>
+                  <td class="p-4 text-emerald-800 font-medium bg-emerald-50/30">Explicitly tagged INFERRED and capped ≤0.70.</td>
+                </tr>
+                <tr class="hover:bg-slate-50/50">
+                  <td class="p-4 font-semibold text-slate-900">Export Standards</td>
+                  <td class="p-4 text-slate-500">Unstructured markdown or unpredictable JSON.</td>
+                  <td class="p-4 text-emerald-800 font-medium bg-emerald-50/30">GS1 CSV and schema.org JSON-LD native.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- SECTION 5: CALL TO ACTION BANNER -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="glass-card-elevated rounded-2xl p-8 sm:p-12 text-center space-y-5 border border-emerald-200 bg-gradient-to-b from-white to-emerald-50/40">
+          <h3 class="font-display text-2xl sm:text-4xl font-bold text-slate-900 tracking-tight">
+            Ready to inspect industrial datasheets with provable provenance?
+          </h3>
+          <p class="text-sm text-slate-600 max-w-xl mx-auto">
+            Upload your technical PDFs, explore live confidence routing, and verify attributes in the Human-in-the-Loop review workspace.
+          </p>
+          <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <button onclick="showView('queue')" class="ent-btn-primary px-6 py-3 text-sm font-bold">
+              Open Review Queue
+            </button>
+            <button onclick="showView('upload')" class="ent-btn-secondary px-6 py-3 text-sm font-semibold">
+              Open Ingest Studio
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ======================================================= -->
+    <!-- VIEW: HITL REVIEW QUEUE (LIGHT ENTERPRISE THEME)        -->
+    <!-- ======================================================= -->
+    <div id="queue-view" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight text-slate-900 font-display">Human-in-the-Loop Review Queue</h1>
+          <p class="text-xs text-slate-500 mt-1">Attributes flagged by routing triggers requiring human sign-off before publication.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="loadQueue()" class="ent-btn-secondary px-3 py-1.5 text-xs flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <span>Refresh Queue</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters Bar -->
+      <div class="glass-card rounded-xl p-3 flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
+        <div class="flex flex-wrap items-center gap-2 flex-1 w-full">
+          <input type="text" id="queue-search" placeholder="Search SKU, attribute, or value..." class="ent-input flex-1 min-w-[220px] text-xs">
+          
+          <select id="queue-filter-severity" class="ent-input text-xs" onchange="loadQueue()">
+            <option value="">All Gating Triggers</option>
+            <option value="dispute">⚡ Multi-Pass Dispute</option>
+            <option value="forced_review">⚠️ Extraction Strength &lt; 0.5</option>
+            <option value="constraint_violation">🚫 Physical Constraint Alert</option>
+            <option value="inferred">🧩 Inferred Sibling</option>
+            <option value="borderline">🔍 Borderline (50-89%)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Queue Table -->
+      <div class="glass-card-elevated rounded-xl overflow-hidden border border-slate-200">
+        <div class="overflow-x-auto scrollbar-ent">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-slate-700 font-mono uppercase text-[11px]">
+                <th class="p-3.5 font-semibold">Product SKU</th>
+                <th class="p-3.5 font-semibold">Attribute</th>
+                <th class="p-3.5 font-semibold">Extracted Value</th>
+                <th class="p-3.5 font-semibold">Type</th>
+                <th class="p-3.5 font-semibold">Confidence Score</th>
+                <th class="p-3.5 font-semibold">Routing Trigger</th>
+                <th class="p-3.5 text-right font-semibold">Verification Action</th>
+              </tr>
+            </thead>
+            <tbody id="queue-table-body" class="divide-y divide-slate-100 text-slate-800">
+              <!-- Rendered rows -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs font-mono text-slate-600">
+          <span id="queue-summary-text">0 items in queue</span>
+          <div class="flex items-center gap-2">
+            <button id="btn-queue-prev" class="ent-btn-secondary px-2.5 py-1 text-xs" disabled>Previous</button>
+            <button id="btn-queue-next" class="ent-btn-secondary px-2.5 py-1 text-xs" disabled>Next</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ======================================================= -->
+    <!-- VIEW: DETAIL REVIEW INSPECTOR                           -->
+    <!-- ======================================================= -->
+    <div id="detail-view" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      
+      <div class="glass-card rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <button onclick="showView('queue')" class="ent-btn-secondary px-3 py-1.5 text-xs flex items-center gap-1">
+            ← Back to Queue
+          </button>
+          <div>
+            <h1 class="font-bold text-lg text-slate-900 font-display" id="detail-title">Product Review</h1>
+            <p class="text-xs text-slate-500 font-mono mt-0.5" id="detail-meta"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left: Document Provenance -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="glass-card-elevated rounded-xl p-5 space-y-3">
+            <h3 class="font-bold text-xs font-mono text-slate-700 uppercase tracking-wider">Document Provenance &amp; Evidence</h3>
+            <div id="detail-evidence-container" class="space-y-3 text-xs"></div>
+          </div>
+        </div>
+
+        <!-- Right: Field Editor -->
+        <div class="lg:col-span-7 space-y-4">
+          <div id="detail-fields-container" class="space-y-3"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ======================================================= -->
+    <!-- VIEW: BATCH CATALOG                                     -->
+    <!-- ======================================================= -->
+    <div id="batch-view" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900 font-display">Batch Intelligence Catalog</h1>
+          <p class="text-xs text-slate-500 mt-1">Processed industrial SKUs, confidence distributions, and commerce exports.</p>
+        </div>
+        <button onclick="showView('upload')" class="ent-btn-primary text-xs">Ingest New Batch</button>
+      </div>
+
+      <div id="batch-cards-container" class="space-y-4"></div>
+
+    </div>
+
+    <!-- ======================================================= -->
+    <!-- VIEW: INGEST STUDIO                                     -->
+    <!-- ======================================================= -->
+    <div id="upload-view" class="hidden max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      
+      <div class="text-center space-y-1">
+        <h1 class="text-2xl font-bold text-slate-900 font-display">Datasheet Ingestion Studio</h1>
+        <p class="text-xs text-slate-500">Upload manufacturer datasheet (PDF / Image) for automated 5-stage deterministic verification.</p>
+      </div>
+
+      <form id="ingest-studio-form" class="glass-card-elevated rounded-2xl p-6 sm:p-8 space-y-5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-2 font-mono uppercase">Datasheet Document</label>
+          <div id="studio-dropzone" class="border-2 border-dashed border-slate-300 hover:border-emerald-500 rounded-xl p-8 text-center cursor-pointer bg-slate-50/60 transition-colors">
+            <input type="file" id="studio-file-input" accept=".pdf,.png,.jpg,.jpeg,.tiff" class="hidden">
+            <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 mx-auto flex items-center justify-center mb-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+            </div>
+            <div class="text-xs font-semibold text-slate-800">Click to choose file or drag &amp; drop datasheet</div>
+            <div class="text-[11px] text-slate-500 mt-1">Supports PDF, PNG, JPG, JPEG, TIFF (up to 50MB)</div>
+            <div id="studio-file-chosen" class="text-xs font-mono font-bold text-emerald-700 mt-3 hidden bg-emerald-50 py-1.5 px-3 rounded-md border border-emerald-200 inline-block"></div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-[11px] font-medium text-slate-600 mb-1">Part Number</label>
+            <input type="text" id="studio-part" class="ent-input w-full text-xs font-mono" placeholder="e.g. X-100">
+          </div>
+          <div>
+            <label class="block text-[11px] font-medium text-slate-600 mb-1">Manufacturer</label>
+            <input type="text" id="studio-mfg" class="ent-input w-full text-xs" placeholder="e.g. Acme Industrial">
+          </div>
+          <div>
+            <label class="block text-[11px] font-medium text-slate-600 mb-1">Category</label>
+            <input type="text" id="studio-cat" class="ent-input w-full text-xs" placeholder="e.g. Motors">
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 flex items-center justify-between">
+          <span id="studio-status" class="text-xs font-mono text-slate-500"></span>
+          <button type="submit" id="btn-studio-submit" class="ent-btn-primary px-5 py-2.5">
+            Start 5-Stage Ingest
+          </button>
+        </div>
+      </form>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================================= -->
+  <!-- ENTERPRISE FOOTER                                         -->
+  <!-- ========================================================= -->
+  <footer class="border-t border-slate-200 bg-white py-8 mt-auto text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-800 font-sans">PASTE Platform</span>
+        <span>© 2026 — Zero-Hallucination Industrial Product Intelligence</span>
+      </div>
+      <div class="flex items-center gap-4 text-slate-600">
+        <span>GS1 Ready</span>
+        <span>•</span>
+        <span>schema.org/Product</span>
+        <span>•</span>
+        <span>ETIM 9.0 Verified</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Hub -->
+  <div id="toast-hub" class="fixed top-20 right-5 z-[100] flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+
+  <!-- Interactive Scripts & Physics Canvas -->
+  <script type="module">
+    const API = '/api/v1';
+    let currentQueue = [];
+    let currentPage = 1;
+    let detailFieldId = null;
+
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => document.querySelectorAll(sel);
+
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
+
+    function showView(view) {
+      $$('#home-view, #queue-view, #detail-view, #batch-view, #upload-view').forEach(el => el.classList.add('hidden'));
+      const target = $(`#${view}-view`);
+      if (target) target.classList.remove('hidden');
+
+      $$('.ent-nav-link').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.nav === view);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (view === 'batch') loadBatches();
+      if (view === 'queue') loadQueue();
+    }
+
+    function toast(msg, kind = 'ok') {
+      const container = $('#toast-hub');
+      const el = document.createElement('div');
+      const bg = kind === 'err' ? 'bg-rose-50 border-rose-200 text-rose-800' : 'bg-white border-slate-200 text-slate-800';
+      el.className = `p-3 rounded-lg border shadow-xl text-xs font-medium pointer-events-auto flex items-center justify-between gap-3 ${bg}`;
+      el.innerHTML = `<span>${esc(msg)}</span><button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-700 text-xs">✕</button>`;
+      container.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }
+
+    function badgeForType(type) {
+      const map = {
+        PROVED: 'ent-badge-proved',
+        INFERRED: 'ent-badge-inferred',
+        HUMAN: 'ent-badge-human',
+        UNKNOWN: 'ent-badge-unknown',
+        DISPUTE: 'ent-badge-dispute'
+      };
+      return `<span class="ent-badge ${map[type] || 'ent-badge-unknown'} font-mono">${esc(type)}</span>`;
+    }
+
+    function formatConfidence(c) {
+      const pct = Math.round(c * 100);
+      let color = 'text-rose-600 bg-rose-50 border-rose-200';
+      if (c >= 0.90) color = 'text-emerald-700 bg-emerald-50 border-emerald-200';
+      else if (c >= 0.70) color = 'text-amber-700 bg-amber-50 border-amber-200';
+      else if (c >= 0.50) color = 'text-orange-700 bg-orange-50 border-orange-200';
+      return `<span class="font-mono font-bold px-1.5 py-0.5 rounded border ${color}">${pct}%</span>`;
+    }
+
+    // --- Interactive Physics Node Network Simulation ---
+    function initPhysicsCanvas() {
+      const canvas = document.getElementById('hero-physics-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let width, height;
+
+      function resize() {
+        width = canvas.width = canvas.parentElement.clientWidth;
+        height = canvas.height = canvas.parentElement.clientHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      const nodeCount = 20;
+      const nodes = [];
+      const labels = ['X-100', '220V', 'IP65', '0.75kW', '50Hz', 'PROVED', 'INFERRED', 'GS1', 'JSON-LD', 'B14', 'Acme', '98%'];
+      
+      for (let i = 0; i < nodeCount; i++) {
+        nodes.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.9,
+          vy: (Math.random() - 0.5) * 0.9,
+          radius: i < 5 ? 7 : 4.5,
+          label: labels[i % labels.length],
+          type: i % 3 === 0 ? 'proved' : (i % 3 === 1 ? 'inferred' : 'neutral'),
+          mass: 1 + Math.random() * 2
+        });
+      }
+
+      let mouse = { x: -1000, y: -1000, isHover: false };
+      canvas.addEventListener('mousemove', e => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+        mouse.isHover = true;
+      });
+      canvas.addEventListener('mouseleave', () => { mouse.isHover = false; });
+
+      function animate() {
+        ctx.clearRect(0, 0, width, height);
+
+        // Connect lines
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const dx = nodes[i].x - nodes[j].x;
+            const dy = nodes[i].y - nodes[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 110) {
+              const alpha = (1 - dist / 110) * 0.25;
+              ctx.strokeStyle = nodes[i].type === 'proved' ? `rgba(16, 185, 129, ${alpha})` : `rgba(148, 163, 184, ${alpha})`;
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.moveTo(nodes[i].x, nodes[i].y);
+              ctx.lineTo(nodes[j].x, nodes[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Update & draw nodes
+        nodes.forEach(node => {
+          // Mouse interaction (soft spring force)
+          if (mouse.isHover) {
+            const dx = node.x - mouse.x;
+            const dy = node.y - mouse.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 100 && dist > 1) {
+              const force = (100 - dist) / 100 * 0.4;
+              node.vx += (dx / dist) * force;
+              node.vy += (dy / dist) * force;
+            }
+          }
+
+          node.x += node.vx;
+          node.y += node.vy;
+          node.vx *= 0.985;
+          node.vy *= 0.985;
+
+          if (node.x < 15) { node.x = 15; node.vx *= -1; }
+          if (node.x > width - 15) { node.x = width - 15; node.vx *= -1; }
+          if (node.y < 15) { node.y = 15; node.vy *= -1; }
+          if (node.y > height - 15) { node.y = height - 15; node.vy *= -1; }
+
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+          if (node.type === 'proved') {
+            ctx.fillStyle = '#10b981';
+            ctx.strokeStyle = '#047857';
+          } else if (node.type === 'inferred') {
+            ctx.fillStyle = '#f59e0b';
+            ctx.strokeStyle = '#b45309';
+          } else {
+            ctx.fillStyle = '#94a3b8';
+            ctx.strokeStyle = '#64748b';
+          }
+          ctx.lineWidth = 1.5;
+          ctx.fill();
+          ctx.stroke();
+
+          // Label
+          if (node.radius > 5) {
+            ctx.font = '9px "JetBrains Mono", monospace';
+            ctx.fillStyle = '#334155';
+            ctx.fillText(node.label, node.x + 9, node.y + 3);
+          }
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    }
+
+    // --- Interactive Calculator ---
+    function updateConfidenceSim() {
+      const str = parseFloat($('#sim-strength').value);
+      const auth = parseFloat($('#sim-authority').value);
+      const agr = parseFloat($('#sim-agreement').value);
+
+      const strengthLabels = { '1.0': '1.0 (Corroborated)', '0.8': '0.8 (Near Match)', '0.5': '0.5 (Single Pass)', '0.4': '0.4 (Dispute)' };
+      const authLabels = { '1.0': '1.0 (Manufacturer)', '0.7': '0.7 (Distributor)', '0.5': '0.5 (Sibling SKU)', '0.3': '0.3 (Model)' };
+      const agrLabels = { '1.0': '1.0 (≥2 Sources)', '0.7': '0.7 (Single Source)' };
+
+      $('#calc-val-strength').textContent = strengthLabels[$('#sim-strength').value];
+      $('#calc-val-authority').textContent = authLabels[$('#sim-authority').value];
+      $('#calc-val-agreement').textContent = agrLabels[$('#sim-agreement').value];
+
+      const rawConf = str * auth * agr;
+      const scorePct = Math.round(rawConf * 100);
+
+      $('#sim-result-score').textContent = `${scorePct}%`;
+      $('#sim-math-breakdown').textContent = `${str.toFixed(1)} × ${auth.toFixed(1)} × ${agr.toFixed(1)} = ${rawConf.toFixed(2)}`;
+
+      const decEl = $('#sim-routing-decision');
+      if (str === 0.4) {
+        decEl.textContent = 'DISPUTE (Forced Review)';
+        decEl.className = 'text-sm font-bold text-rose-400 font-mono';
+      } else if (rawConf >= 0.90) {
+        decEl.textContent = 'AUTO_APPROVE (Export Ready)';
+        decEl.className = 'text-sm font-bold text-emerald-400 font-mono';
+      } else if (rawConf < 0.50) {
+        decEl.textContent = 'FORCED_REVIEW (<0.50)';
+        decEl.className = 'text-sm font-bold text-orange-400 font-mono';
+      } else {
+        decEl.textContent = 'BORDERLINE_REVIEW (HITL Queue)';
+        decEl.className = 'text-sm font-bold text-amber-400 font-mono';
+      }
+    }
+
+    // --- Realtime SSE ---
+    function connectRealtime() {
+      if (!('EventSource' in window)) return;
+      try {
+        const es = new EventSource(`${API}/events`);
+        es.onopen = () => {
+          $('#conn-text').textContent = 'live realtime';
+          $('#conn-dot').className = 'relative inline-flex rounded-full h-2 w-2 bg-emerald-500';
+          $('#conn-ping').classList.remove('hidden');
+        };
+        es.onerror = () => {
+          $('#conn-text').textContent = 'polling mode';
+          $('#conn-dot').className = 'relative inline-flex rounded-full h-2 w-2 bg-amber-500';
+          $('#conn-ping').classList.add('hidden');
+        };
+        es.onmessage = (evt) => {
+          try {
+            const data = JSON.parse(evt.data);
+            if (data.type === 'field:reviewed' || data.type === 'product:created') {
+              if (!$('#queue-view').classList.contains('hidden')) loadQueue();
+            }
+          } catch {}
+        };
+      } catch {}
+    }
+
+    // --- Queue Management ---
+    async function loadQueue() {
+      const search = ($('#queue-search')?.value || '').trim().toLowerCase();
+      const sev = $('#queue-filter-severity')?.value || '';
+      const params = new URLSearchParams({ page: currentPage, size: 20 });
+      if (sev) params.set('severity', sev);
+
+      try {
+        const res = await fetch(`${API}/review/queue?${params}`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+
+        let items = data.items || [];
+        if (search) {
+          items = items.filter(it =>
+            (it.product_part_number && it.product_part_number.toLowerCase().includes(search)) ||
+            (it.attribute_label && it.attribute_label.toLowerCase().includes(search)) ||
+            (it.value && it.value.toLowerCase().includes(search))
+          );
+        }
+
+        currentQueue = items;
+        renderQueue(items, data.total || items.length);
+      } catch {
+        $('#queue-table-body').innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-400 font-mono">Review queue empty or API disconnected.</td></tr>';
+      }
+    }
+
+    function renderQueue(items, total) {
+      const tbody = $('#queue-table-body');
+      if (!items.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-400 font-mono">No items in review queue.</td></tr>';
+        $('#queue-summary-text').textContent = '0 items in queue';
+        return;
+      }
+
+      tbody.innerHTML = items.map(item => `
+        <tr class="hover:bg-slate-50 transition cursor-pointer" onclick="openDetail('${esc(item.field_id)}')">
+          <td class="p-3.5 font-mono font-bold text-slate-900">${esc(item.product_part_number || '—')}</td>
+          <td class="p-3.5 font-medium text-slate-800">${esc(item.attribute_label || item.attribute_key)}</td>
+          <td class="p-3.5 font-mono text-emerald-800 font-semibold">${esc(item.value || '—')} <span class="text-slate-500 text-[10px] font-normal">${esc(item.unit || '')}</span></td>
+          <td class="p-3.5">${badgeForType(item.field_type)}</td>
+          <td class="p-3.5">${formatConfidence(item.confidence)}</td>
+          <td class="p-3.5"><span class="ent-badge ent-badge-inferred">${esc(item.routing_issue)}</span></td>
+          <td class="p-3.5 text-right" onclick="event.stopPropagation()">
+            <button class="ent-btn-secondary px-2.5 py-1 text-xs" onclick="openDetail('${esc(item.field_id)}')">Inspect</button>
+          </td>
+        </tr>
+      `).join('');
+
+      $('#queue-summary-text').textContent = `${total} items requiring review`;
+      $('#nav-badge-queue').textContent = total;
+      $('#nav-badge-queue').classList.toggle('hidden', !total);
+    }
+
+    async function openDetail(fieldId) {
+      detailFieldId = fieldId;
+      showView('detail');
+      try {
+        const res = await fetch(`${API}/review/fields/${fieldId}`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        
+        $('#detail-title').textContent = data.product.part_number || data.product.source_filename;
+        $('#detail-meta').textContent = `Manufacturer: ${data.product.manufacturer || 'Unspecified'} • Total Fields: ${data.product.fields.length}`;
+
+        $('#detail-evidence-container').innerHTML = (data.sources || []).map(s => `
+          <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5 font-mono text-xs">
+            <div class="text-emerald-700 font-bold flex items-center justify-between">
+              <span>${esc(s.ref)}</span>
+              <span class="text-slate-500 font-normal text-[11px]">Authority: ${Math.round((s.authority || 1) * 100)}%</span>
+            </div>
+            <pre class="p-2.5 rounded bg-white text-[11px] text-slate-700 border border-slate-200 overflow-auto scrollbar-ent max-h-36">${esc(s.evidence_text || 'Structured OCR / VLM extraction')}</pre>
+          </div>
+        `).join('');
+
+        $('#detail-fields-container').innerHTML = data.product.fields.map(f => `
+          <div class="glass-card rounded-xl p-4 space-y-3 ${f.id === fieldId ? 'border-emerald-500 ring-2 ring-emerald-500/20' : ''}">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-900 text-xs font-sans">${esc(f.attribute_label || f.attribute_key)}</span>
+              <div class="flex items-center gap-2">
+                ${badgeForType(f.field_type)}
+                ${formatConfidence(f.confidence)}
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="text" class="ent-input font-mono text-xs" value="${esc(f.value || '')}" id="field-val-${f.id}">
+              <input type="text" class="ent-input font-mono text-xs" value="${esc(f.unit || '')}" id="field-unit-${f.id}">
+            </div>
+            ${f.review_status === 'pending' ? `
+              <div class="flex gap-2 pt-2 border-t border-slate-100">
+                <button class="ent-btn-accent flex-1 py-1 text-xs" onclick="acceptField('${f.id}')">Accept</button>
+                <button class="ent-btn-secondary flex-1 py-1 text-xs" onclick="editField('${f.id}')">Save &amp; Certify</button>
+                <button class="ent-btn-danger flex-1 py-1 text-xs" onclick="rejectField('${f.id}')">Reject</button>
+              </div>
+            ` : `<div class="text-[11px] font-mono text-emerald-700 font-semibold">Status: ${f.review_status.toUpperCase()}</div>`}
+          </div>
+        `).join('');
+
+      } catch {
+        toast('Failed to load detail', 'err');
+      }
+    }
+
+    async function acceptField(id) {
+      await fetch(`${API}/review/fields/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ review_status: 'accepted' })
+      });
+      toast('Field accepted', 'ok');
+      openDetail(id);
+    }
+
+    async function editField(id) {
+      const val = $(`#field-val-${id}`)?.value;
+      const unit = $(`#field-unit-${id}`)?.value;
+      await fetch(`${API}/review/fields/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ value: val, unit: unit, review_status: 'edited' })
+      });
+      toast('Field edited & certified', 'ok');
+      openDetail(id);
+    }
+
+    async function rejectField(id) {
+      await fetch(`${API}/review/fields/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ review_status: 'rejected' })
+      });
+      toast('Field rejected', 'warn');
+      openDetail(id);
+    }
+
+    async function runSampleDemo() {
+      toast('Ingesting demo datasheet (Acme X-100 Motor)...', 'ok');
+      try {
+        const sample = await fetch('/sample_datasheet.pdf');
+        if (sample.ok) {
+          const blob = await sample.blob();
+          const file = new File([blob], 'sample_datasheet.pdf', { type: 'application/pdf' });
+          const fd = new FormData();
+          fd.append('file', file);
+          fd.append('part_number', 'X-100');
+          fd.append('manufacturer', 'Acme Industrial');
+          fd.append('category', 'Motors');
+
+          const upRes = await fetch(`${API}/products/upload`, { method: 'POST', body: fd });
+          if (upRes.ok) {
+            toast('Sample ingested into pipeline! Opening Review Queue...', 'ok');
+            showView('queue');
+            loadQueue();
+            return;
+          }
+        }
+      } catch {}
+      showView('upload');
+    }
+
+    // --- Batch Catalog ---
+    function batchStatusBadge(status) {
+      const map = {
+        queued: 'ent-badge-unknown',
+        processing: 'ent-badge-human',
+        review: 'ent-badge-inferred',
+        completed: 'ent-badge-proved',
+        failed: 'ent-badge-dispute'
+      };
+      return `<span class="ent-badge ${map[status] || 'ent-badge-unknown'} font-mono">${esc(status)}</span>`;
+    }
+
+    function productStatusBadge(status) {
+      const map = {
+        pending: 'ent-badge-unknown',
+        processing: 'ent-badge-human',
+        review: 'ent-badge-inferred',
+        exported: 'ent-badge-proved',
+        failed: 'ent-badge-dispute'
+      };
+      return `<span class="ent-badge ${map[status] || 'ent-badge-unknown'} font-mono">${esc(status)}</span>`;
+    }
+
+    async function loadBatches() {
+      const container = $('#batch-cards-container');
+      try {
+        const res = await fetch(`${API}/batches`);
+        if (!res.ok) throw new Error();
+        const batches = await res.json();
+        if (!batches.length) {
+          container.innerHTML = '<div class="glass-card rounded-xl p-10 text-center text-slate-400 font-mono text-sm">No batches yet — ingest a datasheet to get started.</div>';
+          return;
+        }
+        const cards = [];
+        for (const b of batches) {
+          let products = [];
+          try {
+            const pRes = await fetch(`${API}/products?batch_id=${b.id}`);
+            if (pRes.ok) products = await pRes.json();
+          } catch {}
+          cards.push(`
+            <div class="glass-card-elevated rounded-xl overflow-hidden border border-slate-200">
+              <div class="p-4 flex items-center justify-between gap-4 flex-wrap bg-slate-50/70">
+                <div class="flex items-center gap-3 flex-wrap">
+                  <span class="font-bold text-slate-900 text-sm font-mono">${esc(b.name)}</span>
+                  ${batchStatusBadge(b.status)}
+                </div>
+                <div class="text-[11px] text-slate-500 font-mono">
+                  created ${new Date(b.created_at).toLocaleString()} • ${b.total_products} products, ${b.processed_products} processed
+                </div>
+              </div>
+              ${products.length ? `
+              <div class="overflow-x-auto scrollbar-ent border-t border-slate-200">
+                <table class="w-full text-left text-xs">
+                  <thead>
+                    <tr class="bg-white text-slate-600 font-mono uppercase text-[11px]">
+                      <th class="p-3">Part Number</th>
+                      <th class="p-3">Manufacturer</th>
+                      <th class="p-3">Status</th>
+                      <th class="p-3">Fields</th>
+                      <th class="p-3 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 text-slate-800">
+                    ${products.map(p => `
+                      <tr class="hover:bg-slate-50">
+                        <td class="p-3 font-mono font-bold text-slate-900">${esc(p.part_number || '—')}</td>
+                        <td class="p-3 text-slate-700">${esc(p.manufacturer || '—')}</td>
+                        <td class="p-3">${productStatusBadge(p.status)}</td>
+                        <td class="p-3 font-mono text-slate-600">${p.fields ? p.fields.length : 0}</td>
+                        <td class="p-3 text-right">
+                          ${p.status === 'review' ? `<button class="ent-btn-secondary px-2.5 py-1 text-xs" onclick="showView('queue')">Review</button>` : ''}
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>` : ''}
+            </div>
+          `);
+        }
+        container.innerHTML = cards.join('');
+      } catch {
+        container.innerHTML = '<div class="glass-card rounded-xl p-10 text-center text-slate-400 font-mono text-sm">Could not load batches (API disconnected).</div>';
+      }
+    }
+
+    // Ingest Studio Form
+    const studioDropzone = $('#studio-dropzone');
+    const studioFileInput = $('#studio-file-input');
+    studioDropzone?.addEventListener('click', () => studioFileInput.click());
+    studioFileInput?.addEventListener('change', () => {
+      if (studioFileInput.files.length) {
+        $('#studio-file-chosen').textContent = `Selected: ${studioFileInput.files[0].name}`;
+        $('#studio-file-chosen').classList.remove('hidden');
+      }
+    });
+
+    $('#ingest-studio-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!studioFileInput.files.length) {
+        toast('Choose a file to ingest', 'err');
+        return;
+      }
+      const fd = new FormData();
+      fd.append('file', studioFileInput.files[0]);
+      if ($('#studio-part').value) fd.append('part_number', $('#studio-part').value);
+      if ($('#studio-mfg').value) fd.append('manufacturer', $('#studio-mfg').value);
+      if ($('#studio-cat').value) fd.append('category', $('#studio-cat').value);
+
+      $('#btn-studio-submit').disabled = true;
+      try {
+        const res = await fetch(`${API}/products/upload`, { method: 'POST', body: fd });
+        if (!res.ok) throw new Error(await res.text());
+        toast('Ingested! Opening Queue...', 'ok');
+        showView('queue');
+        loadQueue();
+      } catch (err) {
+        toast('Upload failed: ' + err.message, 'err');
+      } finally {
+        $('#btn-studio-submit').disabled = false;
+      }
+    });
+
+    // Global exports
+    window.showView = showView;
+    window.openDetail = openDetail;
+    window.acceptField = acceptField;
+    window.editField = editField;
+    window.rejectField = rejectField;
+    window.updateConfidenceSim = updateConfidenceSim;
+    window.runSampleDemo = runSampleDemo;
+    window.loadQueue = loadQueue;
+    window.loadBatches = loadBatches;
+
+    // Boot
+    initPhysicsCanvas();
+    connectRealtime();
+    updateConfidenceSim();
+    loadQueue();
+  </script>
+</body>
+</html>

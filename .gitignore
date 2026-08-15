@@ -1,0 +1,37 @@
+# Environment / secrets
+.env
+.env.local
+
+# Local dev Postgres cluster (project-local, created by initdb)
+.pgdata/
+
+# Bundled local tools (e.g. Windows Redis build)
+.tools/
+
+# VLM model files (large, downloaded separately)
+models/
+*.gguf
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Runtime artifacts
+uploads/
+exports/
+*.log
+
+# Documents not meant for the repo
+*.pdf
+
+# Markdown except README.md
+*.md
+!README.md
+
+# Editor / OS
+.vscode/
+.DS_Store
+Thumbs.db

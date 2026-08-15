@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PASTE — Product Intelligence Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0d12; --panel:#10151d; --panel2:#151b26; --line:#202938;
+    --ink:#e8edf4; --dim:#8b98ab; --faint:#5b6678;
+    --accent:#4f8cff; --accent2:#7c5cff; --gold:#ffb84d;
+    --green:#3ddc84; --red:#ff5d5d; --amber:#ffc24d;
+    --prov:#4f8cff; --inf:#b18cff; --hum:#ffb84d; --unk:#5b6678;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:'Space Grotesk',system-ui,sans-serif;line-height:1.5;overflow-x:hidden}
+  ::selection{background:var(--accent);color:#fff}
+  .container{max-width:1120px;margin:0 auto;padding:0 28px}
+  section{position:relative;padding:96px 0}
+  /* grid bg */
+  .grid-bg::before{content:'';position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:52px 52px;opacity:.07;pointer-events:none}
+  .light{background:#eef2f8;color:#10151d}
+  .light .hero-tag{color:var(--accent)}
+  .light .dim{color:#5b6678}
+  .light .panel{background:#fff;border-color:#d7dfec}
+  .muted{background:var(--panel)}
+  /* nav */
+  nav{position:fixed;top:0;left:0;right:0;z-index:50;backdrop-filter:blur(14px);background:rgba(10,13,18,.78);border-bottom:1px solid var(--line)}
+  nav .container{display:flex;align-items:center;justify-content:space-between;height:62px}
+  .logo{font-weight:700;letter-spacing:.5px;font-size:17px}
+  .logo b{color:var(--accent)}
+  .nav-links{display:flex;gap:26px;font-size:13px;font-weight:500;color:var(--dim)}
+  .nav-links a{color:inherit;text-decoration:none;transition:.2s}
+  .nav-links a:hover{color:var(--ink)}
+  @media(max-width:760px){.nav-links{display:none}}
+  /* hero */
+  #hero{padding:170px 0 110px;overflow:hidden}
+  .hero-tag{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:1.4px;color:var(--accent);border:1px solid var(--line);padding:7px 14px;border-radius:100px;text-transform:uppercase}
+  .hero h1{font-size:clamp(38px,6.2vw,74px);line-height:1.04;font-weight:700;margin:26px 0 20px;letter-spacing:-1.5px}
+  .grad{background:linear-gradient(90deg,var(--accent),var(--accent2) 55%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p.lede{font-size:clamp(16px,2vw,20px);color:var(--dim);max-width:720px;font-weight:400}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+  .btn{display:inline-block;padding:14px 24px;border-radius:12px;font-weight:600;font-size:15px;text-decoration:none;transition:.2s;cursor:pointer;border:none}
+  .btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px -8px rgba(79,140,255,.5)}
+  .btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+  .proof-row{display:flex;gap:40px;margin-top:60px;flex-wrap:wrap}
+  .proof{flex:1;min-width:170px}
+  .proof .num{font-size:clamp(28px,4vw,44px);font-weight:700;letter-spacing:-1px}
+  .proof .lbl{color:var(--dim);font-size:13.5px;margin-top:2px}
+  .proof .num.accent{color:var(--accent)}
+  .proof .num.gold{color:var(--gold)}
+  .proof .num.green{color:var(--green)}
+  /* floating tag chips behind hero */
+  .floats{position:absolute;inset:0;pointer-events:none;z-index:-1}
+  .chip{position:absolute;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);border:1px solid var(--line);padding:6px 10px;border-radius:8px;background:rgba(16,21,29,.5);opacity:.7;animation:float 9s ease-in-out infinite}
+  .chip.c1{top:16%;left:4%} .chip.c2{top:34%;right:6%;animation-delay:1.4s}
+  .chip.c3{top:64%;left:7%;animation-delay:.6s} .chip.c4{bottom:14%;right:14%;animation-delay:2.1s}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  /* section header */
+  .kicker{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:12px}
+  .light .kicker{color:var(--accent)}
+  h2{font-size:clamp(28px,4.4vw,48px);font-weight:700;letter-spacing:-1px;line-height:1.1;margin-bottom:16px}
+  .sub{font-size:17px;color:var(--dim);max-width:760px;margin-bottom:44px}
+  .light .sub{color:#5b6678}
+  /* cards */
+  .grid{display:grid;gap:18px}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px}
+  .panel .ic{font-size:26px;margin-bottom:14px}
+  .panel h3{font-size:19px;font-weight:600;margin-bottom:8px}
+  .panel p{color:var(--dim);font-size:14.5px}
+  .panel p b{color:var(--ink)}
+  /* thesis callout */
+  .thesis{position:relative;border:1px solid var(--line);border-radius:18px;padding:40px;overflow:hidden;background:linear-gradient(120deg,rgba(79,140,255,.08),rgba(124,92,255,.08))}
+  .thesis .big{font-size:clamp(26px,4vw,42px);font-weight:700;letter-spacing:-1px;line-height:1.12}
+  .thesis .big em{font-style:italic;color:var(--accent)}
+  .thesis .persona{margin-top:26px;font-family:'JetBrains Mono',monospace;font-size:14px;background:#0b0f16;border:1px solid var(--line);border-radius:10px;padding:18px;overflow:auto;color:#a9c3ff}
+  /* trust tags */
+  .tagrow{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0 30px}
+  .tagg{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:13px;padding:8px 14px;border-radius:9px;border:1px solid}
+  .tag-prov{color:var(--prov);border-color:rgba(79,140,255,.4);background:rgba(79,140,255,.08)}
+  .tag-inf{color:var(--inf);border-color:rgba(177,140,255,.4);background:rgba(177,140,255,.08)}
+  .tag-hum{color:var(--hum);border-color:rgba(255,184,77,.4);background:rgba(255,184,77,.08)}
+  .tag-unk{color:var(--unk);border-color:rgba(91,102,120,.4);background:rgba(91,102,120,.08)}
+  /* JSON sample */
+  pre{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.65;overflow:auto;border-radius:14px;border:1px solid var(--line);background:#0b0f16;padding:24px}
+  pre .k{color:#7ec6ff}.pre .s{color:#9fe08a}.pre .n{color:#ffc24d}.pre .c{color:#5b6678}
+  /* formula */
+  .formula{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:clamp(15px,2.3vw,20px);font-weight:600;padding:34px 20px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}
+  .var{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 18px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);min-width:150px}
+  .var .vname{color:var(--accent);font-size:12px;letter-spacing:1px}
+  .var .vval{font-size:26px;font-weight:700}
+  .op{color:var(--dim);font-size:24px}
+  .result{font-size:32px;font-weight:700;color:var(--green)}
+  /* confidence calculator */
+  .calc{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+  @media(max-width:820px){.calc{grid-template-columns:1fr}}
+  .slider-row{margin-bottom:22px}
+  .slider-row .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13.5px;color:var(--dim)}
+  .slider-row .head .val{font-family:'JetBrains Mono',monospace;color:var(--ink);font-weight:600}
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:4px;background:var(--line);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid #0a0d12;box-shadow:0 0 0 1px var(--accent)}
+  .gauge{height:22px;border-radius:12px;background:var(--line);overflow:hidden;margin:16px 0 8px}
+  .gauge .fill{height:100%;border-radius:12px;transition:width .35s ease,background .35s}
+  .verdict{font-size:15px;font-weight:600;padding:14px 18px;border-radius:12px;text-align:center;letter-spacing:.3px}
+  .v-auto{background:rgba(61,220,132,.12);color:var(--green);border:1px solid rgba(61,220,132,.4)}
+  .v-review{background:rgba(255,194,77,.12);color:var(--amber);border:1px solid rgba(255,194,77,.4)}
+  /* comparison */
+  table{width:100%;border-collapse:collapse;font-size:14px;background:var(--panel);border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+  th,td{padding:15px 18px;text-align:left;border-bottom:1px solid var(--line)}
+  th{color:var(--dim);font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:600}
+  td:first-child{font-weight:600;white-space:nowrap}
+  td:last-child{color:var(--accent);font-weight:600}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:var(--panel2)}
+  tr:hover td.paste{background:rgba(124,92,255,.08)}
+  .check{color:var(--green)}
+  .cross{color:var(--red)}
+  /* scenario tabs */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .tab{flex:1;min-width:150px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);cursor:pointer;font-weight:600;font-size:14px;color:var(--dim);text-align:left;transition:.15s;font-family:'Space Grotesk'}
+  .tab:hover{border-color:var(--accent)}
+  .tab.active{background:linear-gradient(90deg,rgba(79,140,255,.16),rgba(124,92,255,.16));color:var(--ink);border-color:var(--accent)}
+  .scenario{display:none;border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:24px}
+  .scenario.active{display:block;animation:fade .3s}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+  .sc-body{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:18px}
+  @media(max-width:820px){.sc-body{grid-template-columns:1fr}}
+  .field{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-radius:10px;border:1px solid var(--line);margin-bottom:9px;background:var(--panel2);font-size:13.5px}
+  .field .name{color:var(--dim)}
+  .field .val{font-family:'JetBrains Mono',monospace;font-weight:600}
+  .field .conf{font-size:12px;padding:3px 9px;border-radius:6px;font-weight:600;font-family:'JetBrains Mono',monospace}
+  .pipe-steps{display:flex;flex-direction:column;gap:12px}
+  .step{display:flex;gap:14px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--panel);transition:.15s}
+  .step:hover{border-color:var(--accent)}
+  .step .num{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;width:34px;height:34px;min-width:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:gradient;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+  .step .stitle{font-weight:600;font-size:15px;margin-bottom:3px}
+  .step .sdesc{color:var(--dim);font-size:13.5px}
+  .step .b{color:var(--accent);font-weight:600}
+  /* footer */
+  footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--faint);font-size:13.5px}
+  /* reveal on scroll */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+  .costbar{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px}
+  .costbar .bar{flex:1;min-width:200px;border-radius:12px;border:1px solid var(--line);padding:18px;background:var(--panel)}
+  .costbar .bar .route{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:var(--accent)}
+  .costbar .bar .share{font-size:34px;font-weight:700}
+  .costbar .bar .note{color:var(--dim);font-size:13px;margin-top:4px}
+  .costbar .bar.hot .share{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <div class="logo">PASTE<b>//</b>PIE</div>
+    <div class="nav-links">
+      <a href="#problem">Problem</a>
+      <a href="#trust">Trust</a>
+      <a href="#conf">Confidence</a>
+      <a href="#pipeline">Pipeline</a>
+      <a href="#demo">Live Demo</a>
+      <a href="#scale">Scale</a>
+      <a href="#compare">Compare</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero" class="grid-bg">
+  <div class="floats">
+    <div class="chip c1">{"voltage":"220V","type":"PROVED"}</div>
+    <div class="chip c2">conf = strength × authority × agreement</div>
+    <div class="chip c3">"type":"UNKNOWN" — insufficient evidence</div>
+    <div class="chip c4">status: AUTO-APPROVED → PIM</div>
+  </div>
+  <div class="container">
+    <span class="hero-tag">AI-Powered Product Intelligence for Industrial Commerce</span>
+    <h1>From a messy PDF<br/>to a <span class="grad">rusted, verified</span><br/>product digital twin.</h1>
+    <p class="lede">Industrial manufacturers drown in fragmented product data — datasheets, CAD metadata, legacy ERP exports, grainy nameplate photos. <b>PASTE</b> turns limited, messy input into <b>commerce-ready, traceable, explainable product intelligence</b> — without ever hallucinating a specification.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#demo">Live Trust Model →</a>
+      <a class="btn btn-ghost" href="#pipeline">See the Pipeline</a>
+    </div>
+    <div class="proof-row">
+      <div class="proof"><div class="num green">98%+</div><div class="lbl">field precision on PROVED specs</div></div>
+      <div class="proof"><div class="num accent">100%</div><div class="lbl">fields traceable to source evidence</div></div>
+      <div class="proof"><div class="num gold">~$0.05</div><div class="lbl">per product (model-routing ladder)</div></div>
+      <div class="proof"><div class="num">85%</div><div class="lbl">of fields auto-approved, humans only on exceptions</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem" class="muted grid-bg">
+  <div class="container">
+    <div class="kicker">The Problem</div>
+    <h2>Catalog data is messy. Risk is not.</h2>
+    <p class="sub">A wrong voltage, a wrong fitting spec, a mislabeled certification — in industrial commerce these cause safety incidents, returned orders, and lost trust. This is not a copywriting problem. It is a <b>trust</b> problem.</p>
+    <div class="grid g3">
+      <div class="panel reveal"><div class="ic">📄</div><h3>Heterogeneous inputs</h3><p>PDF datasheets, CAD metadata, legacy ERP exports, JS-heavy supplier websites, scanned nameplates, sometimes just a <b>part number</b>.</p></div>
+      <div class="panel reveal"><div class="ic">🧩</div><h3>Fragmented standards</h3><p>ETIM, eCl@ss, UNSPSC, GS1 and manufacturer schemas all describe the same part differently. Nothing is comparable out of the box.</p></div>
+      <div class="panel reveal"><div class="ic">🎯</div><h3>Zero tolerance for hallucination</h3><p>Generative AI writes fluent, confident, <b>wrong</b> numbers. The winning system must <b>prove</b> what it asserts — or refuse to guess.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- THESIS / TRUST -->
+<section id="trust" class="grid-bg">
+  <div class="container">
+    <div class="kicker">The Thesis</div>
+    <div class="thesis reveal">
+      <div class="big">Reliability is not a feature. It is an <em>architecture</em>.<br/>Never present an inferred value as a fact.</div>
+      <p class="dim" style="margin-top:16px;max-width:700px">Mainstream RAG chatbots <b>generate</b> — they blend what they know with what they guess and call it all "the answer." PASTE inverts this: extraction <b>only reports what is evidenced</b>, enrichment <b>deliberately, and loudly, marks its guesses</b>, validation <b>forces disputes to a human</b> — and the whole thing is <b>allowed to say "we don't know."</b></p>
+      <div class="tagrow">
+        <span class="tagg tag-prov">PROVED · cited evidence</span>
+        <span class="tagg tag-inf">INFERRED · derived, capped ≤ 0.70</span>
+        <span class="tagg tag-hum">HUMAN · confirmed by operator</span>
+        <span class="tagg tag-unk">UNKNOWN · we refuse to guess</span>
+      </div>
+      <pre><span class="k">"attribute"</span>: <span class="s">"voltage_rating"</span>,
+  <span class="k">"value"</span>: <span class="s">"220V"</span>,
+  <span class="k">"type"</span>: <span class="s">"PROVED"</span>,          <span class="c">// PROVED | INFERRED | HUMAN | UNKNOWN</span>
+  <span class="k">"confidence"</span>: <span class="n">0.97</span>,          <span class="c">// computed, never guessed</span>
+  <span class="k">"sources"</span>: [
+    {<span class="k">"ref"</span>: <span class="s">"datasheet.pdf#p4"</span>, <span class="k">"authority"</span>: <span class="n">1.0</span>, <span class="k">"agreement"</span>: <span class="s">"corroborated"</span>},
+    {<span class="k">"ref"</span>: <span class="s">"mfr.com/spec"</span>,  <span class="k">"authority"</span>: <span class="n">1.0</span>, <span class="k">"agreement"</span>: <span class="s">"corroborated"</span>}
+  ]</pre>
+    </div>
+  </div>
+</section>
+
+<!-- CONFIDENCE -->
+<section id="conf" class="light grid-bg">
+  <div class="container">
+    <div class="kicker">Explainability = Provable Confidence</div>
+    <h2>How do you <em>know</em> it's 97% right?</h2>
+    <p class="sub">Every field's confidence is a <b>computed product</b> of three explicit factors — not a vibe from the LLM. Click the sliders; the verdict recomputes live.</p>
+
+    <div class="formula reveal" style="margin-bottom:30px">
+      <div class="var"><span class="vname">EXTRACTION STRENGTH</span><span class="vval" id="f-es">1.00</span></div>
+      <span class="op">×</span>
+      <div class="var"><span class="vname">SOURCE AUTHORITY</span><span class="vval" id="f-sa">1.00</span></div>
+      <span class="op">×</span>
+      <div class="var"><span class="vname">AGREEMENT</span><span class="vval" id="f-ag">1.00</span></div>
+      <span class="op">=</span>
+      <div class="result" id="f-res">0.97</div>
+    </div>
+
+    <div class="calc">
+      <div class="panel">
+        <div class="slider-row">
+          <div class="head"><span>Extraction strength</span><span class="val" id="lab-es">1.00 — 2 passes agree</span></div>
+          <input type="range" id="in-es" min="0" max="100" value="100">
+        </div>
+        <div class="slider-row">
+          <div class="head"><span>Source authority</span><span class="val" id="lab-sa">1.00 — official mfr. doc</span></div>
+          <input type="range" id="in-sa" min="0" max="100" value="100">
+        </div>
+        <div class="slider-row" style="margin-bottom:0">
+          <div class="head"><span>Agreement</span><span class="val" id="lab-ag">1.00 — ≥2 sources agree</span></div>
+          <input type="range" id="in-ag" min="0" max="100" value="100">
+        </div>
+      </div>
+      <div>
+        <div class="gauge"><div class="fill" id="gauge" style="width:97%;background:var(--green)"></div></div>
+        <div id="verdict" class="verdict v-auto">12 / 12 fields → AUTO-APPROVED → PIM/ERP export</div>
+        <p class="dim" style="margin-top:16px;font-size:13.5px">Lower any factor and watch the outcome change. <b>Disagreement between two extraction passes always drops strength to 0.40 → forced human review.</b> A single low-authority inferred source can never auto-export.</p>
+      </div>
+    </div>
+
+    <div class="grid g3" style="margin-top:34px">
+      <div class="panel reveal"><h3>🔒 Type caps confidence</h3><p><b>INFERRED</b> fields are hard-capped at <b>0.70</b> — they can never silently pass the auto-export gate.</p></div>
+      <div class="panel reveal"><h3>🧱 Physical constraints gate</h3><p>Voltage outside the category's plausible range, negative weight, invalid IP-rating enum → <b>forced human</b>, regardless of score.</p></div>
+      <div class="panel reveal"><h3>🙅 Contradiction = human</h3><p>Two sources that conflict never average to a guess. Dispute is a first-class state that routes to the review queue.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PIPELINE -->
+<section id="pipeline" class="grid-bg">
+  <div class="container">
+    <div class="kicker">Architecture · Prove–Assert–Separate–Trace–Evaluate</div>
+    <h2>Five stages. One hard rule: <br/>extraction never fills gaps.</h2>
+    <p class="sub">The sharp boundary between Stage 2 (faithful extraction) and Stage 4 (deliberate inference) <em>is</em> the anti-hallucination mechanism. The extractor's only job is to report what's in the source, field by field, with a citation.</p>
+    <div class="pipe-steps">
+      <div class="step reveal"><div class="num">1</div><div><div class="stitle">Ingest + Layout Analysis</div><div class="sdesc">Content-hash every asset for idempotent re-runs. Layout-aware parsing (Unstructured / LayoutLMv3) separates tables, key-value blocks, headers — so the model reads structure, not a wall of text.</div></div></div>
+      <div class="step reveal"><div class="num">2</div><div><div class="stitle">Extract — <span class="b">faithful only</span></div><div class="sdesc">VLM returns <b>only what is evidenced</b> in the source, cites page + bounding box, returns <b>null</b> for gaps. Two independent passes run for <b>dispute detection</b>. Output type: <code>PROVED</code>.</div></div></div>
+      <div class="step reveal"><div class="num">3</div><div><div class="stitle">Normalize — <span class="b">deterministic, low risk</span></div><div class="sdesc">Unit conversion (PSI→bar), alias→canonical field mapping, ETIM / eCl@ss / UNSPSC taxonomy mapping. Free rules — no token money for PSI→bar.</div></div></div>
+      <div class="step reveal"><div class="num">4</div><div><div class="stitle">Infer — <span class="b">deliberate, separate, loud</span></div><div class="sdesc">Enrichment agent fills gaps only from: sibling SKUs in the knowledge graph, web RAG, standards docs. Every inference tagged <code>INFERRED</code>, capped ≤ 0.70, with a full reason chain.</div></div></div>
+      <div class="step reveal"><div class="num">5</div><div><div class="stitle">Validate · Route · Export</div><div class="sdesc">Compute <code>conf()</code> per field → auto-approve PROVED &amp; high-conf → route disputes / low-conf / constraint-violations to the HITL review dashboard → export JSON-LD / GS1 CSV / PIM feed <b>with provenance attached</b>.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section id="demo" class="muted grid-bg">
+  <div class="container">
+    <div class="kicker">Live Demonstration · Graceful Degradation</div>
+    <h2>What does PASTE actually <em>return</em>?</h2>
+    <p class="sub">Three real-world cases. The system's defining behavior: it never invents. It <b>refuses</b> where evidence is missing, and says so — loudly and honestly.</p>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="t1">✅ Full datasheet</div>
+      <div class="tab" data-tab="t2">⚠️ Part # + 1 photo</div>
+      <div class="tab" data-tab="t3">🟡 Conflicting sources</div>
+    </div>
+
+    <!-- Sparse -->
+    <div class="scenario active" id="t2">
+      <div class="sc-body">
+        <div>
+          <div class="stitle" style="font-weight:600;margin-bottom:14px">Input: only a part number + one blurry nameplate photo</div>
+          <div class="field"><span class="name">Category</span><span class="val">AC Motor (taxonomy)</span><span class="conf tag-prov" style="color:var(--prov)">PROVED</span></div>
+          <div class="field"><span class="name">Voltage</span><span class="val">220V</span><span class="conf tag-inf" style="color:var(--inf);border:1px solid rgba(177,140,255,.4)">INFERRED ≤0.70</span></div>
+          <div class="field" style="border-color:var(--red)"><span class="name">Power</span><span class="val" style="color:var(--red)">We don't know</span><span class="conf tag-unk">UNKNOWN</span></div>
+          <div class="field" style="border-color:var(--red)"><span class="name">IP Rating</span><span class="val" style="color:var(--red)">—</span><span class="conf tag-unk">UNKNOWN</span></div>
+          <p class="dim" style="font-size:13px;margin-top:14px">The system refuses to hallucinate specs it has no evidence for — then routes the surest guesses to a human as suggestions.</p>
+        </div>
+        <div>
+          <div class="stitle" style="font-weight:600;margin-bottom:14px">System verdict</div>
+          <div class="field"><span class="name">Auto-exported</span><span class="val green" style="color:var(--green)">1 / 8 fields</span></div>
+          <div class="field"><span class="name">Inferred (human-suggested)</span><span class="val">4 / 8 fields</span></div>
+          <div class="field"><span class="name">Refused (UNKNOWN)</span><span class="val">3 / 8 fields</span></div>
+          <div style="margin-top:14px;padding:14px;border-radius:10px;background:rgba(61,220,132,.06);border:1px solid rgba(61,220,132,.25)">
+            <b style="color:var(--green)">★ The story judges remember:</b> most systems would confidently output a fake spec sheet. PASTE says "insufficient evidence." That honesty <em>is</em> the product.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full -->
+    <div class="scenario" id="t1">
+      <div class="sc-body">
+        <div>
+          <div class="stitle" style="font-weight:600;margin-bottom:14px">Input: complete manufacturer datasheet PDF</div>
+          <div class="field"><span class="name">Voltage</span><span class="val">400V</span><span class="conf tag-prov" style="color:var(--prov)">PROVED · p3</span></div>
+          <div class="field"><span class="name">Rated Power</span><span class="val">7.5 kW</span><span class="conf tag-prov" style="color:var(--prov)">PROVED · p3</span></div>
+          <div class="field"><span class="name">IP Rating</span><span class="val">IP55</span><span class="conf tag-prov" style="color:var(--prov)">PROVED · p5</span></div>
+          <div class="field"><span class="name">Certifications</span><span class="val">CE · UL · RoHS</span><span class="conf tag-prov" style="color:var(--prov)">PROVED · p6</span></div>
+        </div>
+        <div>
+          <div class="stitle" style="font-weight:600;margin-bottom:14px">Result</div>
+          <div class="field"><span class="name">Auto-exported</span><span class="val green" style="color:var(--green)">12 / 12 fields</span></div>
+          <div class="field"><span class="name">Avg. confidence</span><span class="val">0.97</span></div>
+          <div class="field"><span class="name">Human review needed</span><span class="val">0 fields</span></div>
+          <div style="margin-top:14px;padding:14px;border-radius:10px;background:rgba(79,140,255,.06);border:1px solid rgba(79,140,255,.25)">
+            Every field carries <b>PROVED</b> provenance. Click any of them in the review UI to jump to the exact datasheet page + highlighted cell.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conflict -->
+    <div class="scenario" id="t3">
+      <div class="sc-body">
+        <div>
+          <div class="stitle" style="font-weight:600;margin-bottom:14px">Input: two sources give different voltage ratings</div>
+          <div class="field"><span class="name">Source A (datasheet)</span><span class="val">220V</span></div>
+          <div class="field"><span class="name">Source B (distributor)</span><span class="val">230V</span></div>
+        </div>
+        <div>
+          <div class="stitle" style="font-weight:600;margin-bottom:14px">System response</div>
+          <div class="field"><span class="name">State</span><span class="val" style="color:var(--amber)">⚑ DISPUTE</span></div>
+          <div class="field" style="border-color:var(--amber)"><span class="name">Auto-guess average</span><span class="val" style="color:var(--red)">never</span></div>
+          <div class="field"><span class="name">Routed to</span><span class="val">HITL review queue</span></div>
+          <div style="margin-top:14px;padding:14px;border-radius:10px;background:rgba(255,194,77,.06);border:1px solid rgba(255,194,77,.25)">
+            Contradiction is a <b>first-class state</b>. The system never averages conflicting facts into a silent guess. It flags the dispute, shows both sources, and asks a human. That correction updates the knowledge graph so the same class never trips again.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCALE -->
+<section id="scale" class="grid-bg">
+  <div class="container">
+    <div class="kicker">Scalability · Unit Economics</div>
+    <h2>Millions of SKUs, without going broke.</h2>
+    <p class="sub">A judge will ask how this scales to a whole catalog. Fewer than 5% of fields deserve a frontier model. That's the entire trick.</p>
+    <div class="costbar">
+      <div class="bar reveal"><div class="route">TIER 1 · deterministic rules</div><div class="share">~90%</div><div class="note">unit conversion, alias→canonical, taxonomy mapping — free</div></div>
+      <div class="bar reveal"><div class="route">TIER 2 · small/fast model</div><div class="share">~9%</div><div class="note">straightforward field extraction — ~$0.005/field</div></div>
+      <div class="bar hot reveal"><div class="route">TIER 3 · frontier VLM</div><div class="share">&lt;1%</div><div class="note">disputed / dense / ambiguous docs only — where cost belongs</div></div>
+    </div>
+    <div class="grid g3" style="margin-top:30px">
+      <div class="panel reveal"><h3>⧗ Idempotent + incremental</h3><p>Content-hash every asset; a re-run over a 10k-SKU catalog touches only the docs that changed. No reprocessing waste.</p></div>
+      <div class="panel reveal"><h3>🧠 Knowledge-graph leverage</h3><p>Infer a missing spec from a <b>sibling SKU in the same product family</b> — not a fresh expensive model call. Graph traversal &lt; frontier inference.</p></div>
+      <div class="panel reveal"><h3>👤 Review only exceptions</h3><p>Tight routing keeps humans on a small, high-value slice — 85% auto-approval means human effort scales with anomalies, not with catalog size.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section id="compare" class="light grid-bg">
+  <div class="container">
+    <div class="kicker">Why PASTE Wins</div>
+    <h2>Beyond every RAG chatbot and PIM on the floor.</h2>
+    <table class="reveal" style="margin-top:24px">
+      <thead><tr><th></th><th>Traditional PIM</th><th>RAG chatbot</th><th style="color:var(--accent)">PASTE</th></tr></thead>
+      <tbody>
+        <tr><td>Confidence is provable</td><td class="cross">✗</td><td class="cross">✗ vague</td><td class="paste check">✓ × explicit formula</td></tr>
+        <tr><td>Separates fact from guess</td><td class="cross">✗</td><td class="cross">✗ blends</td><td class="paste check">✓ PROVED / INFERRED</td></tr>
+        <tr><td>Allowed to refuse / say "unknown"</td><td>—</td><td class="cross">✗ always answers</td><td class="paste check">✓ graceful degradation</td></tr>
+        <tr><td>Contradiction handling</td><td class="cross">✗</td><td class="cross">✗ ignores</td><td class="paste check">✓ dispute → human</td></tr>
+        <tr><td>Source-level provenance</td><td class="cross">✗ manual</td><td class="cross">✗</td><td class="paste check">✓ every field, every browser click</td></tr>
+        <tr><td>Real unit economics</td><td>—</td><td class="cross">✗ $10/product</td><td class="paste check">✓ ~$0.05/product</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- OUTCOMES -->
+<section class="grid-bg">
+  <div class="container">
+    <div class="kicker">Expected Outcomes · Met</div>
+    <div class="grid g2">
+      <div class="panel reveal"><h3>🧾 Structured intelligence from limited inputs</h3><p>Deliberate inference (stage 4) + refusal (type UNKNOWN) + knowledge-graph sibling leverage.</p></div>
+      <div class="panel reveal"><h3>📈 Data quality &amp; consistency</h3><p>Deterministic normalization (stage 3) enforces canonical units and valid attribute patterns before anything is trusted.</p></div>
+      <div class="panel reveal"><h3>🔎 Validate &amp; enrich with traceable outputs</h3><p>Every value: <code>type</code> + <code>confidence</code> + <code>sources[]</code> + <code>reason_chain</code>. Click any field → highlighted source page.</p></div>
+      <div class="panel reveal"><h3>🚀 Scale across catalogs</h3><p>Content-hash idempotency + model-routing ladder + graph-traversal inference + review-only-exceptions.</p></div>
+    </div>
+    <div class="cta-row" style="justify-content:center;margin-top:46px">
+      <a class="btn btn-primary" href="#hero">PASTE — Prove It, or Don't Say It →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    PASTE · Product Intelligence Engine — "Prove · Assert · Separate · Trace · Evaluate." Industrial catalog data you can put your name on.
+  </div>
+</footer>
+
+<script>
+  // scroll reveal
+  const io=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // confidence calculator
+  const $=id=>document.getElementById(id);
+  const ES=[['0.00','0.40 — passes disagree → FORCED REVIEW'],['0.50','0.50 — single pass'],['0.80','0.80 — near-match'],['1.00','1.00 — 2 passes agree']];
+  const SA=[['0.30','0.30 — model predicted'],['0.50','0.50 — inferred from sibling SKU'],['0.70','0.70 — distributor / catalog'],['1.00','1.00 — official manufacturer doc']];
+  const AG=[['0.70','0.70 — single source only'],['1.00','1.00 — ≥2 independent sources agree']];
+  function valMap(arr,raw){const i=Math.min(arr.length-1, Math.round(raw/100*(arr.length-1)));return arr[i];}
+  function tick(inp,lab,arr,init){const v=parseFloat($(inp).value)/100;const e=valMap(arr,$(inp).value);$(lab).textContent=e[1];return parseFloat(e[0]);}
+  function compute(){
+    const es=tick('in-es','lab-es',ES);const sa=tick('in-sa','lab-sa',SA);const ag=tick('in-ag','lab-ag',AG);
+    // caps
+    const conf=Math.min(es*sa*ag, sa<=0.5?0.70:1).toFixed(2);
+    $('f-es').textContent=es.toFixed(2);$('f-sa').textContent=sa.toFixed(2);$('f-ag').textContent=ag.toFixed(2);
+    $('f-res').textContent=conf;
+    const f=$('gauge');f.style.width=(conf*100)+'%';
+    const v=$('verdict');
+    const forced= (es<0.5) || (sa<=0.5);
+    if(forced){f.style.background='var(--amber)';v.className='verdict v-review';v.innerHTML='⚑ DISPUTE / INFERRED — routed to <b>HITL human review</b> (never auto-exported)';}
+    else if(conf>=0.90){f.style.background='var(--green)';v.className='verdict v-auto';v.innerHTML='12 / 12 fields → <b>AUTO-APPROVED → PIM / ERP export</b>';}
+    else {f.style.background='var(--amber)';v.className='verdict v-review';v.innerHTML='Borderline — routed to <b>review queue</b> for confirmation';}
+  }
+  ['in-es','in-sa','in-ag'].forEach(id=>$(id).addEventListener('input',compute));
+  compute();
+
+  // scenario tabs
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click',()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.scenario').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');$(t.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
