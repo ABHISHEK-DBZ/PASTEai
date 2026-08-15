@@ -40,6 +40,11 @@ services:
       VLM_MODEL_PATH: /models/qwen2-vl-7b-instruct-q4_k_m.gguf
       VLM_N_CTX: 8192
       VLM_N_GPU_LAYERS: -1
+      MODEL_PROVIDER: ${MODEL_PROVIDER:-auto}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
+      MODEL_TIMEOUT_SECONDS: ${MODEL_TIMEOUT_SECONDS:-60}
       LOG_LEVEL: INFO
       SECRET_KEY: ${SECRET_KEY:?set SECRET_KEY in your .env file}
       PASTE_API_KEY: ${PASTE_API_KEY:-}
@@ -68,6 +73,11 @@ services:
       VLM_MODEL_PATH: /models/qwen2-vl-7b-instruct-q4_k_m.gguf
       VLM_N_CTX: 8192
       VLM_N_GPU_LAYERS: -1
+      MODEL_PROVIDER: ${MODEL_PROVIDER:-auto}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
+      MODEL_TIMEOUT_SECONDS: ${MODEL_TIMEOUT_SECONDS:-60}
     volumes:
       - ./app:/app/app:ro
       - ./models:/models:ro

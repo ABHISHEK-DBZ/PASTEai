@@ -153,6 +153,19 @@ The PASTE Console provides a modern, light-theme interface with an interactive *
 - Python 3.12+ (or Docker & Docker Compose)
 - PostgreSQL 16+ (with `pgvector` extension)
 
+### Model API setup
+
+For AI extraction, add these values to `.env` before starting the app:
+
+```env
+MODEL_PROVIDER=openai
+OPENAI_API_KEY=your_api_key
+OPENAI_MODEL=gpt-4o-mini
+# Optional: use any OpenAI-compatible endpoint.
+# OPENAI_BASE_URL=https://your-provider.example/v1
+```
+
+The API performs two independent vision extraction passes and sends disagreements to review. Without `OPENAI_API_KEY`, PDF uploads use the deterministic table/key-value fallback; image uploads require the model API.
 ### 1. Local Setup
 
 ```bash

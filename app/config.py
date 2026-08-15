@@ -28,6 +28,13 @@ class Settings(BaseSettings):
     vlm_n_gpu_layers: int = Field(default=-1, validation_alias="VLM_N_GPU_LAYERS")
     vlm_temperature: float = Field(default=0.1, validation_alias="VLM_TEMPERATURE")
     vlm_top_p: float = Field(default=0.95, validation_alias="VLM_TOP_P")
+    # Model API. "auto" uses an OpenAI-compatible API when OPENAI_API_KEY is
+    # set; without it, processing uses deterministic PDF extraction.
+    model_provider: str = Field(default="auto", validation_alias="MODEL_PROVIDER")
+    openai_api_key: str | None = Field(default=None, validation_alias="OPENAI_API_KEY")
+    openai_model: str = Field(default="gpt-4o-mini", validation_alias="OPENAI_MODEL")
+    openai_base_url: str | None = Field(default=None, validation_alias="OPENAI_BASE_URL")
+    model_timeout_seconds: float = Field(default=60.0, validation_alias="MODEL_TIMEOUT_SECONDS")
 
     # Redis
     redis_url: str = Field(default="redis://localhost:6379/0", validation_alias="REDIS_URL")

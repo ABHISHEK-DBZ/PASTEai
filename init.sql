@@ -109,6 +109,6 @@ CREATE TABLE document_chunks (
     source_url TEXT,
     content TEXT NOT NULL,
     embedding JSONB,
-    metadata JSONB,
+    chunk_metadata JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );

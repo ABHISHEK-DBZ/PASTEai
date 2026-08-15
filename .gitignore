@@ -16,16 +16,20 @@ models/
 __pycache__/
 *.py[cod]
 .venv/
+.venv311/
+.venv-deploy/
 venv/
 .pytest_cache/
 
 # Runtime artifacts
 uploads/
 exports/
+logs/
 *.log
 
 # Documents not meant for the repo
 *.pdf
+!sample_datasheet.pdf
 
 # Markdown except README.md
 *.md

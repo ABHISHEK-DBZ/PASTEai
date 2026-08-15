@@ -3,59 +3,32 @@ from __future__ import annotations
 import base64
 import json
 import logging
+import mimetypes
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any
 
 import pdfplumber
-from llama_cpp import Llama
-from PIL import Image
-import fitz
 
 from app.config import settings
-from app.trust_model import EXTRACTION_STRENGTH
+from app.trust_model import EXTRACTION_STRENGTH, get_extraction_strength
 
-
-def _find_model() -> Path:
-    """Resolve the GGUF model path.
-
-    Order: explicit VLM_MODEL_PATH → any *.gguf beside it → any *.gguf in the
-    project's ./models directory. This lets you drop in any Qwen2-VL (or LLaVA)
-    GGUF regardless of the exact filename.
-    """
-    configured = Path(settings.vlm_model_path)
-    if configured.exists():
-        return configured
-
-    candidates = []
-    parent = configured.parent
-    if parent.exists():
-        candidates.extend(sorted(parent.glob("*.gguf")))
-    # Local dev: project-root models/ dir
-    local_models = Path(__file__).resolve().parent.parent / "models"
-    if local_models.exists():
-        candidates.extend(sorted(local_models.glob("*.gguf")))
-
-    if candidates:
-        chosen = candidates[0]
-        logging.getLogger("paste.vlm").warning(
-            "Configured model %s not found - using discovered %s", configured, chosen
-        )
-        return chosen
-    return configured
+logger = logging.getLogger("paste.vlm")
 
 
 class VLMError(Exception):
-    pass
-
-
-# Anything below this is clearly a truncated download (real 2B/7B GGUFs are >= 100 MB).
-MIN_VALID_MODEL_BYTES = 100 * 1024 * 1024
+    """Raised when a configured model cannot produce a usable extraction."""
 
 
 class VLMClient:
-    """Wrapper around llama.cpp for Qwen2-VL / LLaVA extraction."""
+    """Two-pass OpenAI-compatible vision extraction client.
 
-    _instance: VLMClient | None = None
+    The API is optional: with no API key the caller can use the deterministic
+    PDF fallback.  This keeps local development usable without pretending a
+    text-only llama.cpp instance can process document images.
+    """
+
+    _instance: "VLMClient | None" = None
 
     def __new__(cls):
         if cls._instance is None:
@@ -66,224 +39,185 @@ class VLMClient:
     def __init__(self):
         if self._initialized:
             return
-        self.llm = None
-        try:
-            self._load_model()
-        except VLMError as e:
-            # ponytail: model optional at runtime — fall back to rule-based extraction
-            logging.getLogger("paste.vlm").warning("VLM unavailable, using rule-based fallback: %s", e)
-        except Exception as e:
-            # A present-but-corrupt/truncated GGUF raises from llama.cpp (not VLMError).
-            # Treat it like a missing model so extraction degrades to the rule-based
-            # fallback instead of crashing the processing job.
-            logging.getLogger("paste.vlm").warning(
-                "VLM failed to initialize (%s: %s), using rule-based fallback", type(e).__name__, e
-            )
+        self.client: Any | None = None
+        provider = settings.model_provider.strip().lower()
+        if provider not in {"auto", "openai"}:
+            logger.warning("Unsupported MODEL_PROVIDER=%r; using deterministic fallback", provider)
+        elif settings.openai_api_key:
+            try:
+                from openai import OpenAI
+
+                options: dict[str, Any] = {
+                    "api_key": settings.openai_api_key,
+                    "timeout": settings.model_timeout_seconds,
+                }
+                if settings.openai_base_url:
+                    options["base_url"] = settings.openai_base_url
+                self.client = OpenAI(**options)
+                logger.info("Vision extraction configured with model %s", settings.openai_model)
+            except Exception as exc:
+                logger.warning("Model API unavailable; using deterministic fallback: %s", exc)
+        elif provider == "openai":
+            logger.warning("MODEL_PROVIDER=openai but OPENAI_API_KEY is not configured")
         self._initialized = True
 
     def is_available(self) -> bool:
-        return self.llm is not None
-
-    def _load_model(self):
-        model_path = _find_model()
-        if not model_path.exists():
-            raise VLMError(
-                f"Model not found at {model_path}. Download any Qwen2-VL GGUF into ./models/ "
-                "(e.g. bartowski/Qwen2-VL-7B-Instruct-GGUF) or set VLM_MODEL_PATH."
-            )
-
-        # Any real 7B (or 2B) GGUF is hundreds of MB to GBs. A file far smaller
-        # than that is a truncated/corrupt download - fail fast instead of letting
-        # llama.cpp crash mid-init (which also dumps a noisy __del__ traceback).
-        if model_path.stat().st_size < MIN_VALID_MODEL_BYTES:
-            raise VLMError(
-                f"Model file {model_path} is only {model_path.stat().st_size} bytes - "
-                "the download appears truncated. Re-download the full GGUF "
-                f"(at least {MIN_VALID_MODEL_BYTES // (1024 * 1024)} MB)."
-            )
-
-        self.llm = Llama(
-            model_path=str(model_path),
-            n_ctx=settings.vlm_n_ctx,
-            n_gpu_layers=settings.vlm_n_gpu_layers,
-            verbose=False,
-            n_threads=8,
-            use_mmap=True,
-            use_mlock=False,
-        )
-
-    def _encode_image(self, image_path: Path) -> str:
-        with open(image_path, "rb") as f:
-            return base64.b64encode(f.read()).decode("utf-8")
-
-    def _pdf_to_images(self, pdf_path: Path, max_pages: int = 5) -> list[Path]:
-        """Convert PDF pages to images for VLM."""
-        output_dir = Path("/tmp/pdf_images")
-        output_dir.mkdir(exist_ok=True)
-
-        doc = fitz.open(pdf_path)
-        images = []
-        for i, page in enumerate(doc):
-            if i >= max_pages:
-                break
-            pix = page.get_pixmap(dpi=150)
-            img_path = output_dir / f"{pdf_path.stem}_page_{i+1}.png"
-            pix.save(str(img_path))
-            images.append(img_path)
-        doc.close()
-        return images
+        return self.client is not None
 
     def extract_from_pdf(self, pdf_path: Path, part_number: str | None = None) -> dict[str, Any]:
-        """Run 2-pass extraction on a PDF."""
-        images = self._pdf_to_images(pdf_path)
+        """Backward-compatible alias for PDF callers."""
+        return self.extract_from_document(pdf_path, part_number)
 
-        # Pass 1
-        prompt = self._build_extraction_prompt(part_number, pass_num=1)
-        pass1 = self._run_vlm(prompt, images)
+    def extract_from_document(self, document_path: Path, part_number: str | None = None) -> dict[str, Any]:
+        """Run independent extraction passes for a PDF or supported image."""
+        if not self.client:
+            raise VLMError("No model API is configured. Set OPENAI_API_KEY to enable vision extraction.")
+        if not document_path.exists():
+            raise VLMError(f"Source document not found: {document_path}")
 
-        # Pass 2 (independent)
-        prompt2 = self._build_extraction_prompt(part_number, pass_num=2)
-        pass2 = self._run_vlm(prompt2, images)
+        with TemporaryDirectory(prefix="paste-vlm-") as tmp:
+            images = self._document_images(document_path, Path(tmp))
+            if not images:
+                return self._result_from_passes({"attributes": {}}, {"attributes": {}}, [])
+            pass1 = self._run_model(self._build_extraction_prompt(part_number, 1), images)
+            pass2 = self._run_model(self._build_extraction_prompt(part_number, 2), images)
+            return self._result_from_passes(pass1, pass2, images)
 
-        # Compare passes
-        from app.trust_model import get_extraction_strength
+    @staticmethod
+    def _document_images(document_path: Path, output_dir: Path, max_pages: int = 5) -> list[Path]:
+        suffix = document_path.suffix.lower()
+        if suffix != ".pdf":
+            if suffix not in {".png", ".jpg", ".jpeg", ".tif", ".tiff"}:
+                raise VLMError(f"Unsupported document type: {suffix or '(none)'}")
+            return [document_path]
+        try:
+            import fitz
+
+            document = fitz.open(document_path)
+            images: list[Path] = []
+            for index, page in enumerate(document):
+                if index >= max_pages:
+                    break
+                image_path = output_dir / f"page-{index + 1}.png"
+                page.get_pixmap(dpi=150).save(str(image_path))
+                images.append(image_path)
+            document.close()
+            return images
+        except Exception as exc:
+            raise VLMError(f"Could not render PDF for model extraction: {exc}") from exc
+
+    @staticmethod
+    def _build_extraction_prompt(part_number: str | None, pass_num: int) -> str:
+        known_part = f"Known part number: {part_number}" if part_number else ""
+        return f"""Extract only product attributes visibly evidenced in these technical-document images.
+Return exactly one JSON object with this schema:
+{{"attributes": {{"attribute_key": {{"value": "string", "unit": "string", "source_page": 1, "bbox": [0,0,1,1]}}}}}}
+
+Rules:
+- Do not infer, estimate, or invent values. Omit absent attributes.
+- Use canonical keys where possible: voltage_rating, current_rating, power_rating,
+  frequency_rating, ip_rating, temperature_range, dimensions, weight, material,
+  certifications, part_number, manufacturer, series, description.
+- bbox is optional and must be normalized 0-1 when supplied.
+- Return JSON only, with no Markdown.
+{known_part}
+This is independent extraction pass {pass_num} of 2."""
+
+    def _run_model(self, prompt: str, images: list[Path]) -> dict[str, Any]:
+        content: list[dict[str, Any]] = [{"type": "text", "text": prompt}]
+        for image_path in images:
+            mime_type = mimetypes.guess_type(image_path.name)[0] or "image/png"
+            encoded = base64.b64encode(image_path.read_bytes()).decode("ascii")
+            content.append({"type": "image_url", "image_url": {"url": f"data:{mime_type};base64,{encoded}"}})
+        try:
+            response = self.client.chat.completions.create(
+                model=settings.openai_model,
+                messages=[{"role": "user", "content": content}],
+                temperature=settings.vlm_temperature,
+                top_p=settings.vlm_top_p,
+                max_tokens=4096,
+                response_format={"type": "json_object"},
+            )
+            raw = response.choices[0].message.content or "{}"
+            parsed = json.loads(raw)
+        except Exception as exc:
+            raise VLMError(f"Model API extraction failed: {exc}") from exc
+        if not isinstance(parsed, dict):
+            raise VLMError("Model API returned JSON that is not an object")
+        attributes = parsed.get("attributes", {})
+        if not isinstance(attributes, dict):
+            raise VLMError("Model API response has an invalid attributes object")
+        return {"attributes": attributes}
+
+    def _result_from_passes(self, pass1: dict[str, Any], pass2: dict[str, Any], images: list[Path]) -> dict[str, Any]:
         extraction_strength, is_dispute = get_extraction_strength(pass1, pass2)
-
-        # Merge results (prefer corroborated fields)
-        merged = self._merge_passes(pass1, pass2)
-
         return {
             "pass1": pass1,
             "pass2": pass2,
-            "merged": merged,
+            "merged": self._merge_passes(pass1, pass2),
             "extraction_strength": extraction_strength,
             "is_dispute": is_dispute,
-            "images_used": [str(p) for p in images],
+            "images_used": [str(image) for image in images],
         }
 
-    def _build_extraction_prompt(self, part_number: str | None, pass_num: int) -> str:
-        base = f"""You are an expert industrial product data extractor. Extract ONLY evidenced attributes from the provided datasheet images.
-
-RULES:
-1. Return ONLY valid JSON. No markdown, no explanations.
-2. If an attribute is NOT visibly present in the images, OMIT it (do not guess).
-3. For each attribute, include: value, unit (if applicable), confidence (0-1), source_page, bbox [x0,y0,x1,y1] normalized 0-1.
-4. Focus on: electrical (voltage, current, power, frequency), mechanical (dimensions, weight, IP rating, material), environmental (temp range, humidity, certifications), identification (part number, manufacturer, series, description).
-5. Be conservative. Better to miss an attribute than hallucinate.
-
-{f"Known part number: {part_number}" if part_number else ""}
-
-Pass {pass_num} of 2 - work independently."""
-
-        return base
-
-    def _run_vlm(self, prompt: str, images: list[Path]) -> dict[str, Any]:
-        """Run VLM with images, return parsed JSON."""
-        if not images:
-            return {"attributes": {}}
-
-        # Build messages with images
-        content = [{"type": "text", "text": prompt}]
-        for img_path in images:
-            b64 = self._encode_image(img_path)
-            content.append({
-                "type": "image_url",
-                "image_url": {"url": f"data:image/png;base64,{b64}"}
-            })
-
-        response = self.llm.create_chat_completion(
-            messages=[{"role": "user", "content": content}],
-            temperature=settings.vlm_temperature,
-            top_p=settings.vlm_top_p,
-            max_tokens=4096,
-            response_format={"type": "json_object"},
-        )
-
-        try:
-            result = json.loads(response["choices"][0]["message"]["content"])
-            return result if isinstance(result, dict) else {"attributes": {}}
-        except (json.JSONDecodeError, KeyError) as e:
-            raise VLMError(f"Failed to parse VLM response: {e}")
-
-    def _merge_passes(self, pass1: dict, pass2: dict) -> dict[str, Any]:
-        """Merge two extraction passes, preferring corroborated fields."""
-        attrs1 = pass1.get("attributes", {})
-        attrs2 = pass2.get("attributes", {})
-
-        merged = {}
-        all_keys = set(attrs1.keys()) | set(attrs2.keys())
-
-        for key in all_keys:
-            v1 = attrs1.get(key)
-            v2 = attrs2.get(key)
-
-            if v1 and v2:
-                # Both passes found it - check agreement
-                if str(v1.get("value")) == str(v2.get("value")):
-                    # Corroborated
-                    merged[key] = {
-                        **v1,
-                        "corroborated": True,
-                        "extraction_strength": EXTRACTION_STRENGTH["corroborated"],
-                    }
+    @staticmethod
+    def _merge_passes(pass1: dict[str, Any], pass2: dict[str, Any]) -> dict[str, Any]:
+        attrs1 = pass1.get("attributes", {}) or {}
+        attrs2 = pass2.get("attributes", {}) or {}
+        merged: dict[str, dict[str, Any]] = {}
+        for key in set(attrs1) | set(attrs2):
+            first, second = attrs1.get(key), attrs2.get(key)
+            if not isinstance(first, dict):
+                first = None
+            if not isinstance(second, dict):
+                second = None
+            if first and second:
+                if str(first.get("value", "")).strip().casefold() == str(second.get("value", "")).strip().casefold():
+                    merged[key] = {**first, "corroborated": True, "extraction_strength": EXTRACTION_STRENGTH["corroborated"]}
                 else:
-                    # Disagreement - mark for review
                     merged[key] = {
-                        **v1,
+                        **first,
                         "corroborated": False,
-                        "conflict": {"pass1": v1.get("value"), "pass2": v2.get("value")},
+                        "conflict": {"pass1": first.get("value"), "pass2": second.get("value")},
                         "extraction_strength": EXTRACTION_STRENGTH["disagree"],
                     }
-            elif v1:
-                merged[key] = {**v1, "corroborated": False, "extraction_strength": EXTRACTION_STRENGTH["single_pass"]}
-            else:
-                merged[key] = {**v2, "corroborated": False, "extraction_strength": EXTRACTION_STRENGTH["single_pass"]}
-
+            elif first:
+                merged[key] = {**first, "corroborated": False, "extraction_strength": EXTRACTION_STRENGTH["single_pass"]}
+            elif second:
+                merged[key] = {**second, "corroborated": False, "extraction_strength": EXTRACTION_STRENGTH["single_pass"]}
         return {"attributes": merged}
 
 
-def extract_text_fallback(pdf_path: Path) -> dict[str, Any]:
-    """Rule-based fallback using pdfplumber for structured PDFs."""
-    attributes = {}
+def extract_text_fallback(document_path: Path) -> dict[str, Any]:
+    """Extract basic key/value data from structured PDFs without an AI model."""
+    if document_path.suffix.lower() != ".pdf":
+        logger.warning("No model API configured for image source %s", document_path.name)
+        return {"attributes": {}}
 
-    with pdfplumber.open(pdf_path) as pdf:
-        for page in pdf.pages:
-            tables = page.extract_tables()
-            for table in tables:
-                for row in table:
-                    if len(row) >= 2:
+    attributes: dict[str, dict[str, Any]] = {}
+    try:
+        with pdfplumber.open(document_path) as pdf:
+            for page in pdf.pages:
+                for table in page.extract_tables() or []:
+                    for row in table:
+                        if len(row) < 2 or not row[0] or not row[1]:
+                            continue
                         key = str(row[0]).strip().lower().replace(" ", "_").replace("/", "_")
-                        val = str(row[1]).strip()
-                        if key and val and len(key) < 64:
-                            attributes[key] = {
-                                "value": val,
-                                "unit": "",
-                                "confidence": 0.7,
-                                "source_page": page.page_number,
-                                "extraction_method": "pdfplumber_table",
-                            }
-
-            # Also try key-value patterns in text
-            text = page.extract_text()
-            if text:
-                import re
-                for line in text.split("\n"):
-                    if ":" in line:
-                        parts = line.split(":", 1)
-                        key = parts[0].strip().lower().replace(" ", "_")
-                        val = parts[1].strip()
-                        if key and val and len(key) < 64 and any(c.isdigit() for c in val):
-                            attributes[key] = {
-                                "value": val,
-                                "unit": "",
-                                "confidence": 0.5,
-                                "source_page": page.page_number,
-                                "extraction_method": "pdfplumber_kv",
-                            }
-
+                        value = str(row[1]).strip()
+                        if key and value and len(key) < 64:
+                            attributes[key] = {"value": value, "unit": "", "source_page": page.page_number}
+                text = page.extract_text() or ""
+                for line in text.splitlines():
+                    if ":" not in line:
+                        continue
+                    key, value = (part.strip() for part in line.split(":", 1))
+                    key = key.lower().replace(" ", "_")
+                    if key and value and len(key) < 64 and any(char.isdigit() for char in value):
+                        attributes[key] = {"value": value, "unit": "", "source_page": page.page_number}
+    except Exception as exc:
+        raise VLMError(f"PDF fallback extraction failed: {exc}") from exc
     return {"attributes": attributes}
 
 
-# Singleton accessor
 def get_vlm_client() -> VLMClient:
     return VLMClient()

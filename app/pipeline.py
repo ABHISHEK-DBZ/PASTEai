@@ -11,6 +11,7 @@ from app.config import settings
 from app.models import FieldType, Product, ProductField, ReviewStatus, ProductStatus
 from app.trust_model import (
     AGREEMENT,
+    EXTRACTION_STRENGTH,
     SOURCE_AUTHORITY,
     ConfidenceFactors,
     RoutingDecision,
@@ -321,7 +322,7 @@ async def process_product(product_id: str, file_path: Path, session) -> Product:
     vlm = get_vlm_client()
     if vlm.is_available():
         try:
-            merged = vlm.extract_from_pdf(file_path, product.part_number)["merged"]
+            merged = vlm.extract_from_document(file_path, product.part_number)["merged"]
         except VLMError:
             # Fallback to rule-based
             merged = extract_text_fallback(file_path)

@@ -4,6 +4,7 @@ uvicorn[standard]==0.30.6
 pydantic==2.8.2
 pydantic-settings==2.15.0
 python-multipart==0.0.9
+openai==1.102.0
 
 # Database
 sqlalchemy[asyncio]==2.0.31
@@ -16,8 +17,6 @@ pdfplumber==0.11.4
 pymupdf==1.23.26
 pillow==10.4.0
 
-# VLM - llama.cpp Python bindings (0.3.19: prebuilt wheels; 0.2.90 compiles from source)
-llama-cpp-python==0.3.19
 
 # Background jobs
 redis==5.0.1

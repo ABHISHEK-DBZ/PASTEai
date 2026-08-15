@@ -1,0 +1,59 @@
+# Render Blueprint — PASTE Product Intelligence Engine
+# Deploy the API + worker on Render with a Supabase Postgres database.
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Prerequisites:
+#  1. Create a Supabase project -> Database -> Connection string (Session pooler).
+#     Build DATABASE_URL as:
+#     postgresql+asyncpg://postgres.<project-ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres?sslmode=require
+#  2. Create a Render account and a Postgres instance OR paste the Supabase URL above.
+#  3. Click "New +" -> "Blueprint" and point it at this repository.
+#
+# The app creates all tables on first boot (SQLAlchemy create_all), so no manual
+# schema step is required. Redis is optional: without it the API processes jobs
+# in-process; with it, the worker below processes them reliably.
+
+services:
+  # ---- API + dashboard ----------------------------------------------------
+  - type: web
+    name: paste-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        sync: false # set in the dashboard (Supabase connection string)
+      - key: REDIS_URL
+        sync: false # optional; set to your managed Redis (e.g. Render Redis / Upstash)
+      - key: SECRET_KEY
+        generateValue: true
+      - key: API_KEY_HASH_SALT
+        generateValue: true
+      - key: PASTE_API_KEY
+        sync: false # optional: leave empty to disable auth
+      - key: CORS_ORIGINS
+        value: "*" # restrict to your dashboard domain in production
+      - key: MODEL_PROVIDER
+        value: "auto" # rule-based PDF fallback; add OPENAI_API_KEY for vision
+      - key: UPLOAD_DIR
+        value: /data/uploads
+      - key: EXPORT_DIR
+        value: /data/exports
+
+  # ---- Background worker (requires Redis) ---------------------------------
+  # Optional. Remove this block to keep processing in-process on the API.
+  - type: worker
+    name: paste-worker
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile.worker
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        sync: false # same value as the API
+      - key: REDIS_URL
+        sync: false # must match the API's REDIS_URL
+      - key: MODEL_PROVIDER
+        value: "auto"
