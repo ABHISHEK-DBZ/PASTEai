@@ -29,8 +29,8 @@ logger = logging.getLogger("paste")
 async def lifespan(app: FastAPI):
     # Startup
     logger.info("Starting PASTE API...")
-    if settings.secret_key == "***REMOVED***":
-        logger.warning("SECRET_KEY is still the default value - generate a strong random one before deploying.")
+    if not settings.secret_key:
+        logger.warning("SECRET_KEY is not set - generate a strong random one before deploying.")
     if "*" in settings.cors_origins:
         logger.warning("CORS_ORIGINS includes '*' - this allows any origin to call the API. Restrict it before production.")
     try:

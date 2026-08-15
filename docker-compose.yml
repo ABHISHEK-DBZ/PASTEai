@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_DB: paste
       POSTGRES_USER: paste
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-***REMOVED***}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in your .env file}
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
@@ -35,13 +35,13 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: postgresql+asyncpg://paste:${POSTGRES_PASSWORD:-***REMOVED***}@postgres:5432/paste
+      DATABASE_URL: postgresql+asyncpg://paste:${POSTGRES_PASSWORD}@postgres:5432/paste
       REDIS_URL: redis://redis:6379/0
       VLM_MODEL_PATH: /models/qwen2-vl-7b-instruct-q4_k_m.gguf
       VLM_N_CTX: 8192
       VLM_N_GPU_LAYERS: -1
       LOG_LEVEL: INFO
-      SECRET_KEY: ${SECRET_KEY:-***REMOVED***}
+      SECRET_KEY: ${SECRET_KEY:?set SECRET_KEY in your .env file}
       PASTE_API_KEY: ${PASTE_API_KEY:-}
       CORS_ORIGINS: ${CORS_ORIGINS:-*}
     ports:
@@ -63,7 +63,7 @@ services:
       context: .
       dockerfile: Dockerfile.worker
     environment:
-      DATABASE_URL: postgresql+asyncpg://paste:${POSTGRES_PASSWORD:-***REMOVED***}@postgres:5432/paste
+      DATABASE_URL: postgresql+asyncpg://paste:${POSTGRES_PASSWORD}@postgres:5432/paste
       REDIS_URL: redis://redis:6379/0
       VLM_MODEL_PATH: /models/qwen2-vl-7b-instruct-q4_k_m.gguf
       VLM_N_CTX: 8192

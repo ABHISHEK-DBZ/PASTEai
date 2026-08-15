@@ -18,7 +18,7 @@ class Settings(BaseSettings):
 
     # Database
     database_url: str = Field(
-        default="postgresql+asyncpg://paste:***REMOVED***@localhost:5432/paste",
+        default="postgresql+asyncpg://paste@localhost:5432/paste",
         validation_alias="DATABASE_URL",
     )
 
@@ -33,8 +33,8 @@ class Settings(BaseSettings):
     redis_url: str = Field(default="redis://localhost:6379/0", validation_alias="REDIS_URL")
 
     # Security
-    secret_key: str = Field(default="***REMOVED***", validation_alias="SECRET_KEY")
-    api_key_hash_salt: str = Field(default="***REMOVED***", validation_alias="API_KEY_HASH_SALT")
+    secret_key: str = Field(default="", validation_alias="SECRET_KEY")
+    api_key_hash_salt: str = Field(default="", validation_alias="API_KEY_HASH_SALT")
     jwt_algorithm: str = Field(default="HS256", validation_alias="JWT_ALGORITHM")
     jwt_expire_minutes: int = Field(default=60, validation_alias="JWT_EXPIRE_MINUTES")
     # Optional API key. When set, every API call must send `Authorization: Bearer <key>`
