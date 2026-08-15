@@ -72,7 +72,7 @@ class Product(Base):
     part_number: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
     manufacturer: Mapped[Optional[str]] = mapped_column(String(256), nullable=True)
     category: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
-    status: Mapped[ProductStatus] = mapped_column(String(32), nullable=False, default=ProductStatus.PENDING, index=True)
+    status: Mapped[ProductStatus] = mapped_column(Enum(ProductStatus), nullable=False, default=ProductStatus.PENDING, index=True)
     confidence_distribution: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
@@ -92,9 +92,7 @@ class ProductField(Base):
     attribute_label: Mapped[Optional[str]] = mapped_column(String(256), nullable=True)
     value: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     unit: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
-    # ponytail: String (not native Enum) to match init.sql Text column; avoids
-    # Postgres enum-type mismatch on filter comparisons. Python FieldType validates writes.
-    field_type: Mapped[FieldType] = mapped_column(String(32), nullable=False, index=True)
+    field_type: Mapped[FieldType] = mapped_column(Enum(FieldType), nullable=False, index=True)
     confidence: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     extraction_strength: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     source_authority: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
@@ -103,9 +101,7 @@ class ProductField(Base):
     reason_chain: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
     physical_constraints: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
     constraint_violation: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    # ponytail: String (not native Enum) so it matches the Text column in init.sql
-    # and avoids Postgres enum-type mismatch. Python ReviewStatus enum still validates writes.
-    review_status: Mapped[ReviewStatus] = mapped_column(String(32), nullable=False, default=ReviewStatus.PENDING, index=True)
+    review_status: Mapped[ReviewStatus] = mapped_column(Enum(ReviewStatus), nullable=False, default=ReviewStatus.PENDING, index=True)
     reviewed_by: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
     reviewed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -121,7 +117,7 @@ class Batch(Base):
     name: Mapped[str] = mapped_column(String(256), nullable=False)
     total_products: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     processed_products: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    status: Mapped[BatchStatus] = mapped_column(String(32), nullable=False, default=BatchStatus.QUEUED)
+    status: Mapped[BatchStatus] = mapped_column(Enum(BatchStatus), nullable=False, default=BatchStatus.QUEUED)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
