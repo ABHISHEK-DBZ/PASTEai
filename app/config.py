@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -60,13 +60,16 @@ class Settings(BaseSettings):
     confidence_inferred_cap: float = Field(default=0.70, validation_alias="CONFIDENCE_INFERRED_CAP")
     confidence_forced_review: float = Field(default=0.50, validation_alias="CONFIDENCE_FORCED_REVIEW")
 
-    # File uploads
+# File uploads
     upload_dir: Path = Field(default=Path("/uploads"), validation_alias="UPLOAD_DIR")
     max_file_size_mb: int = Field(default=50, validation_alias="MAX_FILE_SIZE_MB")
-    allowed_extensions: set[str] = Field(default={"pdf", "png", "jpg", "jpeg", "tiff"}, validation_alias="ALLOWED_EXTENSIONS")
+    allowed_extensions: Annotated[set[str], NoDecode] = Field(
+        default={"pdf", "png", "jpg", "jpeg", "tiff"},
+        validation_alias="ALLOWED_EXTENSIONS",
+    )
 
     # CORS - restrict to your frontend origins in production (comma-separated).
-    cors_origins: list[str] = Field(default=["*"], validation_alias="CORS_ORIGINS")
+    cors_origins: Annotated[list[str], NoDecode] = Field(default=["*"], validation_alias="CORS_ORIGINS")
 
     # Export
     export_dir: Path = Field(default=Path("/exports"), validation_alias="EXPORT_DIR")
