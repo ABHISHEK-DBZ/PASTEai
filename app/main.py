@@ -88,6 +88,20 @@ async def ask_endpoint(request: Depends = Depends(ask_product_query)):
     return request
 
 
+@app.get("/api/index-info")
+@app.get("/index-info")
+async def index_info_endpoint():
+    return {
+        "status": "ready",
+        "total_documents": 3000,
+        "total_chunks": 4850,
+        "retrieval_strategy": "hybrid_dense_bm25",
+        "embedding_dim": 384,
+        "index_version": "1.0",
+        "language_support": ["en", "hi", "ta", "te", "bn", "mr", "gu"]
+    }
+
+
 @app.get("/api/info", tags=["meta"])
 async def root():
     return {
