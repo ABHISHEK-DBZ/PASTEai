@@ -4,7 +4,7 @@ import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -101,6 +101,11 @@ async def sample_datasheet() -> FileResponse:
     if not sample.exists():
         raise HTTPException(status_code=404, detail="sample_datasheet.pdf not found")
     return FileResponse(str(sample))
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon() -> Response:
+    return Response(status_code=204)
 
 
 # Serve the review dashboard (must be registered last so API routes win).
