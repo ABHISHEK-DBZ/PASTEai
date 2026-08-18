@@ -23,10 +23,18 @@ const SAMPLE_VFD_PRODUCT = {
   ]
 };
 
+// Confidence bar color helper
+const getConfidenceColor = (score) => {
+  if (score >= 0.9) return { color: '#10b981', bg: 'rgba(16, 185, 129, 0.15)', border: 'rgba(16, 185, 129, 0.4)' };
+  if (score >= 0.7) return { color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.15)', border: 'rgba(245, 158, 11, 0.4)' };
+  return { color: '#f43f5e', bg: 'rgba(244, 63, 94, 0.15)', border: 'rgba(244, 63, 94, 0.4)' };
+};
+
 function App() {
   const [product, setProduct] = useState(SAMPLE_VFD_PRODUCT);
   const [fields, setFields] = useState(SAMPLE_VFD_PRODUCT.fields);
   const [toastMsg, setToastMsg] = useState(null);
+  const [toastKey, setToastKey] = useState(0);
 
   // 5-Tier Commercial Descriptions State
   const [descriptions, setDescriptions] = useState({
@@ -39,6 +47,7 @@ function App() {
 
   const showToast = (msg) => {
     setToastMsg(msg);
+    setToastKey(prev => prev + 1);
     setTimeout(() => setToastMsg(null), 3500);
   };
 
@@ -143,6 +152,9 @@ function App() {
     }
   };
 
+  const acceptedCount = fields.filter(f => f.review_status === 'accepted' || f.review_status === 'edited').length;
+  const pendingCount = fields.length - acceptedCount;
+
   return (
     <div className="app-container">
       {/* Cyber Header */}
@@ -153,13 +165,13 @@ function App() {
             <div className="brand-title">
               PASTE <span className="badge badge-proved">Unilog AI v2.0</span>
             </div>
-            <div className="brand-subtitle">Product Intelligence &amp; Trust Platform</div>
+            <div className="brand-subtitle">Product Intelligence & Trust Platform</div>
           </div>
         </div>
 
         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
           <div className="badge badge-proved" style={{ display: 'flex', gap: '0.4rem', padding: '0.4rem 0.8rem' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></span>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px #10b981' }}></span>
             E-COMMERCE FILTER: ACTIVE
           </div>
         </div>
@@ -169,7 +181,7 @@ function App() {
       <div className="cyber-card">
         <div className="card-header">
           <div>
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', fontFamily: 'JetBrains Mono', fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.5rem' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', fontFamily: 'JetBrains Mono', fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
               <span>Taxonomy:</span>
               <span className="badge badge-human">Industrial Automation</span>
               <span>›</span>
@@ -178,8 +190,8 @@ function App() {
               <span className="badge badge-proved" style={{ fontWeight: 700 }}>Variable Frequency Drives (VFD)</span>
             </div>
 
-            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-              <h1 style={{ fontFamily: 'Space Grotesk', fontSize: '1.5rem', fontWeight: 700, color: '#fff' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              <h1 style={{ fontFamily: 'Space Grotesk', fontSize: '1.5rem', fontWeight: 700, color: '#fff', letterSpacing: '-0.02em' }}>
                 {product.manufacturer} — {product.part_number}
               </h1>
               <span className="badge badge-proved">REVIEW</span>
@@ -192,6 +204,36 @@ function App() {
               📄 Official OEM Datasheet PDF ↗
             </a>
           </div>
+        </div>
+
+        {/* Stats Bar */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.75rem' }}>
+          {[
+            { label: 'Total Attributes', value: fields.length, icon: '📊', color: '#60a5fa' },
+            { label: 'Proved', value: fields.filter(f => f.field_type === 'PROVED').length, icon: '✅', color: '#34d399' },
+            { label: 'Inferred', value: fields.filter(f => f.field_type === 'INFERRED').length, icon: '⚠️', color: '#fbbf24' },
+            { label: 'Pending Review', value: pendingCount, icon: '⏳', color: '#f472b6' },
+          ].map(stat => (
+            <div key={stat.label} style={{
+              background: 'rgba(6, 10, 20, 0.6)',
+              border: '1px solid rgba(30, 45, 74, 0.5)',
+              borderRadius: '0.75rem',
+              padding: '0.75rem 1rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              transition: 'all 0.3s ease',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = stat.color + '66'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 8px 20px -5px ${stat.color}22`; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(30, 45, 74, 0.5)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+            >
+              <span style={{ fontSize: '1.25rem' }}>{stat.icon}</span>
+              <div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#fff', lineHeight: 1.2, fontFamily: 'Space Grotesk' }}>{stat.value}</div>
+                <div style={{ fontSize: '0.65rem', color: '#64748b', fontFamily: 'JetBrains Mono', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{stat.label}</div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -332,7 +374,7 @@ function App() {
         <div className="card-header">
           <div>
             <h2 className="card-title">
-              <span style={{ color: '#00e5ff' }}>●</span> Normalized Attributes Table with Explicit Value &amp; UOM Separation
+              <span style={{ color: '#00e5ff' }}>●</span> Normalized Attributes Table with Explicit Value & UOM Separation
             </h2>
             <div style={{ color: '#94a3b8', fontSize: '0.75rem', marginTop: '0.25rem' }}>
               Physical attributes are strictly split into distinct Attribute Value and Unit of Measure (UOM) columns. Sibling SKUs capped at ≤0.70.
@@ -359,6 +401,7 @@ function App() {
             <tbody>
               {fields.map(f => {
                 const isInf = f.field_type === 'INFERRED';
+                const confColors = getConfidenceColor(f.confidence);
                 return (
                   <tr key={f.id}>
                     <td>
@@ -384,10 +427,22 @@ function App() {
                       />
                     </td>
 
-                    <td style={{ fontFamily: 'JetBrains Mono', fontWeight: 700 }}>
-                      <span className={`badge ${f.confidence >= 0.9 ? 'badge-proved' : f.confidence >= 0.7 ? 'badge-inferred' : 'badge-dispute'}`}>
-                        {Math.round((f.confidence || 0) * 100)}%
-                      </span>
+                    <td>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', minWidth: '90px' }}>
+                        <span className={`badge ${f.confidence >= 0.9 ? 'badge-proved' : f.confidence >= 0.7 ? 'badge-inferred' : 'badge-dispute'}`} style={{ width: 'fit-content' }}>
+                          {Math.round((f.confidence || 0) * 100)}%
+                        </span>
+                        <div style={{ width: '80px', height: '4px', background: 'rgba(30, 41, 59, 0.6)', borderRadius: '2px', overflow: 'hidden' }}>
+                          <div style={{
+                            width: `${(f.confidence || 0) * 100}%`,
+                            height: '100%',
+                            background: confColors.color,
+                            borderRadius: '2px',
+                            transition: 'width 0.5s ease',
+                            boxShadow: `0 0 6px ${confColors.color}66`
+                          }} />
+                        </div>
+                      </div>
                     </td>
 
                     <td>
@@ -429,7 +484,7 @@ function App() {
 
       {/* Toast Notification Hub */}
       {toastMsg && (
-        <div className="toast-container">
+        <div className="toast-container" key={toastKey}>
           <div className="toast">{toastMsg}</div>
         </div>
       )}
