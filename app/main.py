@@ -12,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from app.config import settings
 from app.db import close_db, init_db
 from app.events import router as events_router
-from app.routes import router as api_router
+from app.routes import router as api_router, ask_product_query
 from app.review_routes import router as review_router
 from app.security import require_api_key
 
@@ -78,6 +78,14 @@ app.include_router(events_router)
 @app.get("/api/health")
 async def health_check():
     return {"status": "ok", "service": "paste-api"}
+
+
+@app.post("/api/ask")
+@app.get("/api/ask")
+@app.post("/ask")
+@app.get("/ask")
+async def ask_endpoint(request: Depends = Depends(ask_product_query)):
+    return request
 
 
 @app.get("/api/info", tags=["meta"])
