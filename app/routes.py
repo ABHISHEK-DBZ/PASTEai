@@ -354,28 +354,38 @@ async def list_products(
     status: ProductStatus | None = None,
     session: AsyncSession = Depends(get_session),
 ):
-    stmt = select(Product).options(selectinload(Product.fields))
-    if batch_id:
-        stmt = stmt.where(Product.batch_id == batch_id)
-    if status:
-        stmt = stmt.where(Product.status == status)
-    stmt = stmt.order_by(Product.created_at.desc())
-    result = await session.execute(stmt)
-    return result.scalars().all()
+    try:
+        stmt = select(Product).options(selectinload(Product.fields))
+        if batch_id:
+            stmt = stmt.where(Product.batch_id == batch_id)
+        if status:
+            stmt = stmt.where(Product.status == status)
+        stmt = stmt.order_by(Product.created_at.desc())
+        result = await session.execute(stmt)
+        return result.scalars().all()
+    except Exception as exc:
+        logger.warning("Database query failed in list_products: %s", exc)
+        return []
 
 
 @router.get("/products/{product_id}", response_model=ProductRead)
 async def get_product(product_id: uuid.UUID, session: AsyncSession = Depends(get_session)):
-    stmt = (
-        select(Product)
-        .where(Product.id == product_id)
-        .options(selectinload(Product.fields))
-    )
-    result = await session.execute(stmt)
-    product = result.scalar_one_or_none()
-    if not product:
-        raise HTTPException(status_code=404, detail="Product not found")
-    return product
+    try:
+        stmt = (
+            select(Product)
+            .where(Product.id == product_id)
+            .options(selectinload(Product.fields))
+        )
+        result = await session.execute(stmt)
+        product = result.scalar_one_or_none()
+        if not product:
+            raise HTTPException(status_code=404, detail="Product not found")
+        return product
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.warning("Database query failed in get_product: %s", exc)
+        raise HTTPException(status_code=404, detail="Product not found or database offline")
 
 
 @router.get("/products/{product_id}/file", include_in_schema=True)

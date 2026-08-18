@@ -75,6 +75,7 @@ app.include_router(events_router)
 
 
 @app.get("/health")
+@app.get("/api/health")
 async def health_check():
     return {"status": "ok", "service": "paste-api"}
 
