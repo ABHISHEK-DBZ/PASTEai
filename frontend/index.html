@@ -3,18 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PASTE — Industrial Product Intelligence &amp; Trust Engine</title>
-  
-  <!-- Tailwind CSS & Fonts -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>PASTE — Industrial Product Intelligence</title>
+  <meta name="description" content="Extract, normalize and verify industrial product specifications from PDFs and catalogs. Every attribute is proven, bounded and traceable to its source.">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- SheetJS & PapaParse for Dynamic Dataset Ingestion (.xlsx, .csv) -->
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -22,36 +20,18 @@
         extend: {
           fontFamily: {
             sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-            display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+            display: ['Archivo', 'Inter', 'system-ui', 'sans-serif'],
             mono: ['"JetBrains Mono"', 'monospace'],
           },
           colors: {
             brand: {
-              50: '#ecfdf5',
-              100: '#d1fae5',
-              400: '#34d399',
-              500: '#10b981',
-              600: '#059669',
-              700: '#047857',
-              800: '#065f46',
-              900: '#064e3b',
-              950: '#022c22',
+              300: '#9dbdff', 400: '#6b96ff', 500: '#4a7dff', 600: '#2f5ce0', 700: '#2749b4', 800: '#243e8e', 900: '#223872', 950: '#16224b'
             },
-            cyber: {
-              bg: '#080d1a',
-              card: '#0d1527',
-              cardAlt: '#111d35',
-              border: '#1e2d4a',
-              borderGlow: 'rgba(16, 185, 129, 0.35)',
-              neonGreen: '#00ff9d',
-              neonCyan: '#00e5ff',
-              neonAmber: '#ffb300',
-              neonRose: '#ff2a6d',
+            emerald: {
+              50: '#eef4ff', 100: '#e0eaff', 200: '#c6d9ff', 300: '#9dbdff', 400: '#6b96ff', 500: '#4a7dff', 600: '#2f5ce0', 700: '#2749b4', 800: '#243e8e', 900: '#223872', 950: '#16224b'
             },
             slate: {
-              850: '#111b2f',
-              925: '#0a101d',
-              950: '#060a12'
+              850: '#101722', 900: '#0d1219', 925: '#0b0f15', 950: '#080b10'
             }
           }
         }
@@ -61,1334 +41,1058 @@
 
   <style>
     :root {
-      --bg: #050810;
-      --card: #0d1527;
-      --card-alt: #121c33;
-      --border: #1d2a45;
-      --border-strong: #2a3d66;
-      --text-main: #f1f5f9;
-      --text-muted: #94a3b8;
-      --accent: #10b981;
-      --accent-glow: rgba(16, 185, 129, 0.25);
+      --bg: #0a0d12;
+      --surface: #10141b;
+      --surface-2: #141922;
+      --surface-3: #1a2029;
+      --border: rgba(255, 255, 255, 0.07);
+      --border-strong: rgba(255, 255, 255, 0.14);
+      --text: #e6eaf0;
+      --text-2: #9aa6b2;
+      --text-3: #667180;
+      --accent: #4a7dff;
+      --ok: #3ecf8e;
+      --warn: #f5b94a;
+      --err: #fb7185;
     }
 
     * { box-sizing: border-box; }
+    html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+
     body {
       background-color: var(--bg);
-      color: var(--text-main);
+      color: var(--text);
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background-image: 
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(16, 185, 129, 0.12) 0%, transparent 100%),
-        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(0, 229, 255, 0.08) 0%, transparent 100%),
-        radial-gradient(ellipse 50% 30% at 0% 50%, rgba(245, 158, 11, 0.05) 0%, transparent 100%);
-      background-attachment: fixed;
+      overflow-x: hidden;
     }
 
-    /* Animated aurora background */
     body::before {
       content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: -1;
-      background: 
-        radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 30%, rgba(0, 229, 255, 0.06) 0%, transparent 50%),
-        radial-gradient(circle at 50% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
-      animation: aurora 15s ease-in-out infinite alternate;
-      pointer-events: none;
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 45% at 50% -10%, rgba(74, 125, 255, 0.06), transparent 65%),
+        linear-gradient(rgba(255, 255, 255, 0.016) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.016) 1px, transparent 1px);
+      background-size: auto, 56px 56px, 56px 56px;
+      -webkit-mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 5%, transparent 90%);
+      mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 5%, transparent 90%);
     }
 
-    @keyframes aurora {
-      0% {
-        transform: translate(0, 0) scale(1);
-        opacity: 0.8;
-      }
-      50% {
-        transform: translate(2%, -2%) scale(1.05);
-        opacity: 1;
-      }
-      100% {
-        transform: translate(-2%, 2%) scale(1.1);
-        opacity: 0.9;
-      }
-    }
+    h1, h2, h3 { font-family: 'Archivo', sans-serif; letter-spacing: -0.01em; }
 
-    /* Subtle grid overlay */
-    body::after {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: -1;
-      background-image: 
-        linear-gradient(to right, rgba(30, 41, 59, 0.15) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(30, 41, 59, 0.15) 1px, transparent 1px);
-      background-size: 50px 50px;
-      mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 100%);
-      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 100%);
-      pointer-events: none;
-    }
-
-    /* Cyber Glass Cards */
-    .glass-card {
-      background: rgba(13, 21, 39, 0.88);
-      backdrop-filter: blur(16px);
+    /* ---------- Cards ---------- */
+    .glass-card, .glass-card-elevated, .glass-card-interactive {
+      background: var(--surface);
       border: 1px solid var(--border);
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      border-radius: 0.75rem;
     }
     .glass-card-elevated {
-      background: rgba(15, 24, 44, 0.94);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--border-strong);
-      box-shadow: 0 16px 40px -4px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(16, 185, 129, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      background: var(--surface-2);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 12px 30px -16px rgba(0, 0, 0, 0.7);
     }
-    .glass-card-glow {
-      border-color: rgba(16, 185, 129, 0.45);
-      box-shadow: 0 0 25px -4px rgba(16, 185, 129, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    .glass-card-interactive { transition: border-color .2s, transform .2s, background .2s; }
+    .glass-card-interactive:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+
+    .panel {
+      background: #0c0f15;
+      border: 1px solid var(--border);
+      border-radius: 0.625rem;
     }
 
-    /* Scrollbars */
-    .scrollbar-ent::-webkit-scrollbar { width: 6px; height: 6px; }
-    .scrollbar-ent::-webkit-scrollbar-track { background: #0a101d; }
-    .scrollbar-ent::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
-    .scrollbar-ent::-webkit-scrollbar-thumb:hover { background: #334155; }
-
-    /* Precision Enterprise Cyber Badges */
+    /* ---------- Badges ---------- */
     .ent-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.22rem 0.6rem;
-      border-radius: 0.375rem;
-      font-size: 0.6875rem;
-      font-weight: 600;
-      font-family: 'JetBrains Mono', monospace;
-      border-width: 1px;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.15rem 0.5rem; border-radius: 0.375rem;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; font-weight: 600;
+      letter-spacing: 0.01em; white-space: nowrap;
+      border: 1px solid transparent;
     }
+    .ent-badge-proved { background: rgba(74, 125, 255, 0.1); border-color: rgba(74, 125, 255, 0.35); color: #9dbdff; }
+    .ent-badge-inferred { background: rgba(245, 185, 74, 0.1); border-color: rgba(245, 185, 74, 0.35); color: #f5c879; }
+    .ent-badge-human { background: rgba(154, 166, 178, 0.1); border-color: rgba(154, 166, 178, 0.3); color: #b9c2cc; }
+    .ent-badge-unknown { background: rgba(154, 166, 178, 0.07); border-color: rgba(154, 166, 178, 0.18); color: #8b96a3; }
+    .ent-badge-dispute { background: rgba(251, 113, 133, 0.1); border-color: rgba(251, 113, 133, 0.35); color: #fda2b1; }
 
-    .ent-badge-proved {
-      background: rgba(16, 185, 129, 0.12);
-      border-color: rgba(16, 185, 129, 0.4);
-      color: #34d399;
-      box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
-    }
-    .ent-badge-inferred {
-      background: rgba(245, 158, 11, 0.12);
-      border-color: rgba(245, 158, 11, 0.4);
-      color: #fbbf24;
-      box-shadow: 0 0 10px rgba(245, 158, 11, 0.15);
-    }
-    .ent-badge-human {
-      background: rgba(59, 130, 246, 0.12);
-      border-color: rgba(59, 130, 246, 0.4);
-      color: #60a5fa;
-      box-shadow: 0 0 10px rgba(59, 130, 246, 0.15);
-    }
-    .ent-badge-unknown {
-      background: rgba(148, 163, 184, 0.08);
-      border-color: rgba(148, 163, 184, 0.25);
-      color: #94a3b8;
-    }
-    .ent-badge-dispute {
-      background: rgba(244, 63, 94, 0.15);
-      border-color: rgba(244, 63, 94, 0.5);
-      color: #fb7185;
-      box-shadow: 0 0 12px rgba(244, 63, 94, 0.2);
-    }
+    .char-badge-ok { background: rgba(74, 125, 255, 0.1); border-color: rgba(74, 125, 255, 0.35); color: #9dbdff; }
+    .char-badge-warn { background: rgba(245, 185, 74, 0.1); border-color: rgba(245, 185, 74, 0.4); color: #f5c879; }
+    .char-badge-err { background: rgba(251, 113, 133, 0.12); border-color: rgba(251, 113, 133, 0.5); color: #fda2b1; font-weight: 700; }
 
-    /* Cyber Buttons */
-    .ent-btn-primary {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: #ffffff;
-      font-weight: 600;
-      border-radius: 0.5rem;
-      padding: 0.55rem 1.1rem;
-      font-size: 0.8125rem;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      border: 1px solid rgba(52, 211, 153, 0.4);
-      cursor: pointer;
+    /* ---------- Buttons ---------- */
+    .ent-btn-primary, .ent-btn-accent, .ent-btn-unilog, .ent-btn-secondary, .ent-btn-danger {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      border-radius: 0.5rem; font-size: 0.8125rem; font-weight: 600; cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background .15s, border-color .15s, color .15s, transform .1s;
+      border: 1px solid transparent;
     }
-    .ent-btn-primary:hover {
-      background: linear-gradient(135deg, #059669 0%, #047857 100%);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
-    }
-    .ent-btn-primary:active { transform: translateY(0); }
+    .ent-btn-primary { background: #2f5ce0; color: #fff; border-color: #3a6bf0; box-shadow: 0 1px 0 rgba(255,255,255,0.15) inset; }
+    .ent-btn-primary:hover { background: #3a6bf0; }
+    .ent-btn-primary:active, .ent-btn-secondary:active, .ent-btn-unilog:active { transform: translateY(1px); }
 
-    .ent-btn-accent {
-      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-      color: #ffffff;
-      font-weight: 600;
-      border-radius: 0.5rem;
-      padding: 0.55rem 1.1rem;
-      font-size: 0.8125rem;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 10px rgba(2, 132, 199, 0.3);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      cursor: pointer;
-    }
-    .ent-btn-accent:hover {
-      background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.45);
-    }
+    .ent-btn-unilog { background: #2f5ce0; color: #fff; border-color: #3a6bf0; box-shadow: 0 1px 0 rgba(255,255,255,0.15) inset; }
+    .ent-btn-unilog:hover { background: #3a6bf0; }
 
-    .ent-btn-unilog {
-      background: linear-gradient(135deg, #059669 0%, #0d9488 50%, #0284c7 100%);
-      color: #ffffff;
-      font-weight: 700;
-      border-radius: 0.5rem;
-      padding: 0.6rem 1.25rem;
-      font-size: 0.8125rem;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 4px 16px rgba(13, 148, 136, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      border: 1px solid rgba(45, 212, 191, 0.5);
-      cursor: pointer;
-    }
-    .ent-btn-unilog:hover {
-      background: linear-gradient(135deg, #047857 0%, #0f766e 50%, #0369a1 100%);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 22px rgba(13, 148, 136, 0.55);
-    }
+    .ent-btn-accent { background: rgba(74, 125, 255, 0.1); color: #9dbdff; border-color: rgba(74, 125, 255, 0.35); }
+    .ent-btn-accent:hover { background: rgba(74, 125, 255, 0.18); color: #cfe0ff; }
 
-    .ent-btn-secondary {
-      background: rgba(18, 28, 49, 0.8);
-      border: 1px solid var(--border-strong);
-      color: #cbd5e1;
-      font-weight: 600;
-      border-radius: 0.5rem;
-      padding: 0.55rem 1.1rem;
-      font-size: 0.8125rem;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      cursor: pointer;
-    }
-    .ent-btn-secondary:hover {
-      background: rgba(30, 45, 74, 0.9);
-      border-color: #475569;
-      color: #ffffff;
-      transform: translateY(-1px);
-    }
+    .ent-btn-secondary { background: var(--surface-3); color: #c3cbd5; border-color: var(--border-strong); }
+    .ent-btn-secondary:hover { background: #232a34; color: #e6eaf0; }
 
-    .ent-btn-danger {
-      background: rgba(225, 29, 72, 0.15);
-      border: 1px solid rgba(244, 63, 94, 0.4);
-      color: #fda4af;
-      font-weight: 600;
-      border-radius: 0.5rem;
-      padding: 0.5rem 1rem;
-      font-size: 0.8125rem;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-    .ent-btn-danger:hover {
-      background: rgba(225, 29, 72, 0.25);
-      border-color: rgba(244, 63, 94, 0.7);
-      color: #ffffff;
-    }
+    .ent-btn-danger { background: rgba(251, 113, 133, 0.1); color: #fda2b1; border-color: rgba(251, 113, 133, 0.35); }
+    .ent-btn-danger:hover { background: rgba(251, 113, 133, 0.18); color: #fff; }
 
-    /* Cyber Inputs */
+    .icon-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 1.75rem; height: 1.75rem; border-radius: 0.375rem;
+      color: #9aa6b2; background: transparent; border: 1px solid transparent;
+      transition: all .15s; cursor: pointer;
+    }
+    .icon-btn:hover { color: #e6eaf0; background: rgba(255, 255, 255, 0.06); border-color: var(--border); }
+
+    /* ---------- Inputs ---------- */
     .ent-input {
-      background: #080e1b;
-      border: 1px solid #1e2e4c;
-      color: #f1f5f9;
-      border-radius: 0.5rem;
-      padding: 0.55rem 0.85rem;
-      font-size: 0.8125rem;
-      transition: all 0.15s ease;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+      width: 100%; background: #0c0f15; border: 1px solid var(--border);
+      color: var(--text); border-radius: 0.5rem; padding: 0.5rem 0.75rem;
+      font-size: 0.8125rem; font-family: 'JetBrains Mono', monospace;
+      transition: border-color .15s, box-shadow .15s;
     }
     .ent-input:focus {
-      outline: none;
-      border-color: #10b981;
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.4);
+      outline: none; border-color: rgba(74, 125, 255, 0.6);
+      box-shadow: 0 0 0 3px rgba(74, 125, 255, 0.15);
     }
+    .ent-input::placeholder { color: #5c6675; }
 
-    /* Navigation Links */
+    /* ---------- Nav ---------- */
     .ent-nav-link {
-      color: #94a3b8;
-      font-size: 0.8125rem;
-      font-weight: 500;
-      padding: 0.4rem 0.8rem;
-      border-radius: 0.375rem;
-      transition: all 0.15s ease;
-      cursor: pointer;
+      color: #9aa6b2; font-size: 0.8125rem; font-weight: 500;
+      padding: 0.4rem 0.75rem; border-radius: 0.5rem;
+      transition: all .15s; cursor: pointer; white-space: nowrap;
     }
-    .ent-nav-link:hover {
-      color: #f8fafc;
-      background: rgba(30, 41, 59, 0.6);
-    }
-    .ent-nav-link.active {
-      color: #34d399;
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      font-weight: 600;
-    }
+    .ent-nav-link:hover { color: #e6eaf0; background: rgba(255, 255, 255, 0.05); }
+    .ent-nav-link.active { color: #9dbdff; background: rgba(74, 125, 255, 0.12); }
 
-    /* Character counter pill states */
-    .char-badge-ok {
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #34d399;
-    }
-    .char-badge-warn {
-      background: rgba(245, 158, 11, 0.15);
-      border: 1px solid rgba(245, 158, 11, 0.5);
-      color: #fbbf24;
-    }
-    .char-badge-err {
-      background: rgba(244, 63, 94, 0.25);
-      border: 1px solid #f43f5e;
-      color: #ff4d6d;
-      font-weight: 700;
-      box-shadow: 0 0 12px rgba(244, 63, 94, 0.5);
-      animation: pulse-border 1.5s infinite;
-    }
-
-    @keyframes pulse-border {
-      0%, 100% { border-color: #f43f5e; }
-      50% { border-color: #ff85a2; }
-    }
-
-    /* Pipeline Step Checkpoints */
+    /* ---------- Pipeline ---------- */
     .pipeline-step-card {
-      background: rgba(13, 21, 39, 0.9);
-      border: 1px solid #1e2d4a;
-      transition: all 0.25s ease;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 0.75rem; transition: border-color .2s, background .2s;
     }
-    .pipeline-step-card.active {
-      border-color: #10b981;
-      box-shadow: 0 0 16px rgba(16, 185, 129, 0.3);
-      background: rgba(16, 185, 129, 0.08);
-    }
-    .pipeline-step-card.completed {
-      border-color: rgba(16, 185, 129, 0.6);
-      background: rgba(6, 78, 59, 0.2);
-    }
+    .pipeline-step-card.active { border-color: rgba(74, 125, 255, 0.55); background: rgba(74, 125, 255, 0.08); }
+    .pipeline-step-card.completed { border-color: rgba(74, 125, 255, 0.45); background: rgba(74, 125, 255, 0.06); }
 
-    input[type=range] { accent-color: #10b981; }
+    /* ---------- Links ---------- */
+    .doc-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      color: #9dbdff; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+      border: 1px solid rgba(74, 125, 255, 0.3); background: rgba(74, 125, 255, 0.08);
+      padding: 0.35rem 0.65rem; border-radius: 0.5rem; transition: all .15s;
+    }
+    .doc-link:hover { background: rgba(74, 125, 255, 0.16); color: #cfe0ff; }
+
+    /* ---------- Scrollbar ---------- */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #262e3a; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #333d4c; }
+    .scrollbar-ent::-webkit-scrollbar { width: 6px; height: 6px; }
+
+input[type=range] { accent-color: #4a7dff; }
+
+    table { border-collapse: collapse; }
+
+    /* App chrome (nav + status pills) only appears once inside the product views.
+       Hidden while the marketing landing page (home-view) is visible. */
+    .app-nav, .app-pill {
+      transition: opacity .2s ease;
+    }
+    body:has(#home-view:not(.hidden)) .app-nav,
+    body:has(#home-view:not(.hidden)) .app-pill {
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+    /* The launch CTA is only needed on the marketing landing page. */
+    body:not(:has(#home-view:not(.hidden))) .app-cta {
+      display: none;
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-black">
+
+<body class="min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
 
   <!-- ========================================================= -->
-  <!-- TOP STICKY ENTERPRISE CYBER HEADER                        -->
+  <!-- HEADER                                                     -->
   <!-- ========================================================= -->
-  <header class="border-b border-slate-800/80 bg-slate-950/85 backdrop-blur-xl sticky top-0 z-50 shadow-2xl">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
-        
-        <!-- Brand / Logo -->
-        <div class="flex items-center gap-6">
-          <a href="#hero" onclick="showView('home')" class="flex items-center gap-3 group">
-            <div class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-bold font-mono text-base shadow-lg shadow-emerald-500/10 group-hover:scale-105 transition-transform">
-              🛡️
-            </div>
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="font-display font-bold text-base tracking-tight text-white">PASTE</span>
-                <span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-500/40 font-semibold">Unilog AI v2.0</span>
-              </div>
-              <p class="text-[11px] text-slate-400 font-medium font-mono">Product Intelligence &amp; Trust Platform</p>
-            </div>
+  <header class="sticky top-0 z-50 border-b border-white/[0.06] bg-[#0a0d12]/90 backdrop-blur">
+    <div class="max-w-[1200px] mx-auto px-5 sm:px-8">
+      <div class="flex items-center justify-between h-16 gap-4">
+
+        <div class="flex items-center gap-7 min-w-0">
+          <a href="#" onclick="showView('home')" class="flex items-center gap-2.5 shrink-0">
+            <span class="w-8 h-8 rounded-lg bg-brand-500/15 border border-brand-500/40 flex items-center justify-center">
+              <svg class="w-4.5 h-4.5 text-brand-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </span>
+<span class="flex flex-col leading-none">
+              <span class="font-display font-bold text-base tracking-tight text-white">PASTE</span>
+            </span>
           </a>
 
-          <div class="h-4 w-px bg-slate-800 hidden md:block"></div>
-
-          <!-- Main Nav Links -->
-          <nav class="hidden md:flex items-center gap-1">
+          <nav class="app-nav hidden md:flex items-center gap-1 min-w-0">
             <button data-nav="home" onclick="showView('home')" class="ent-nav-link active">Overview</button>
-            <button data-nav="upload" onclick="showView('upload')" class="ent-nav-link flex items-center gap-1.5 text-emerald-400 font-semibold">
-              <span>⚡ Ingest Studio</span>
-              <span class="px-1 py-0.2 rounded text-[9px] bg-emerald-950 text-emerald-300 border border-emerald-500/40 font-mono">Dynamic</span>
-            </button>
-            <button data-nav="detail" onclick="openActiveProductReview()" class="ent-nav-link flex items-center gap-1.5">
-              <span>Product Review</span>
-              <span class="px-1 py-0.2 rounded text-[9px] bg-cyan-950 text-cyan-300 border border-cyan-500/40 font-mono">Unilog Spec</span>
-            </button>
+            <button data-nav="upload" onclick="showView('upload')" class="ent-nav-link">Ingest Studio</button>
+            <button data-nav="detail" onclick="openActiveProductReview()" class="ent-nav-link">Product Review</button>
             <button data-nav="batch" onclick="showView('batch')" class="ent-nav-link">Batch Catalog</button>
             <button data-nav="queue" onclick="showView('queue')" class="ent-nav-link flex items-center gap-1.5">
-              <span>HITL Queue</span>
-              <span id="nav-badge-queue" class="px-1.5 py-0.2 rounded-full text-[10px] bg-amber-950/80 text-amber-300 border border-amber-500/40 font-mono font-bold hidden">0</span>
+              <span>Review Queue</span>
+              <span id="nav-badge-queue" class="hidden px-1.5 py-0.5 rounded-full text-[9px] bg-brand-500/20 text-brand-300 border border-brand-500/40 font-mono font-bold">0</span>
             </button>
           </nav>
         </div>
 
-        <!-- Right System Status & Actions -->
-        <div class="flex items-center gap-3">
-          <!-- E-Commerce Filter Active Pill -->
-          <div class="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-950/70 border border-emerald-500/40 text-[11px] font-mono text-emerald-300 shadow-sm" title="Only official manufacturer domains & datasheets allowed. Amazon, eBay, Walmart, and unverified marketplaces are strictly excluded.">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>E-COMMERCE FILTER: ACTIVE</span>
+        <div class="flex items-center gap-3 shrink-0">
+          <div class="app-pill hidden xl:flex items-center gap-2 px-2.5 py-1 rounded-md bg-[#10141b] border border-white/[0.07] text-[11px] font-mono text-[#9aa6b2]" title="Only official manufacturer domains and datasheets are allowed.">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-400"></span>
+            <span>OEM filter active</span>
           </div>
 
-          <div id="conn-indicator" class="flex items-center gap-2 px-2.5 py-1 rounded-md bg-slate-900/90 border border-slate-800 text-[11px] font-mono text-slate-300">
+          <div id="conn-indicator" class="app-pill hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-md bg-[#10141b] border border-white/[0.07] text-[11px] font-mono text-[#9aa6b2]">
             <span class="relative flex h-2 w-2">
-              <span id="conn-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span id="conn-dot" class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+              <span id="conn-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75 hidden"></span>
+              <span id="conn-dot" class="relative inline-flex rounded-full h-2 w-2 bg-brand-400"></span>
             </span>
-            <span id="conn-text" class="text-slate-300 font-medium">live telemetry</span>
+            <span id="conn-text" class="font-medium">connecting</span>
           </div>
 
-          <button onclick="showView('queue')" class="ent-btn-primary text-xs">
-            <span>Review Console</span>
-            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+<button onclick="showView('upload')" class="app-cta ent-btn-primary px-4 py-2 text-xs">
+            Launch Studio
+          </button>
+
+          <button id="menu-toggle" class="app-nav md:hidden w-9 h-9 rounded-lg flex items-center justify-center text-[#9aa6b2] border border-white/[0.08] bg-[#10141b] hover:text-white hover:border-white/[0.18] transition-colors" aria-label="Menu" aria-expanded="false">
+            <svg id="menu-icon-open" class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            <svg id="menu-icon-close" class="w-4.5 h-4.5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
           </button>
         </div>
 
+      </div>
+    </div>
+
+    <!-- Mobile menu panel -->
+    <div id="mobile-menu" class="app-nav hidden md:hidden border-t border-white/[0.06] bg-[#0d1119] px-5 pt-3 pb-5">
+      <nav class="flex flex-col">
+        <button data-nav="home" onclick="showView('home')" class="ent-nav-link text-left py-2.5">Overview</button>
+        <button data-nav="upload" onclick="showView('upload')" class="ent-nav-link text-left py-2.5">Ingest Studio</button>
+        <button data-nav="detail" onclick="openActiveProductReview()" class="ent-nav-link text-left py-2.5">Product Review</button>
+        <button data-nav="batch" onclick="showView('batch')" class="ent-nav-link text-left py-2.5">Batch Catalog</button>
+        <button data-nav="queue" onclick="showView('queue')" class="ent-nav-link text-left py-2.5 flex items-center gap-2">
+          <span>Review Queue</span>
+          <span id="nav-badge-queue-mobile" class="hidden px-1.5 py-0.5 rounded-full text-[9px] bg-brand-500/20 text-brand-300 border border-brand-500/40 font-mono font-bold">0</span>
+        </button>
+      </nav>
+      <div class="mt-4 pt-4 border-t border-white/[0.06] flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-mono text-[#9aa6b2]">
+        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-400"></span>OEM filter active</span>
+        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-400"></span><span id="conn-text-mobile">live realtime</span></span>
       </div>
     </div>
   </header>
 
-  <!-- ========================================================= -->
-  <!-- MAIN CONTAINER WITH DYNAMIC VIEWS                         -->
-  <!-- ========================================================= -->
   <main class="flex-1 w-full">
 
-    <!-- ======================================================= -->
-    <!-- VIEW: OVERVIEW & PHYSICS CANVAS                         -->
-    <!-- ======================================================= -->
-    <div id="home-view" class="space-y-24 pb-20">
+    <!-- ========================================================= -->
+    <!-- HOME                                                       -->
+    <!-- ========================================================= -->
+    <div id="home-view" class="pt-10 pb-20 space-y-16 sm:pt-14 sm:pb-24 sm:space-y-28">
 
-      <!-- HERO SECTION WITH INTERACTIVE PHYSICS CANVAS -->
-      <section id="hero" class="relative pt-10 sm:pt-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          
-          <!-- Hero Copy (7 cols) -->
-          <div class="lg:col-span-7 space-y-6 z-10">
-            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/60 border border-emerald-500/40 text-emerald-400 text-xs font-mono font-semibold">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              UniHack 2026 • Deterministic Product Intelligence Engine
-            </div>
+<!-- Hero -->
+      <section class="max-w-[1200px] mx-auto px-5 sm:px-8">
+        <div class="max-w-3xl mx-auto text-center pt-6 sm:pt-10">
 
-            <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.12]">
-              Never present an <span class="bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400 bg-clip-text text-transparent underline decoration-amber-400/50 decoration-wavy decoration-2">inferred spec</span> as fact.
-            </h1>
+          <h1 class="font-display text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-tight text-white leading-[1.06]">
+            Industrial product data you can <span class="text-brand-400">actually trust</span>.
+          </h1>
 
-            <p class="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl font-normal">
-              Industrial manufacturers manage fragmented PDF datasheets, CAD exports, and part catalogs. Standard RAG chatbots hallucinate specs with zero provenance. 
-              <strong class="text-white font-semibold">PASTE</strong> tags every emitted attribute as <span class="text-emerald-400 font-mono text-xs font-semibold bg-emerald-950/80 px-1 py-0.5 rounded border border-emerald-500/40">PROVED</span>, <span class="text-amber-400 font-mono text-xs font-semibold bg-amber-950/80 px-1 py-0.5 rounded border border-amber-500/40">INFERRED (≤0.70)</span>, <span class="text-blue-400 font-mono text-xs font-semibold bg-blue-950/80 px-1 py-0.5 rounded border border-blue-500/40">HUMAN</span>, or <span class="text-slate-400 font-mono text-xs font-semibold bg-slate-800 px-1 py-0.5 rounded border border-slate-700">UNKNOWN</span>, validates physical boundaries, separates values from UOMs, and enforces Unilog 5-tier commercial formats.
-            </p>
+          <p class="mt-6 text-[15px] sm:text-base text-[#9aa6b2] leading-relaxed mx-auto max-w-[52ch]">
+            Extract, normalize and verify industrial specs from messy PDFs and legacy catalogs. Every attribute is mathematically scored and traced to a page and coordinates.
+          </p>
 
-            <div class="flex flex-wrap items-center gap-3 pt-2">
-              <button onclick="showView('upload')" class="ent-btn-primary px-6 py-3 text-sm">
-                <span>⚡ Open Ingestion Studio</span>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-              </button>
-              <button onclick="openActiveProductReview()" class="ent-btn-accent px-5 py-3 text-sm">
-                <span>Inspect Product Review →</span>
-              </button>
-              <button onclick="showView('queue')" class="ent-btn-secondary px-4 py-3 text-sm text-slate-300">
-                <span>Explore Review Queue →</span>
-              </button>
-            </div>
-
-            <!-- Precision Badges Grid -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-slate-800 text-xs font-mono text-slate-400">
-              <div class="p-3 bg-slate-900/80 rounded-lg border border-slate-800 shadow-sm">
-                <div class="text-white font-bold text-sm font-sans">Dynamic Ingestion</div>
-                <div class="text-slate-400 text-[11px] mt-0.5">.xlsx, .csv &amp; .pdf</div>
-              </div>
-              <div class="p-3 bg-slate-900/80 rounded-lg border border-slate-800 shadow-sm">
-                <div class="text-white font-bold text-sm font-sans">≤0.70 Hard Cap</div>
-                <div class="text-slate-400 text-[11px] mt-0.5">Inferred attributes</div>
-              </div>
-              <div class="p-3 bg-slate-900/80 rounded-lg border border-slate-800 shadow-sm">
-                <div class="text-white font-bold text-sm font-sans">UOM Separation</div>
-                <div class="text-slate-400 text-[11px] mt-0.5">Value &amp; Unit split</div>
-              </div>
-              <div class="p-3 bg-slate-900/80 rounded-lg border border-slate-800 shadow-sm">
-                <div class="text-white font-bold text-sm font-sans">5-Tier Descriptions</div>
-                <div class="text-slate-400 text-[11px] mt-0.5">Strict char bounds</div>
-              </div>
-            </div>
+          <div class="mt-9 flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-3">
+            <button onclick="showView('upload')" class="ent-btn-primary w-full sm:w-auto px-6 py-3 text-sm justify-center">
+              Open Ingestion Studio
+            </button>
+            <button onclick="openActiveProductReview()" class="ent-btn-secondary w-full sm:w-auto px-5 py-3 text-sm justify-center">
+              Inspect a Sample Record
+            </button>
           </div>
 
-          <!-- Hero Right: Dynamic Physics Motion Graphic & Inspection Card (5 cols) -->
-          <div class="lg:col-span-5 space-y-4">
-            
-            <div class="glass-card-elevated rounded-2xl overflow-hidden border border-slate-800 relative group shadow-2xl">
-              
-              <div class="bg-slate-900/90 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <div class="w-2.5 h-2.5 rounded-full bg-rose-500"></div>
-                  <div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
-                  <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
-                  <span class="font-mono text-xs text-slate-300 font-medium ml-2">live-provenance-mesh.interactive</span>
-                </div>
-                <span class="ent-badge ent-badge-proved">PROVED MESH</span>
-              </div>
-
-              <!-- Canvas Container for Motion Physics -->
-              <div class="relative h-48 sm:h-52 bg-slate-950 overflow-hidden cursor-crosshair">
-                <canvas id="hero-physics-canvas" class="w-full h-full block"></canvas>
-                <div class="absolute bottom-2 right-3 pointer-events-none text-[10px] font-mono text-slate-400 bg-slate-900/90 px-2 py-0.5 rounded border border-slate-800 backdrop-blur-sm">
-                  Interactive Node Physics • Drag/Hover Nodes
-                </div>
-              </div>
-
-              <!-- Real-time Spec Feed Breakdown -->
-              <div class="p-4 space-y-2.5 text-xs font-mono bg-slate-900/90 border-t border-slate-800">
-                <div class="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 flex items-center justify-between">
-                  <div>
-                    <div class="text-white font-semibold">voltage_rating: <span class="text-emerald-400 font-bold">400</span> | UOM: <span class="text-cyan-400 font-bold">V AC</span></div>
-                    <div class="text-[10px] text-slate-400">Dual-pass VLM confirmed • 100% OEM authority</div>
-                  </div>
-                  <span class="ent-badge ent-badge-proved">0.98 AUTO</span>
-                </div>
-
-                <div class="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 flex items-center justify-between">
-                  <div>
-                    <div class="text-white font-semibold">power_rating: <span class="text-emerald-400 font-bold">7.5</span> | UOM: <span class="text-cyan-400 font-bold">kW</span></div>
-                    <div class="text-[10px] text-slate-400">Canonical unit normalized • Physical check OK</div>
-                  </div>
-                  <span class="ent-badge ent-badge-proved">0.96 AUTO</span>
-                </div>
-
-                <div class="p-2.5 rounded-lg bg-amber-950/40 border border-amber-500/40 flex items-center justify-between">
-                  <div>
-                    <div class="text-white font-semibold">mounting_flange: <span class="text-amber-300 font-bold">B14 Face</span></div>
-                    <div class="text-[10px] text-amber-400/80">Inferred from sibling SKU (capped at ≤0.70)</div>
-                  </div>
-                  <span class="ent-badge ent-badge-inferred">0.65 INFERRED</span>
-                </div>
-              </div>
-
+          <div class="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-px bg-white/[0.06] border border-white/[0.06] rounded-xl overflow-hidden text-left">
+            <div class="bg-[#10141b] p-4">
+              <div class="font-display text-lg font-bold text-white">100%</div>
+              <div class="text-[11px] text-[#9aa6b2] mt-1">Audit provenance</div>
             </div>
-
+            <div class="bg-[#10141b] p-4">
+              <div class="font-display text-lg font-bold text-white">&le; 0.70</div>
+              <div class="text-[11px] text-[#9aa6b2] mt-1">Inferred hard cap</div>
+            </div>
+            <div class="bg-[#10141b] p-4">
+              <div class="font-display text-lg font-bold text-white">0</div>
+              <div class="text-[11px] text-[#9aa6b2] mt-1">Hallucinated specs</div>
+            </div>
+            <div class="bg-[#10141b] p-4">
+              <div class="font-display text-lg font-bold text-white">5-Tier</div>
+              <div class="text-[11px] text-[#9aa6b2] mt-1">Unilog ready</div>
+            </div>
           </div>
 
         </div>
       </section>
 
-      <!-- SECTION 2: 5-STAGE PIPELINE ARCHITECTURE WALKTHROUGH -->
-      <section id="pipeline" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        
-        <div class="text-center space-y-2.5 max-w-3xl mx-auto">
-          <span class="ent-badge ent-badge-proved text-xs">Deterministic Architecture</span>
-          <h2 class="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white">
-            The 5-Stage Verification &amp; Trust Pipeline
-          </h2>
-          <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
-            Every product attribute passes through 5 deterministic checkpoints before reaching the export gateway or the human verification queue.
+<!-- 5-stage pipeline -->
+      <section class="max-w-[1200px] mx-auto px-5 sm:px-8 space-y-10">
+        <div class="max-w-2xl">
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">The 5-stage verification pipeline</h2>
+          <p class="mt-3 text-sm text-[#9aa6b2] leading-relaxed">
+            Every attribute passes through five deterministic checkpoints before reaching the commerce export gateway or the human review queue.
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-          
-          <!-- Stage 1 -->
-          <div class="glass-card rounded-xl p-5 space-y-3 relative group hover:border-emerald-500/60 hover:shadow-lg hover:shadow-emerald-500/10 transition-all">
-            <div class="w-8 h-8 rounded-lg bg-emerald-950 border border-emerald-500/40 text-emerald-400 font-mono font-bold text-xs flex items-center justify-center">
-              01
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+          <div class="glass-card-interactive rounded-xl p-5 space-y-3">
+            <div class="w-8 h-8 rounded-lg bg-brand-500/10 border border-brand-500/30 text-brand-300 font-mono font-bold text-xs flex items-center justify-center">01</div>
+            <h3 class="font-bold text-sm text-white">Ingestion &amp; SHA-256</h3>
+            <p class="text-xs text-[#9aa6b2] leading-relaxed">Files are hashed and validated. Ingestion is idempotent, so duplicates never land twice.</p>
+            <div class="text-[11px] font-mono text-[#667180] pt-2 border-t border-white/[0.06]">Multi-format ingestion</div>
+          </div>
+          <div class="glass-card-interactive rounded-xl p-5 space-y-3">
+            <div class="w-8 h-8 rounded-lg bg-brand-500/10 border border-brand-500/30 text-brand-300 font-mono font-bold text-xs flex items-center justify-center">02</div>
+            <h3 class="font-bold text-sm text-white">Dual-pass VLM vision</h3>
+            <p class="text-xs text-[#9aa6b2] leading-relaxed">Two independent passes extract layout-anchored bounding boxes. Disagreements collapse to a dispute.</p>
+            <div class="text-[11px] font-mono text-[#667180] pt-2 border-t border-white/[0.06]">OCR &amp; BBox anchoring</div>
+          </div>
+          <div class="glass-card-interactive rounded-xl p-5 space-y-3">
+            <div class="w-8 h-8 rounded-lg bg-brand-500/10 border border-brand-500/30 text-brand-300 font-mono font-bold text-xs flex items-center justify-center">03</div>
+            <h3 class="font-bold text-sm text-white">Physical gates &amp; UOM</h3>
+            <p class="text-xs text-[#9aa6b2] leading-relaxed">Units are standardized to SI with explicit value / UOM separation and checked against physical boundaries.</p>
+            <div class="text-[11px] font-mono text-[#667180] pt-2 border-t border-white/[0.06]">Value &amp; unit normalizer</div>
+          </div>
+          <div class="glass-card-interactive rounded-xl p-5 space-y-3">
+            <div class="w-8 h-8 rounded-lg bg-[#3a2f12] border border-[#f5b94a]/30 text-[#f5c879] font-mono font-bold text-xs flex items-center justify-center">04</div>
+            <h3 class="font-bold text-sm text-white">Sibling SKU inference</h3>
+            <p class="text-xs text-[#9aa6b2] leading-relaxed">Verified series attributes propagate to incomplete siblings, strictly tagged INFERRED and capped at ≤0.70.</p>
+            <div class="text-[11px] font-mono text-[#667180] pt-2 border-t border-white/[0.06]">≤0.70 hard cap</div>
+          </div>
+          <div class="glass-card-interactive rounded-xl p-5 space-y-3">
+            <div class="w-8 h-8 rounded-lg bg-brand-500/10 border border-brand-500/30 text-brand-300 font-mono font-bold text-xs flex items-center justify-center">05</div>
+            <h3 class="font-bold text-sm text-white">Trust routing gate</h3>
+            <p class="text-xs text-[#9aa6b2] leading-relaxed">Scores ≥0.90 auto-approve to Unilog &amp; GS1 exports; inferred and disputed values route to review.</p>
+            <div class="text-[11px] font-mono text-[#667180] pt-2 border-t border-white/[0.06]">≥0.90 auto · &lt;0.90 review</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Trust simulator -->
+      <section class="max-w-[1200px] mx-auto px-5 sm:px-8">
+        <div class="glass-card-elevated rounded-2xl p-6 sm:p-8 space-y-8">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/[0.06]">
+            <div>
+              <h2 class="text-xl sm:text-2xl font-bold text-white">Confidence simulator</h2>
+              <p class="text-xs sm:text-sm text-[#9aa6b2] mt-1">
+                <code class="text-brand-300 font-mono">confidence = strength × authority × agreement</code>
+              </p>
             </div>
-            <h3 class="font-bold text-sm text-white font-display">SHA-256 &amp; Ingestion</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Files (.xlsx, .csv, .pdf) are SHA-256 hashed and validated. Ingestion is strictly idempotent to avoid duplicate records.
-            </p>
-            <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800 font-medium">
-              Multi-Format Ingestion
+            <div class="flex flex-wrap items-center gap-2">
+              <button onclick="setSimPreset('proved')" class="ent-btn-secondary text-xs px-3 py-1.5">OEM Corroborated</button>
+              <button onclick="setSimPreset('inferred')" class="ent-btn-secondary text-xs px-3 py-1.5">Sibling Inferred</button>
+              <button onclick="setSimPreset('dispute')" class="ent-btn-secondary text-xs px-3 py-1.5">Pass Dispute</button>
             </div>
           </div>
 
-          <!-- Stage 2 -->
-          <div class="glass-card rounded-xl p-5 space-y-3 relative group hover:border-emerald-500/60 hover:shadow-lg hover:shadow-emerald-500/10 transition-all">
-            <div class="w-8 h-8 rounded-lg bg-emerald-950 border border-emerald-500/40 text-emerald-400 font-mono font-bold text-xs flex items-center justify-center">
-              02
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-7 space-y-6">
+              <div class="space-y-2">
+                <div class="flex justify-between text-xs font-mono">
+                  <span class="text-[#c3cbd5] font-semibold">Extraction strength</span>
+                  <span id="sim-val-strength" class="text-brand-300 font-bold">1.00 (Corroborated)</span>
+                </div>
+                <input id="sim-slider-strength" type="range" min="0.4" max="1.0" step="0.1" value="1.0" oninput="updateSimScore()" class="w-full">
+              </div>
+              <div class="space-y-2">
+                <div class="flex justify-between text-xs font-mono">
+                  <span class="text-[#c3cbd5] font-semibold">Source authority</span>
+                  <span id="sim-val-authority" class="text-brand-300 font-bold">1.00 (OEM Datasheet)</span>
+                </div>
+                <input id="sim-slider-authority" type="range" min="0.3" max="1.0" step="0.1" value="1.0" oninput="updateSimScore()" class="w-full">
+              </div>
+              <div class="space-y-2">
+                <div class="flex justify-between text-xs font-mono">
+                  <span class="text-[#c3cbd5] font-semibold">Multi-source agreement</span>
+                  <span id="sim-val-agreement" class="text-brand-300 font-bold">1.00 (≥2 Sources Agree)</span>
+                </div>
+                <input id="sim-slider-agreement" type="range" min="0.7" max="1.0" step="0.3" value="1.0" oninput="updateSimScore()" class="w-full">
+              </div>
             </div>
-            <h3 class="font-bold text-sm text-white font-display">Dual-Pass VLM Extraction</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Two independent passes extract layout-anchored bounding boxes. Discrepancies collapse score to DISPUTE (0.4) for human review.
-            </p>
-            <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800 font-medium">
-              OCR &amp; BBox Anchoring
+
+            <div class="lg:col-span-5">
+              <div class="bg-[#0c0f15] rounded-xl p-6 border border-white/[0.07] space-y-5">
+                <div class="text-xs font-mono text-[#667180] uppercase tracking-wider">Routing result</div>
+                <div class="flex items-baseline gap-3">
+                  <div id="sim-total-score" class="font-display text-4xl sm:text-5xl font-bold text-brand-400">1.00</div>
+                  <div class="text-xs text-[#667180] font-mono">/ 1.00 confidence</div>
+                </div>
+                <div id="sim-routing-card" class="p-3.5 rounded-lg bg-brand-500/10 border border-brand-500/40 space-y-1">
+                  <div id="sim-routing-title" class="text-brand-300 font-bold text-sm flex items-center gap-2">AUTO-PUBLISH READY</div>
+                  <p id="sim-routing-desc" class="text-xs text-[#9aa6b2] leading-relaxed">
+                    Confidence ≥ 0.90 with OEM authority. Field automatically exports to Unilog .xlsx &amp; GS1 CSV.
+                  </p>
+                </div>
+                <div class="text-[11px] font-mono text-[#667180] pt-3 border-t border-white/[0.06] flex justify-between">
+                  <span>Inferred cap: ≤ 0.70</span>
+                  <span>Auto-approve: ≥ 0.90</span>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+      </section>
 
-          <!-- Stage 3 -->
-          <div class="glass-card rounded-xl p-5 space-y-3 relative group hover:border-emerald-500/60 hover:shadow-lg hover:shadow-emerald-500/10 transition-all">
-            <div class="w-8 h-8 rounded-lg bg-emerald-950 border border-emerald-500/40 text-emerald-400 font-mono font-bold text-xs flex items-center justify-center">
-              03
-            </div>
-            <h3 class="font-bold text-sm text-white font-display">Physical Gates &amp; UOM</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Standardizes SI units (kW, V, °C, mm) with explicit Value &amp; UOM separation. Checks against physical constraints.
-            </p>
-            <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800 font-medium">
-              Value &amp; Unit Normalizer
-            </div>
-          </div>
-
-          <!-- Stage 4 -->
-          <div class="glass-card rounded-xl p-5 space-y-3 relative group hover:border-emerald-500/60 hover:shadow-lg hover:shadow-emerald-500/10 transition-all">
-            <div class="w-8 h-8 rounded-lg bg-emerald-950 border border-emerald-500/40 text-emerald-400 font-mono font-bold text-xs flex items-center justify-center">
-              04
-            </div>
-            <h3 class="font-bold text-sm text-white font-display">Sibling SKU Inference</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Propagates series attributes to incomplete sibling records, strictly tagging them INFERRED and capping confidence at ≤0.70.
-            </p>
-            <div class="text-[11px] font-mono text-amber-400 pt-2 border-t border-slate-800 font-medium">
-              ≤0.70 Hard Confidence Cap
-            </div>
-          </div>
-
-          <!-- Stage 5 -->
-          <div class="glass-card rounded-xl p-5 space-y-3 relative group hover:border-emerald-500/60 hover:shadow-lg hover:shadow-emerald-500/10 transition-all">
-            <div class="w-8 h-8 rounded-lg bg-emerald-950 border border-emerald-500/40 text-emerald-400 font-mono font-bold text-xs flex items-center justify-center">
-              05
-            </div>
-            <h3 class="font-bold text-sm text-white font-display">Trust Routing Gate</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Scores ≥0.90 auto-approve to Unilog .xlsx &amp; GS1. Inferred (&lt;0.90) and disputed attributes route to HITL queue.
-            </p>
-            <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800 font-medium">
-              ≥0.90 Auto / &lt;0.90 HITL
-            </div>
-          </div>
-
+      <!-- RAG vs PASTE comparison -->
+      <section class="max-w-[1200px] mx-auto px-5 sm:px-8 space-y-8">
+        <div class="max-w-2xl">
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Why generic RAG fails in industrial commerce</h2>
+          <p class="mt-3 text-sm text-[#9aa6b2] leading-relaxed">
+            In manufacturing, a single hallucinated voltage or mounting dimension means damaged equipment and liability.
+          </p>
         </div>
 
+        <div class="glass-card rounded-xl overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-[#0c0f15] border-b border-white/[0.06] text-[#9aa6b2] font-mono uppercase text-[10px]">
+                <tr>
+                  <th class="p-4 font-semibold">Capability</th>
+                  <th class="p-4 text-[#9aa6b2]">Generic LLM / RAG chatbot</th>
+                  <th class="p-4 text-brand-300 bg-brand-500/[0.06] font-bold">PASTE trust engine</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/[0.05] text-[#c3cbd5]">
+                <tr class="hover:bg-white/[0.02] transition">
+                  <td class="p-4 font-semibold text-white">Missing attributes</td>
+                  <td class="p-4 text-[#fda2b1]">Hallucinates plausible values with no source</td>
+                  <td class="p-4 text-brand-300 bg-brand-500/[0.05] font-semibold">Graceful refusal; explicitly tagged UNKNOWN</td>
+                </tr>
+                <tr class="hover:bg-white/[0.02] transition">
+                  <td class="p-4 font-semibold text-white">Attribute provenance</td>
+                  <td class="p-4 text-[#9aa6b2]">Unstructured black-box summary</td>
+                  <td class="p-4 text-brand-300 bg-brand-500/[0.05] font-semibold">Document page + coordinate bounding box</td>
+                </tr>
+                <tr class="hover:bg-white/[0.02] transition">
+                  <td class="p-4 font-semibold text-white">Physical validation</td>
+                  <td class="p-4 text-[#fda2b1]">None, allows impossible values</td>
+                  <td class="p-4 text-brand-300 bg-brand-500/[0.05] font-semibold">Deterministic reality-boundary gates</td>
+                </tr>
+                <tr class="hover:bg-white/[0.02] transition">
+                  <td class="p-4 font-semibold text-white">Inferred sibling data</td>
+                  <td class="p-4 text-[#9aa6b2]">Presented with equal weight</td>
+                  <td class="p-4 text-brand-300 bg-brand-500/[0.05] font-semibold">Tagged INFERRED and capped at ≤ 0.70</td>
+                </tr>
+                <tr class="hover:bg-white/[0.02] transition">
+                  <td class="p-4 font-semibold text-white">Export standards</td>
+                  <td class="p-4 text-[#9aa6b2]">Markdown or arbitrary JSON</td>
+                  <td class="p-4 text-brand-300 bg-brand-500/[0.05] font-semibold">Unilog 5-Tier .xlsx &amp; GS1 CSV</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Unilog tiers showcase -->
+      <section class="max-w-[1200px] mx-auto px-5 sm:px-8 space-y-8">
+        <div class="max-w-2xl">
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Unilog 5-tier commercial descriptions</h2>
+          <p class="mt-3 text-sm text-[#9aa6b2] leading-relaxed">
+            Deterministic synthesis that enforces strict character bounds for enterprise PIM systems.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="glass-card rounded-xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xs text-brand-300 font-bold">Tier 1 · Mobile</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-brand-500/10 text-brand-300 border border-brand-500/30">&le; 80 chars</span>
+            </div>
+            <p class="text-xs font-mono text-[#c3cbd5] bg-[#0c0f15] p-3 rounded border border-white/[0.06]">ABB ACS580-01-018A-4 7.5kW 400V IP21 VFD</p>
+            <div class="text-[10px] text-[#667180] font-mono">46 chars · within limit</div>
+          </div>
+          <div class="glass-card rounded-xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xs text-brand-300 font-bold">Tier 2 · Search</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-brand-500/10 text-brand-300 border border-brand-500/30">&le; 150 chars</span>
+            </div>
+            <p class="text-xs font-mono text-[#c3cbd5] bg-[#0c0f15] p-3 rounded border border-white/[0.06]">ABB ACS580-01-018A-4 VFD 7.5 kW / 10 HP 380-480V 3-phase IP21</p>
+            <div class="text-[10px] text-[#667180] font-mono">82 chars · within limit</div>
+          </div>
+          <div class="glass-card rounded-xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xs text-brand-300 font-bold">Tier 3 · Short</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-brand-500/10 text-brand-300 border border-brand-500/30">&le; 250 chars</span>
+            </div>
+            <p class="text-xs font-mono text-[#c3cbd5] bg-[#0c0f15] p-3 rounded border border-white/[0.06]">ABB ACS580 general purpose drive, 7.5 kW, 400 V AC 3-phase, 17.7 A nominal, IP21 with integrated EMC filter.</p>
+            <div class="text-[10px] text-[#667180] font-mono">147 chars · within limit</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom CTA -->
+      <section class="max-w-[1200px] mx-auto px-5 sm:px-8">
+        <div class="rounded-2xl p-8 sm:p-12 bg-[#10141b] border border-brand-500/20 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-96 h-48 bg-brand-500/[0.06] rounded-full blur-3xl pointer-events-none"></div>
+          <div class="max-w-2xl space-y-5 relative z-10">
+            <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">Ready to eliminate hallucinated specs?</h2>
+            <p class="text-sm sm:text-base text-[#9aa6b2] leading-relaxed">
+              Upload PDF datasheets, CSV catalogs or Excel dumps to see the five-stage engine run live.
+            </p>
+<div class="flex flex-col sm:flex-row sm:flex-wrap items-center gap-3 pt-2">
+              <button onclick="showView('upload')" class="ent-btn-primary w-full sm:w-auto px-6 py-3 text-sm justify-center">Open Ingestion Studio</button>
+              <button onclick="loadSampleDataset('vfds'); showView('upload')" class="ent-btn-secondary w-full sm:w-auto px-5 py-3 text-sm justify-center">Run demo batch · 5 SKUs</button>
+            </div>
+          </div>
+        </div>
       </section>
 
     </div>
 
-    <!-- ======================================================= -->
-    <!-- VIEW: PART 1 - DYNAMIC INGESTION STUDIO & PIPELINE EXEC  -->
-    <!-- ======================================================= -->
-    <div id="upload-view" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      
-      <!-- Studio Header & Title -->
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+    <!-- ========================================================= -->
+    <!-- INGEST STUDIO                                              -->
+    <!-- ========================================================= -->
+    <div id="upload-view" class="hidden max-w-[1200px] mx-auto px-5 sm:px-8 py-10 space-y-8">
+
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/[0.06]">
         <div>
-          <div class="flex items-center gap-3">
-            <h1 class="text-2xl sm:text-3xl font-bold text-white font-display">Dynamic Datasheet Ingestion Studio</h1>
-            <span class="ent-badge ent-badge-proved">Unilog Hackathon Ready</span>
-          </div>
-          <p class="text-xs sm:text-sm text-slate-400 mt-1">
-            Dynamic ingestion of evaluator-uploaded .xlsx, .csv, and .pdf files with strict manufacturer constraints and 5-stage automated pipeline execution.
+          <h1 class="text-2xl sm:text-3xl font-bold text-white">Datasheet ingestion studio</h1>
+          <p class="text-xs sm:text-sm text-[#9aa6b2] mt-1">
+            Upload .xlsx, .csv or .pdf files and run the 5-stage pipeline in real time.
           </p>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="downloadUnilogExcelFromCatalog()" class="ent-btn-unilog text-xs">
+          <button onclick="downloadUnilogExcelFromCatalog()" class="ent-btn-unilog text-xs px-4 py-2.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-            <span>Download Unilog .xlsx</span>
+            Download Unilog .xlsx
           </button>
         </div>
       </div>
 
-      <!-- MANDATORY TELEMETRY BAR -->
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-        
-        <!-- Indicator 1: Strict Source Constraint Filter -->
-        <div class="md:col-span-6 glass-card-elevated rounded-xl p-4 border border-emerald-500/40 flex items-center justify-between gap-4 shadow-lg shadow-emerald-950/20">
+      <!-- Telemetry strip -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+        <div class="md:col-span-6 glass-card-elevated rounded-xl p-4 flex items-center justify-between gap-4">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-emerald-950 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-lg">
-              🛡️
+            <div class="w-9 h-9 rounded-lg bg-brand-500/10 border border-brand-500/30 flex items-center justify-center">
+              <svg class="w-4.5 h-4.5 text-brand-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
             </div>
             <div>
-              <div class="text-xs font-mono font-bold text-emerald-300 flex items-center gap-2">
-                <span>E-COMMERCE FILTER: ACTIVE</span>
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              <div class="text-xs font-mono font-bold text-brand-300 flex items-center gap-2">
+                OEM source filter active
+                <span class="w-1.5 h-1.5 rounded-full bg-brand-400"></span>
               </div>
-              <div class="text-[11px] text-slate-400 font-mono mt-0.5">
-                Amazon, eBay, Walmart Blocked • Strict OEM Domain Gateway
-              </div>
+              <div class="text-[11px] text-[#9aa6b2] font-mono mt-0.5">Amazon, eBay, Walmart blocked</div>
             </div>
           </div>
-          <span class="ent-badge ent-badge-proved">100% OEM ENFORCED</span>
+          <span class="ent-badge ent-badge-proved">100% OEM</span>
         </div>
-
-        <!-- Indicator 2: Dynamic Cost Estimator -->
-        <div class="md:col-span-6 glass-card-elevated rounded-xl p-4 border border-cyan-500/40 flex items-center justify-between gap-4 shadow-lg shadow-cyan-950/20">
+        <div class="md:col-span-6 glass-card-elevated rounded-xl p-4 flex items-center justify-between gap-4">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-cyan-400 text-lg font-mono font-bold">
-              $
-            </div>
+            <div class="w-9 h-9 rounded-lg bg-brand-500/10 border border-brand-500/30 flex items-center justify-center font-mono font-bold text-brand-300 text-sm">$</div>
             <div>
-              <div class="text-xs font-mono font-bold text-cyan-300 flex items-center gap-2">
-                <span id="telemetry-cost-text">Est. Unit Cost: $0.0024 / SKU</span>
-                <span class="text-[10px] text-slate-400 font-normal">(<span id="telemetry-sku-count">5</span> SKUs in batch)</span>
+              <div class="text-xs font-mono font-bold text-brand-300">
+                Est. <span id="telemetry-sku-count">0</span> SKUs · <span id="telemetry-total-cost">$0.0000</span> total
               </div>
-              <div class="text-[11px] text-slate-400 font-mono mt-0.5">
-                Total Batch: <span id="telemetry-total-cost" class="text-emerald-400 font-bold">$0.0120</span> vs <span class="line-through text-slate-500">$22.50 manual</span> (99.9% savings)
-              </div>
+              <div class="text-[11px] text-[#9aa6b2] font-mono mt-0.5">vs $22.50 manual per batch</div>
             </div>
           </div>
-          <span class="ent-badge bg-cyan-950/80 text-cyan-300 border-cyan-500/40 font-mono text-[10px]">120 SKU/MIN</span>
+          <span class="ent-badge bg-brand-500/10 text-brand-300 border-brand-500/40 font-mono text-[10px]">~120 SKU/min</span>
         </div>
-
       </div>
 
-      <!-- QUICK-LOAD EVALUATION DATASETS (1-CLICK FOR JUDGES) -->
-      <div class="glass-card rounded-xl p-4 border border-slate-800 space-y-3">
+      <!-- Quick-load datasets -->
+      <div class="glass-card rounded-xl p-4 space-y-3">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">⚡ Quick-Load Evaluation Datasets (One-Click Testing for Hackathon Judges)</span>
-          <span class="text-[11px] font-mono text-slate-500">Zero Mocking • Dynamic Parser Ready</span>
+          <span class="text-xs font-mono font-bold text-[#c3cbd5] uppercase tracking-wider">Quick-load demo datasets</span>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <button onclick="loadSampleDataset('vfds')" class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 hover:border-emerald-500/60 hover:bg-slate-850 text-left transition space-y-1 group">
-            <div class="text-xs font-bold text-white font-display group-hover:text-emerald-400 flex items-center justify-between">
-              <span>⚡ 5-SKU Industrial VFD Batch</span>
-              <span class="text-[10px] font-mono text-emerald-400">Load →</span>
+          <button onclick="loadSampleDataset('vfds')" class="p-3.5 rounded-lg bg-[#0c0f15] border border-white/[0.07] hover:border-brand-500/50 hover:bg-white/[0.03] text-left transition space-y-1">
+            <div class="text-xs font-bold text-white flex items-center justify-between">
+              <span>5-SKU VFD batch</span>
+              <span class="text-[10px] font-mono text-brand-300">Load</span>
             </div>
-            <div class="text-[11px] text-slate-400">ABB ACS580, Schneider ATV320, Siemens V20, Danfoss FC-051, Yaskawa GA500</div>
+            <div class="text-[11px] text-[#9aa6b2]">ABB · Schneider · Siemens · Danfoss · Yaskawa</div>
           </button>
-          
-          <button onclick="loadSampleDataset('sensors')" class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 hover:border-cyan-500/60 hover:bg-slate-850 text-left transition space-y-1 group">
-            <div class="text-xs font-bold text-white font-display group-hover:text-cyan-400 flex items-center justify-between">
-              <span>⚡ 6-SKU Industrial Sensors Batch</span>
-              <span class="text-[10px] font-mono text-cyan-400">Load →</span>
+          <button onclick="loadSampleDataset('sensors')" class="p-3.5 rounded-lg bg-[#0c0f15] border border-white/[0.07] hover:border-brand-500/50 hover:bg-white/[0.03] text-left transition space-y-1">
+            <div class="text-xs font-bold text-white flex items-center justify-between">
+              <span>Sensor batch</span>
+              <span class="text-[10px] font-mono text-brand-300">Load</span>
             </div>
-            <div class="text-[11px] text-slate-400">Banner Q4X, Omron E2E, SICK WTB9, IFM OGD592, Keyence LR-Z, Pepperl+Fuchs</div>
+            <div class="text-[11px] text-[#9aa6b2]">Banner · Omron · SICK · IFM · Keyence</div>
           </button>
-
-          <button onclick="loadSampleDataset('motors')" class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 hover:border-amber-500/60 hover:bg-slate-850 text-left transition space-y-1 group">
-            <div class="text-xs font-bold text-white font-display group-hover:text-amber-400 flex items-center justify-between">
-              <span>⚡ Acme X-100 Motor Datasheet</span>
-              <span class="text-[10px] font-mono text-amber-400">Load →</span>
+          <button onclick="loadSampleDataset('motors')" class="p-3.5 rounded-lg bg-[#0c0f15] border border-white/[0.07] hover:border-brand-500/50 hover:bg-white/[0.03] text-left transition space-y-1">
+            <div class="text-xs font-bold text-white flex items-center justify-between">
+              <span>Motor datasheet</span>
+              <span class="text-[10px] font-mono text-brand-300">Load</span>
             </div>
-            <div class="text-[11px] text-slate-400">Acme Industrial X-100, X-105 Sibling SKU with OEM PDF Bounding Boxes</div>
+            <div class="text-[11px] text-[#9aa6b2]">Acme X-100 with OEM bounding boxes</div>
           </button>
         </div>
       </div>
 
-      <!-- MAIN INGESTION FORM & DROPZONE -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <!-- Left: Upload Box (6 cols) -->
+      <!-- Upload + parsed records -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-6 space-y-5">
-          <div class="glass-card-elevated rounded-2xl p-6 border border-slate-800 space-y-4 shadow-2xl">
-            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
-              <span class="text-xs font-bold font-mono text-white uppercase tracking-wider">Dynamic File Upload (Evaluator Input)</span>
-              <span class="text-[10px] font-mono text-emerald-400">.XLSX • .CSV • .PDF</span>
+          <div class="glass-card-elevated rounded-2xl p-6 space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+              <span class="text-xs font-bold font-mono text-white uppercase tracking-wider">File upload</span>
+              <span class="text-[10px] font-mono text-brand-300">.XLSX · .CSV · .PDF</span>
             </div>
 
-            <div id="studio-dropzone" class="border-2 border-dashed border-slate-700 hover:border-emerald-500 rounded-xl p-8 text-center cursor-pointer bg-slate-900/60 transition-colors">
+            <div id="studio-dropzone" class="border-2 border-dashed border-white/[0.12] hover:border-brand-500/60 rounded-xl p-8 text-center cursor-pointer bg-[#0c0f15] transition-colors">
               <input type="file" id="studio-file-input" accept=".xlsx,.csv,.pdf,.png,.jpg" class="hidden">
-              <div class="w-12 h-12 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-500/40 mx-auto flex items-center justify-center mb-3 text-xl">
-                📥
+              <div class="w-11 h-11 rounded-full bg-brand-500/10 border border-brand-500/30 mx-auto flex items-center justify-center mb-3">
+                <svg class="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
               </div>
-              <div class="text-sm font-semibold text-white">Click or drag &amp; drop an Excel (.xlsx), CSV, or PDF</div>
-              <div class="text-xs text-slate-400 mt-1">Must contain MPN / Part Number and Manufacturer columns</div>
-              <div id="studio-file-chosen" class="text-xs font-mono font-bold text-emerald-400 mt-3 hidden bg-emerald-950/80 py-1.5 px-3 rounded-md border border-emerald-500/50 inline-block"></div>
+              <div class="text-sm font-semibold text-white">Drop an Excel, CSV or PDF here</div>
+              <div class="text-xs text-[#9aa6b2] mt-1">Must contain MPN and Manufacturer columns</div>
+              <div id="studio-file-chosen" class="hidden text-xs font-mono font-bold text-brand-300 mt-3 bg-brand-500/10 py-1.5 px-3 rounded-md border border-brand-500/40"></div>
             </div>
 
-            <!-- Manual / Quick Override fields -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
               <div>
-                <label class="block text-[11px] font-medium text-slate-300 mb-1 font-mono">Part Number (MPN)</label>
-                <input type="text" id="studio-part" class="ent-input w-full text-xs font-mono" placeholder="e.g. ACS580-01-018A-4" value="ACS580-01-018A-4">
+                <label class="block text-[11px] font-medium text-[#c3cbd5] mb-1 font-mono">Part number</label>
+                <input type="text" id="studio-part" class="ent-input w-full text-xs" placeholder="e.g. ACS580-01-018A-4" value="ACS580-01-018A-4">
               </div>
               <div>
-                <label class="block text-[11px] font-medium text-slate-300 mb-1 font-mono">Manufacturer</label>
+                <label class="block text-[11px] font-medium text-[#c3cbd5] mb-1 font-mono">Manufacturer</label>
                 <input type="text" id="studio-mfg" class="ent-input w-full text-xs" placeholder="e.g. ABB" value="ABB">
               </div>
               <div>
-                <label class="block text-[11px] font-medium text-slate-300 mb-1 font-mono">Leaf Category</label>
+                <label class="block text-[11px] font-medium text-[#c3cbd5] mb-1 font-mono">Leaf category</label>
                 <input type="text" id="studio-cat" class="ent-input w-full text-xs" placeholder="e.g. Variable Frequency Drives (VFD)" value="Industrial Automation > Drives > Variable Frequency Drives (VFD)">
               </div>
             </div>
 
-            <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
-              <span id="studio-status" class="text-xs font-mono text-slate-400">Ready for execution</span>
+            <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between gap-3">
+              <span id="studio-status" class="text-xs font-mono text-[#9aa6b2]">Ready</span>
               <button type="button" id="btn-run-pipeline" onclick="executeDynamicPipeline()" class="ent-btn-primary px-6 py-2.5 text-xs font-bold">
-                <span>🚀 Run Dynamic Pipeline</span>
+                Run Dynamic Pipeline
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Right: Parsed Records Preview (6 cols) -->
         <div class="lg:col-span-6 space-y-4">
-          <div class="glass-card-elevated rounded-2xl p-5 border border-slate-800 space-y-3 shadow-2xl">
-            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
-              <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-                <span class="text-xs font-bold font-mono text-white uppercase tracking-wider">Dynamic Parsed SKU Staging Buffer</span>
-              </div>
-              <span id="parsed-records-count" class="ent-badge ent-badge-proved">5 SKUs Staged</span>
+          <div class="glass-card-elevated rounded-2xl p-5 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+              <span class="text-xs font-bold font-mono text-white uppercase tracking-wider">Parsed SKU staging buffer</span>
+              <span id="parsed-records-count" class="ent-badge ent-badge-proved">0 SKUs Staged</span>
             </div>
-
             <div class="overflow-x-auto scrollbar-ent max-h-72">
               <table class="w-full text-left text-xs">
                 <thead>
-                  <tr class="bg-slate-900 text-slate-300 font-mono text-[11px] uppercase border-b border-slate-800">
-                    <th class="p-2.5">MPN / Part Number</th>
+                  <tr class="bg-[#0c0f15] text-[#9aa6b2] font-mono text-[11px] uppercase border-b border-white/[0.06]">
+                    <th class="p-2.5">Part number</th>
                     <th class="p-2.5">Manufacturer</th>
-                    <th class="p-2.5">Leaf Category</th>
+                    <th class="p-2.5">Leaf category</th>
                     <th class="p-2.5 text-right">Status</th>
                   </tr>
                 </thead>
-                <tbody id="parsed-records-tbody" class="divide-y divide-slate-800/60 font-mono text-slate-300">
-                  <!-- Staged Rows Rendered by JS -->
-                </tbody>
+                <tbody id="parsed-records-tbody" class="divide-y divide-white/[0.05] font-mono text-[#c3cbd5]"></tbody>
               </table>
             </div>
-
-            <div class="text-[11px] font-mono text-slate-500 pt-2 border-t border-slate-800 flex items-center justify-between">
-              <span>Automatic Leaf Taxonomy &amp; UOM parsing active</span>
-              <span class="text-emerald-400 font-semibold">100% Deterministic</span>
+            <div class="text-[11px] font-mono text-[#667180] pt-2 border-t border-white/[0.06] flex items-center justify-between">
+              <span>Automatic taxonomy &amp; UOM parsing</span>
+              <span class="text-brand-300 font-semibold">100% deterministic</span>
             </div>
           </div>
         </div>
-
       </div>
 
-      <!-- 5-STAGE PIPELINE REAL-TIME EXECUTION VISUALIZER -->
-      <div class="glass-card-elevated rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-6 shadow-2xl">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <!-- Pipeline visualizer -->
+      <div class="glass-card-elevated rounded-2xl p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.06]">
           <div>
             <div class="flex items-center gap-3">
-              <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
-              <h2 class="text-lg font-bold font-display text-white tracking-tight">
-                5-Stage Pipeline Real-Time Visualizer
-              </h2>
+              <span class="w-2.5 h-2.5 rounded-full bg-brand-400"></span>
+              <h2 class="text-lg font-bold text-white">5-stage pipeline visualizer</h2>
             </div>
-            <p class="text-xs text-slate-400 mt-1">Live execution telemetry through all 5 deterministic verification and trust gates.</p>
+            <p class="text-xs text-[#9aa6b2] mt-1">Live execution telemetry through all five trust gates.</p>
           </div>
           <div class="flex items-center gap-3">
-            <span id="pipeline-progress-label" class="text-xs font-mono font-bold text-emerald-400">Stage: Ready</span>
-            <div class="w-32 bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
-              <div id="pipeline-progress-bar" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
+            <span id="pipeline-progress-label" class="text-xs font-mono font-bold text-brand-300">Stage: Ready</span>
+            <div class="w-32 bg-[#0c0f15] rounded-full h-1.5 overflow-hidden border border-white/[0.07]">
+              <div id="pipeline-progress-bar" class="bg-brand-500 h-full w-0 transition-all duration-500"></div>
             </div>
           </div>
         </div>
 
-        <!-- 5 Stage Cards Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
-          
           <div id="pipe-stage-1" class="pipeline-step-card rounded-xl p-4 space-y-2">
             <div class="flex items-center justify-between">
-              <span class="font-mono text-xs font-bold text-emerald-400">01</span>
+              <span class="font-mono text-xs font-bold text-brand-300">01</span>
               <span id="pipe-badge-1" class="ent-badge ent-badge-unknown text-[9px]">IDLE</span>
             </div>
-            <div class="text-xs font-bold text-white font-display">SHA-256 &amp; Ingest</div>
-            <div class="text-[11px] text-slate-400 font-mono">Idempotent hashing &amp; schema check</div>
+            <div class="text-xs font-bold text-white">SHA-256 &amp; ingest</div>
+            <div class="text-[11px] text-[#9aa6b2] font-mono">Idempotent hashing</div>
           </div>
-
           <div id="pipe-stage-2" class="pipeline-step-card rounded-xl p-4 space-y-2">
             <div class="flex items-center justify-between">
-              <span class="font-mono text-xs font-bold text-emerald-400">02</span>
+              <span class="font-mono text-xs font-bold text-brand-300">02</span>
               <span id="pipe-badge-2" class="ent-badge ent-badge-unknown text-[9px]">IDLE</span>
             </div>
-            <div class="text-xs font-bold text-white font-display">Dual-Pass VLM</div>
-            <div class="text-[11px] text-slate-400 font-mono">BBox extraction &amp; cross-attention</div>
+            <div class="text-xs font-bold text-white">Dual-pass VLM</div>
+            <div class="text-[11px] text-[#9aa6b2] font-mono">BBox extraction</div>
           </div>
-
           <div id="pipe-stage-3" class="pipeline-step-card rounded-xl p-4 space-y-2">
             <div class="flex items-center justify-between">
-              <span class="font-mono text-xs font-bold text-emerald-400">03</span>
+              <span class="font-mono text-xs font-bold text-brand-300">03</span>
               <span id="pipe-badge-3" class="ent-badge ent-badge-unknown text-[9px]">IDLE</span>
             </div>
-            <div class="text-xs font-bold text-white font-display">Physical &amp; UOM</div>
-            <div class="text-[11px] text-slate-400 font-mono">Value/UOM split &amp; bounds check</div>
+            <div class="text-xs font-bold text-white">Physical &amp; UOM</div>
+            <div class="text-[11px] text-[#9aa6b2] font-mono">Value/UOM split</div>
           </div>
-
           <div id="pipe-stage-4" class="pipeline-step-card rounded-xl p-4 space-y-2">
             <div class="flex items-center justify-between">
-              <span class="font-mono text-xs font-bold text-emerald-400">04</span>
+              <span class="font-mono text-xs font-bold text-brand-300">04</span>
               <span id="pipe-badge-4" class="ent-badge ent-badge-unknown text-[9px]">IDLE</span>
             </div>
-            <div class="text-xs font-bold text-white font-display">Sibling Inference</div>
-            <div class="text-[11px] text-slate-400 font-mono">Series propagation (≤0.70 cap)</div>
+            <div class="text-xs font-bold text-white">Sibling inference</div>
+            <div class="text-[11px] text-[#9aa6b2] font-mono">≤0.70 cap</div>
           </div>
-
           <div id="pipe-stage-5" class="pipeline-step-card rounded-xl p-4 space-y-2">
             <div class="flex items-center justify-between">
-              <span class="font-mono text-xs font-bold text-emerald-400">05</span>
+              <span class="font-mono text-xs font-bold text-brand-300">05</span>
               <span id="pipe-badge-5" class="ent-badge ent-badge-unknown text-[9px]">IDLE</span>
             </div>
-            <div class="text-xs font-bold text-white font-display">Trust Gate &amp; Export</div>
-            <div class="text-[11px] text-slate-400 font-mono">≥0.90 Auto / &lt;0.90 HITL</div>
+            <div class="text-xs font-bold text-white">Trust gate &amp; export</div>
+            <div class="text-[11px] text-[#9aa6b2] font-mono">≥0.90 auto</div>
           </div>
-
         </div>
 
-        <!-- Live Terminal Log -->
-        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-900">
+        <div class="p-4 rounded-xl bg-[#0c0f15] border border-white/[0.07] space-y-2">
+          <div class="flex items-center justify-between pb-2 border-b border-white/[0.05]">
             <div class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-              <span class="text-[11px] font-mono text-slate-400 uppercase">Live Pipeline Execution Log</span>
+              <span class="w-2 h-2 rounded-full bg-brand-400"></span>
+              <span class="text-[11px] font-mono text-[#9aa6b2] uppercase">Pipeline execution log</span>
             </div>
-            <button onclick="clearPipelineLog()" class="text-[10px] font-mono text-slate-500 hover:text-slate-300">Clear</button>
+            <button onclick="clearPipelineLog()" class="text-[10px] font-mono text-[#667180] hover:text-[#c3cbd5]">Clear</button>
           </div>
-          <pre id="pipeline-log-output" class="text-[11px] font-mono text-emerald-400/90 leading-relaxed max-h-36 overflow-auto scrollbar-ent"></pre>
+          <pre id="pipeline-log-output" class="text-[11px] font-mono text-brand-300/90 leading-relaxed max-h-36 overflow-auto scrollbar-ent"></pre>
         </div>
 
-        <!-- Post-Execution Direct CTA -->
-        <div id="pipeline-completion-actions" class="hidden p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div id="pipeline-completion-actions" class="hidden p-4 rounded-xl bg-brand-500/10 border border-brand-500/40 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div class="flex items-center gap-3">
-            <span class="text-xl">✅</span>
+            <svg class="w-5 h-5 text-brand-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
             <div>
-              <div class="text-xs font-bold text-white font-mono">Pipeline Execution Completed Successfully!</div>
-              <div class="text-[11px] text-emerald-300/90 font-mono">All SKUs parsed, UOMs separated, 5-tier descriptions synthesized, and confidence scores routed.</div>
+              <div class="text-xs font-bold text-white font-mono">Pipeline execution completed</div>
+              <div class="text-[11px] text-brand-300/80 font-mono">All SKUs parsed, UOMs separated, 5-tier descriptions synthesized.</div>
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="openActiveProductReview()" class="ent-btn-accent text-xs">
-              <span>Open Product Review View →</span>
-            </button>
-            <button onclick="downloadUnilogExcelFromCatalog()" class="ent-btn-unilog text-xs">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-              <span>Download Unilog .xlsx</span>
-            </button>
+            <button onclick="openActiveProductReview()" class="ent-btn-accent text-xs px-3 py-2">Open Product Review</button>
+            <button onclick="downloadUnilogExcelFromCatalog()" class="ent-btn-unilog text-xs px-3 py-2">Download Unilog .xlsx</button>
           </div>
         </div>
-
       </div>
 
     </div>
 
-    <!-- ======================================================= -->
-    <!-- VIEW: PART 2 - UNILOG-COMPLIANT PRODUCT REVIEW VIEW     -->
-    <!-- ======================================================= -->
-    <div id="detail-view" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      
-      <!-- 1. TAXONOMY BREADCRUMB & METADATA CARD -->
-      <div class="glass-card-elevated rounded-2xl p-6 border border-slate-800 space-y-4 shadow-2xl relative overflow-hidden">
-        
-        <!-- Ambient Glow -->
-        <div class="absolute top-0 right-0 w-80 h-36 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- ========================================================= -->
+    <!-- PRODUCT REVIEW                                              -->
+    <!-- ========================================================= -->
+    <div id="detail-view" class="hidden max-w-[1200px] mx-auto px-5 sm:px-8 py-10 space-y-6">
 
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-800">
-          <div class="space-y-2">
-            <!-- Taxonomy Breadcrumb Path -->
+      <!-- Product header -->
+      <div class="glass-card-elevated rounded-2xl p-6 space-y-5">
+        <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+          <div class="space-y-2.5">
             <div class="flex items-center gap-2 flex-wrap text-xs font-mono">
-              <span class="text-slate-500">Taxonomy:</span>
+              <span class="text-[#667180]">Taxonomy:</span>
               <div id="detail-taxonomy-breadcrumb" class="flex items-center gap-1.5 flex-wrap">
-                <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800">Industrial Automation</span>
-                <span class="text-slate-600">›</span>
-                <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800">Drives</span>
-                <span class="text-slate-600">›</span>
-                <span id="detail-leaf-category" class="px-2.5 py-0.5 rounded bg-emerald-950/90 text-emerald-300 border border-emerald-500/50 font-bold">
-                  Variable Frequency Drives (VFD)
-                </span>
+                <span class="px-2 py-0.5 rounded bg-[#0c0f15] text-[#9aa6b2] border border-white/[0.07]">Industrial Automation</span>
+                <span class="text-[#44505f]">›</span>
+                <span class="px-2 py-0.5 rounded bg-[#0c0f15] text-[#9aa6b2] border border-white/[0.07]">Drives</span>
+                <span class="text-[#44505f]">›</span>
+                <span id="detail-leaf-category" class="px-2.5 py-0.5 rounded bg-brand-500/10 text-brand-300 border border-brand-500/40 font-semibold">Variable Frequency Drives (VFD)</span>
               </div>
             </div>
-
-            <!-- Product Identity & Meta -->
-            <div class="flex items-center gap-3 flex-wrap pt-1">
-              <h1 class="font-bold text-2xl text-white font-display" id="detail-title">ABB — ACS580-01-018A-4</h1>
-              <span id="detail-part-badge" class="ent-badge font-mono bg-slate-900 text-emerald-400 border-slate-700 text-xs">MPN: ACS580-01-018A-4</span>
-              <span id="detail-mfg-badge" class="ent-badge font-mono bg-slate-900 text-cyan-400 border-slate-700 text-xs">Brand: ABB</span>
+            <div class="flex items-center gap-3 flex-wrap">
+              <h1 id="detail-title" class="font-display text-2xl font-bold text-white">ABB — ACS580-01-018A-4</h1>
+              <span id="detail-part-badge" class="ent-badge bg-[#0c0f15] text-brand-300 border-white/[0.1]">MPN: ACS580-01-018A-4</span>
+              <span id="detail-mfg-badge" class="ent-badge bg-[#0c0f15] text-[#c3cbd5] border-white/[0.1]">Brand: ABB</span>
               <span id="detail-status-badge" class="ent-badge ent-badge-proved">REVIEW</span>
             </div>
           </div>
-
-          <!-- Top Export & CTA Action Bar -->
           <div class="flex items-center gap-2 flex-wrap">
-            <!-- MANDATORY CTA: Download Unilog-Compliant Excel -->
             <button onclick="downloadUnilogExcelFromActiveProduct()" class="ent-btn-unilog text-xs px-4 py-2">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-              <span>Download Unilog-Compliant Excel (.xlsx)</span>
+              Download Unilog Excel
             </button>
-            <button onclick="acceptAllCurrentProduct()" class="ent-btn-primary text-xs px-3 py-2">
-              <span>Accept All</span>
-            </button>
-            <button onclick="exportCurrentJsonLd()" class="ent-btn-secondary text-xs px-3 py-2">
-              <span>JSON-LD</span>
-            </button>
-            <button onclick="exportCurrentGs1()" class="ent-btn-secondary text-xs px-3 py-2">
-              <span>GS1 CSV</span>
-            </button>
+            <button onclick="acceptAllCurrentProduct()" class="ent-btn-primary text-xs px-3 py-2">Accept All</button>
+            <button onclick="exportCurrentJsonLd()" class="ent-btn-secondary text-xs px-3 py-2">JSON-LD</button>
+            <button onclick="exportCurrentGs1()" class="ent-btn-secondary text-xs px-3 py-2">GS1 CSV</button>
           </div>
         </div>
 
-        <!-- Datasheet Link & Verified OEM Provenance Info -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono text-slate-400">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-white/[0.06] text-xs font-mono">
           <div class="flex items-center gap-3 flex-wrap">
-            <span class="text-slate-500">Verified Datasheet:</span>
-            <a id="btn-open-source-pdf" href="/sample_datasheet.pdf" target="_blank" class="text-emerald-400 hover:underline flex items-center gap-1.5 bg-emerald-950/60 px-2.5 py-1 rounded border border-emerald-500/40">
-              <span>📄 Official OEM Datasheet PDF</span>
+            <span class="text-[#667180]">Verified datasheet:</span>
+            <a id="btn-open-source-pdf" href="/sample_datasheet.pdf" target="_blank" class="doc-link">
+              OEM Datasheet PDF
               <span>↗</span>
             </a>
-            <span class="text-slate-600">•</span>
-            <span class="text-slate-400">UNSPSC: <strong class="text-white">39122001</strong></span>
-            <span class="text-slate-600">•</span>
-            <span class="text-slate-400">ETIM 9.0: <strong class="text-white">EC001857</strong></span>
+            <span class="text-[#44505f]">·</span>
+            <span class="text-[#667180]">UNSPSC <span class="text-[#e6eaf0]">39122001</span></span>
+            <span class="text-[#44505f]">·</span>
+            <span class="text-[#667180]">ETIM 9.0 <span class="text-[#e6eaf0]">EC001857</span></span>
           </div>
-          <div class="text-emerald-400/90 font-medium">
-            Strict Source Verification: Amazon/eBay Excluded
-          </div>
+          <span class="text-brand-300">Amazon / eBay sources excluded</span>
         </div>
-
       </div>
 
-      <!-- 2. MANDATORY 5-TIER COMMERCIAL DESCRIPTIONS CARD -->
-      <section class="glass-card-elevated rounded-2xl p-6 sm:p-7 border border-slate-800 space-y-6 shadow-2xl relative overflow-hidden">
-        
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <!-- 5-tier descriptions -->
+      <section class="glass-card-elevated rounded-2xl p-6 sm:p-7 space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/[0.06]">
           <div>
             <div class="flex items-center gap-3 flex-wrap">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <h2 class="text-lg font-bold font-display text-white tracking-tight">
-                5-Tier Commercial Descriptions Card
-              </h2>
-              <span class="ent-badge bg-emerald-950/80 text-emerald-300 border-emerald-500/50 shadow-md font-mono text-[11px] px-2.5 py-1">
-                Manufacturer Verbatim • Strict Unilog Standards
-              </span>
+              <span class="w-2.5 h-2.5 rounded-full bg-brand-400"></span>
+              <h2 class="text-lg font-bold text-white">5-tier commercial descriptions</h2>
+              <span class="ent-badge bg-brand-500/10 text-brand-300 border-brand-500/40">Unilog spec</span>
             </div>
-            <p class="text-xs text-slate-400 mt-1">
-              Multi-channel verified commercial copy formatted to Unilog specifications with live real-time character limit enforcement.
-            </p>
+            <p class="text-xs text-[#9aa6b2] mt-1">Live character-limit enforcement per tier.</p>
           </div>
-
           <div class="flex items-center gap-2">
-            <button onclick="autoSynthesizeDescriptions()" class="ent-btn-secondary text-xs px-3 py-1.5 flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-              <span>Auto-Synthesize from Specs</span>
+            <button onclick="autoSynthesizeDescriptions()" class="ent-btn-secondary text-xs px-3 py-1.5">
+              Auto-synthesize from specs
             </button>
-            <button onclick="copyAllDescriptions()" class="ent-btn-secondary text-xs px-3 py-1.5 flex items-center gap-1.5" id="btn-copy-all-desc">
-              <span>📋 Copy All</span>
+            <button onclick="copyAllDescriptions()" id="btn-copy-all-desc" class="ent-btn-secondary text-xs px-3 py-1.5">
+              Copy all
             </button>
           </div>
         </div>
 
-        <!-- 5 Mandatory Description Fields Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          
-          <!-- 1. Mobile Description (max 80 chars) -->
-          <div class="lg:col-span-6 p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2.5">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          <div class="lg:col-span-6 panel p-4 space-y-2.5">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-white font-mono">1. Mobile Description</span>
-                <span class="text-[10px] text-slate-500 font-mono">(Mobile commerce / SMS)</span>
+                <span class="text-xs font-bold text-white font-mono">1 · Mobile description</span>
+                <span class="text-[10px] text-[#667180] font-mono">max 80 chars</span>
               </div>
               <div class="flex items-center gap-2">
-                <span id="badge-desc-mobile" class="ent-badge char-badge-ok font-mono text-[11px] px-2 py-0.5">
-                  0 / 80 chars
-                </span>
-                <button onclick="copyText('desc-mobile', 'Mobile description copied')" class="text-slate-400 hover:text-emerald-400 text-xs p-1" title="Copy to clipboard">
-                  📋
+                <span id="badge-desc-mobile" class="ent-badge char-badge-ok font-mono text-[11px] px-2 py-0.5">0 / 80 chars</span>
+                <button onclick="copyText('desc-mobile', 'Mobile description copied')" class="icon-btn" title="Copy">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                 </button>
               </div>
             </div>
-            <input 
-              type="text" 
-              id="desc-mobile" 
-              class="ent-input w-full font-mono text-xs text-white" 
-              placeholder="e.g. ABB ACS580-01-018A-4 7.5kW 400V IP21 VFD" 
-              oninput="handleDescInput('mobile', 80)"
-            >
-            <div class="flex items-center justify-between text-[11px] font-mono text-slate-500">
+            <input type="text" id="desc-mobile" class="ent-input w-full font-mono text-xs text-white" placeholder="e.g. ABB ACS580-01-018A-4 7.5kW 400V IP21 VFD" oninput="handleDescInput('mobile', 80)">
+            <div class="flex items-center justify-between text-[11px] font-mono text-[#667180]">
               <span>Limit: 80 chars</span>
-              <span id="status-desc-mobile" class="text-emerald-400">Within limit</span>
+              <span id="status-desc-mobile" class="text-brand-300">Within limit</span>
             </div>
           </div>
 
-          <!-- 2. In-Search Description (max 150 chars) -->
-          <div class="lg:col-span-6 p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2.5">
+          <div class="lg:col-span-6 panel p-4 space-y-2.5">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-white font-mono">2. In-Search Description</span>
-                <span class="text-[10px] text-slate-500 font-mono">(SERP / Catalog Listing)</span>
+                <span class="text-xs font-bold text-white font-mono">2 · In-search description</span>
+                <span class="text-[10px] text-[#667180] font-mono">max 150 chars</span>
               </div>
               <div class="flex items-center gap-2">
-                <span id="badge-desc-search" class="ent-badge char-badge-ok font-mono text-[11px] px-2 py-0.5">
-                  0 / 150 chars
-                </span>
-                <button onclick="copyText('desc-search', 'In-Search description copied')" class="text-slate-400 hover:text-emerald-400 text-xs p-1" title="Copy to clipboard">
-                  📋
+                <span id="badge-desc-search" class="ent-badge char-badge-ok font-mono text-[11px] px-2 py-0.5">0 / 150 chars</span>
+                <button onclick="copyText('desc-search', 'In-search description copied')" class="icon-btn" title="Copy">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                 </button>
               </div>
             </div>
-            <input 
-              type="text" 
-              id="desc-search" 
-              class="ent-input w-full font-mono text-xs text-white" 
-              placeholder="e.g. ABB ACS580-01-018A-4 7.5 kW VFD, 400V AC, 17.7A, 50/60 Hz, IP21 enclosure, CE/UL certified." 
-              oninput="handleDescInput('search', 150)"
-            >
-            <div class="flex items-center justify-between text-[11px] font-mono text-slate-500">
+            <input type="text" id="desc-search" class="ent-input w-full font-mono text-xs text-white" placeholder="e.g. ABB ACS580-01-018A-4 7.5 kW VFD, 400V AC, 17.7A, IP21" oninput="handleDescInput('search', 150)">
+            <div class="flex items-center justify-between text-[11px] font-mono text-[#667180]">
               <span>Limit: 150 chars</span>
-              <span id="status-desc-search" class="text-emerald-400">Within limit</span>
+              <span id="status-desc-search" class="text-brand-300">Within limit</span>
             </div>
           </div>
 
-          <!-- 3. Short Description (max 250 chars) -->
-          <div class="lg:col-span-12 p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2.5">
+          <div class="lg:col-span-12 panel p-4 space-y-2.5">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-white font-mono">3. Short Description</span>
-                <span class="text-[10px] text-slate-500 font-mono">(B2B E-Commerce PDP Summary)</span>
+                <span class="text-xs font-bold text-white font-mono">3 · Short description</span>
+                <span class="text-[10px] text-[#667180] font-mono">max 250 chars</span>
               </div>
               <div class="flex items-center gap-2">
-                <span id="badge-desc-short" class="ent-badge char-badge-ok font-mono text-[11px] px-2 py-0.5">
-                  0 / 250 chars
-                </span>
-                <button onclick="copyText('desc-short', 'Short description copied')" class="text-slate-400 hover:text-emerald-400 text-xs p-1" title="Copy to clipboard">
-                  📋
+                <span id="badge-desc-short" class="ent-badge char-badge-ok font-mono text-[11px] px-2 py-0.5">0 / 250 chars</span>
+                <button onclick="copyText('desc-short', 'Short description copied')" class="icon-btn" title="Copy">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                 </button>
               </div>
             </div>
-            <textarea 
-              id="desc-short" 
-              rows="2" 
-              class="ent-input w-full font-mono text-xs text-white leading-relaxed resize-y" 
-              placeholder="e.g. Heavy-duty industrial Variable Frequency Drive Model ACS580-01-018A-4 by ABB. Rated for 7.5 kW at 400V AC, 17.7A. Features robust IP21 ingress protection and operating temperature range of -15 to 50°C for factory automation."
-              oninput="handleDescInput('short', 250)"
-            ></textarea>
-            <div class="flex items-center justify-between text-[11px] font-mono text-slate-500">
+            <textarea id="desc-short" rows="2" class="ent-input w-full font-mono text-xs text-white leading-relaxed resize-y" placeholder="e.g. Heavy-duty industrial VFD model ACS580-01-018A-4 by ABB, rated 7.5 kW at 400V AC with IP21 protection." oninput="handleDescInput('short', 250)"></textarea>
+            <div class="flex items-center justify-between text-[11px] font-mono text-[#667180]">
               <span>Limit: 250 chars</span>
-              <span id="status-desc-short" class="text-emerald-400">Within limit</span>
+              <span id="status-desc-short" class="text-brand-300">Within limit</span>
             </div>
           </div>
 
-          <!-- 4. Long / Retail Description (bulleted specs) -->
-          <div class="lg:col-span-6 p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2.5">
+          <div class="lg:col-span-6 panel p-4 space-y-2.5">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-white font-mono">4. Long / Retail Description</span>
-                <span class="ent-badge bg-blue-950/80 text-blue-300 border-blue-500/40 text-[10px]">Bulleted Specs</span>
+                <span class="text-xs font-bold text-white font-mono">4 · Long / retail description</span>
+                <span class="ent-badge bg-brand-500/10 text-brand-300 border-brand-500/40 text-[10px]">Bulleted specs</span>
               </div>
               <div class="flex items-center gap-2">
-                <span id="badge-desc-long" class="ent-badge char-badge-ok font-mono text-[11px] px-2 py-0.5">
-                  0 chars
-                </span>
-                <button onclick="copyText('desc-long', 'Long description copied')" class="text-slate-400 hover:text-emerald-400 text-xs p-1" title="Copy to clipboard">
-                  📋
+                <span id="badge-desc-long" class="ent-badge char-badge-ok font-mono text-[11px] px-2 py-0.5">0 chars</span>
+                <button onclick="copyText('desc-long', 'Long description copied')" class="icon-btn" title="Copy">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                 </button>
               </div>
             </div>
-            <textarea 
-              id="desc-long" 
-              rows="5" 
-              class="ent-input w-full font-mono text-xs text-white leading-relaxed resize-y scrollbar-ent" 
-              placeholder="• Part Number: ABB ACS580-01-018A-4&#10;• Power Rating: 7.5 kW (10 hp)&#10;• Operating Voltage: 400V AC 3-Phase&#10;• Ingress Protection: IP21 Wall Mount&#10;• Operating Temperature: -15°C to 50°C&#10;• Net Weight: 7.3 kg&#10;• Compliance: CE, UL, cUL, EAC"
-              oninput="handleDescInput('long', 0)"
-            ></textarea>
-            <div class="flex items-center justify-between text-[11px] font-mono text-slate-500">
-              <span>Structured specs layout</span>
-              <span class="text-slate-400">Unilog Retail Format</span>
+            <textarea id="desc-long" rows="5" class="ent-input w-full font-mono text-xs text-white leading-relaxed resize-y scrollbar-ent" placeholder="• Part Number: ABB ACS580-01-018A-4&#10;• Power Rating: 7.5 kW (10 hp)&#10;• Operating Voltage: 400V AC 3-Phase" oninput="handleDescInput('long', 0)"></textarea>
+            <div class="flex items-center justify-between text-[11px] font-mono text-[#667180]">
+              <span>Structured spec layout</span>
+              <span class="text-[#9aa6b2]">Unilog retail format</span>
             </div>
           </div>
 
-          <!-- 5. Marketing Description (verbatim from manufacturer) -->
-          <div class="lg:col-span-6 p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2.5">
+          <div class="lg:col-span-6 panel p-4 space-y-2.5">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-white font-mono">5. Marketing Description</span>
-                <span class="ent-badge bg-emerald-950/80 text-emerald-300 border-emerald-500/40 text-[10px]">Verbatim OEM</span>
+                <span class="text-xs font-bold text-white font-mono">5 · Marketing description</span>
+                <span class="ent-badge bg-brand-500/10 text-brand-300 border-brand-500/40 text-[10px]">OEM copy</span>
               </div>
               <div class="flex items-center gap-2">
-                <span id="badge-desc-mfg" class="ent-badge char-badge-ok font-mono text-[11px] px-2 py-0.5">
-                  0 chars
-                </span>
-                <button onclick="copyText('desc-mfg', 'Marketing description copied')" class="text-slate-400 hover:text-emerald-400 text-xs p-1" title="Copy to clipboard">
-                  📋
+                <span id="badge-desc-mfg" class="ent-badge char-badge-ok font-mono text-[11px] px-2 py-0.5">0 chars</span>
+                <button onclick="copyText('desc-mfg', 'Marketing description copied')" class="icon-btn" title="Copy">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                 </button>
               </div>
             </div>
-            <textarea 
-              id="desc-mfg" 
-              rows="5" 
-              class="ent-input w-full font-mono text-xs text-white leading-relaxed resize-y scrollbar-ent" 
-              placeholder="Official ABB ACS580 Series general purpose drive technical datasheet. Engineered for continuous high-torque industrial duty cycles and effortless pump/fan control. 100% corroborated against OEM engineering drawings and factory test certificates."
-              oninput="handleDescInput('mfg', 0)"
-            ></textarea>
-            <div class="flex items-center justify-between text-[11px] font-mono text-slate-500">
-              <span>Direct OEM Copy</span>
-              <span class="text-emerald-400">Zero Hallucination Guaranteed</span>
+            <textarea id="desc-mfg" rows="5" class="ent-input w-full font-mono text-xs text-white leading-relaxed resize-y scrollbar-ent" placeholder="Official ABB ACS580 series technical specification, verified against OEM engineering drawings." oninput="handleDescInput('mfg', 0)"></textarea>
+            <div class="flex items-center justify-between text-[11px] font-mono text-[#667180]">
+              <span>Direct OEM copy</span>
+              <span class="text-brand-300">Zero hallucination guarantee</span>
             </div>
           </div>
-
         </div>
-
       </section>
 
-      <!-- 3. MANDATORY NORMALIZED ATTRIBUTE TABLE WITH EXPLICIT VALUE & UOM SEPARATION -->
+      <!-- Normalized attributes -->
       <section class="space-y-4">
-        
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div class="flex items-center gap-3">
-              <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
-              <h2 class="text-lg font-bold font-display text-white tracking-tight">
-                Normalized Attributes Table with Explicit Value &amp; UOM Separation
-              </h2>
-              <span class="ent-badge bg-cyan-950/80 text-cyan-300 border-cyan-500/40 font-mono text-[11px]">
-                [Attribute Label] | [Value] | [UOM] | [Confidence] | [Status] | [Provenance]
-              </span>
+              <span class="w-2.5 h-2.5 rounded-full bg-brand-400"></span>
+              <h2 class="text-lg font-bold text-white">Normalized attributes</h2>
+              <span class="ent-badge bg-brand-500/10 text-brand-300 border-brand-500/40 font-mono text-[11px]">Value · UOM split</span>
             </div>
-            <p class="text-xs text-slate-400 mt-1">
-              Physical attributes are explicitly split into distinct "Normalized Value" and "UOM" columns. Sibling-inferred attributes carry strict ≤0.70 confidence caps.
-            </p>
+            <p class="text-xs text-[#9aa6b2] mt-1">Physical attributes are split into explicit value and UOM columns. Sibling-inferred values are capped at ≤0.70.</p>
           </div>
-
-          <div class="flex items-center gap-2">
-            <span id="attr-count-summary" class="text-xs font-mono text-slate-400">0 attributes loaded</span>
-          </div>
+          <span id="attr-count-summary" class="text-xs font-mono text-[#9aa6b2]">0 normalized attributes</span>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          
-          <!-- Left Main Attributes Data Grid (8 cols) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
           <div class="lg:col-span-8 space-y-4">
-            
-            <div class="glass-card-elevated rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
+            <div class="glass-card-elevated rounded-xl overflow-hidden">
               <div class="overflow-x-auto scrollbar-ent">
                 <table class="w-full text-left text-xs">
                   <thead>
-                    <tr class="bg-slate-900/90 border-b border-slate-800 text-slate-300 font-mono uppercase text-[11px]">
-                      <th class="p-3.5 font-semibold">Attribute Label</th>
-                      <th class="p-3.5 font-semibold text-emerald-400">Normalized Value</th>
-                      <th class="p-3.5 font-semibold text-cyan-400">UOM</th>
-                      <th class="p-3.5 font-semibold">Confidence Score</th>
-                      <th class="p-3.5 font-semibold">Status</th>
-                      <th class="p-3.5 font-semibold text-amber-300">Source Provenance</th>
-                      <th class="p-3.5 text-right font-semibold">Action</th>
+                    <tr class="bg-[#0c0f15] border-b border-white/[0.06] text-[#9aa6b2] font-mono uppercase text-[10px]">
+                      <th class="p-3 font-semibold">Attribute</th>
+                      <th class="p-3 font-semibold">Value</th>
+                      <th class="p-3 font-semibold">UOM</th>
+                      <th class="p-3 font-semibold">Confidence</th>
+                      <th class="p-3 font-semibold">Status</th>
+                      <th class="p-3 font-semibold">Provenance</th>
+                      <th class="p-3 text-right font-semibold">Action</th>
                     </tr>
                   </thead>
-                  <tbody id="attribute-table-body" class="divide-y divide-slate-800/60 text-slate-200">
-                    <!-- Dynamic Rows Rendered by JS -->
-                  </tbody>
+                  <tbody id="attribute-table-body" class="divide-y divide-white/[0.05] text-[#c3cbd5]"></tbody>
                 </table>
               </div>
             </div>
-
           </div>
 
-          <!-- Right: Document Provenance & Evidence Inspector (4 cols) -->
           <div class="lg:col-span-4 space-y-4">
-            
-            <div class="glass-card-elevated rounded-2xl p-5 border border-slate-800 space-y-4 shadow-xl">
-              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
-                <div class="flex items-center gap-2">
-                  <span class="text-xs font-bold font-mono text-white uppercase tracking-wider">OEM Evidence &amp; BBox Coordinates</span>
-                </div>
-                <a id="btn-open-source-pdf-side" href="/sample_datasheet.pdf" target="_blank" class="ent-badge bg-emerald-950 text-emerald-400 border-emerald-500/40 hover:bg-emerald-900 flex items-center gap-1">
-                  <span>Open PDF ↗</span>
-                </a>
+            <div class="glass-card-elevated rounded-xl p-4 space-y-3">
+              <div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+                <span class="text-xs font-bold font-mono text-white uppercase tracking-wider">Evidence &amp; source coordinates</span>
+                <a id="btn-open-source-pdf-side" href="/sample_datasheet.pdf" target="_blank" class="doc-link">Open PDF ↗</a>
               </div>
-
-              <!-- Live PDF Frame / Evidence Text Container -->
-              <div id="detail-evidence-container" class="space-y-3 text-xs font-mono">
-                <!-- Rendered evidence -->
-              </div>
+              <div id="detail-evidence-container" class="space-y-2.5 text-xs font-mono"></div>
             </div>
-
           </div>
-
         </div>
-
       </section>
 
     </div>
 
-    <!-- ======================================================= -->
-    <!-- VIEW: BATCH CATALOG                                     -->
-    <!-- ======================================================= -->
-    <div id="batch-view" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-      
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+    <!-- ========================================================= -->
+    <!-- BATCH CATALOG                                               -->
+    <!-- ========================================================= -->
+    <div id="batch-view" class="hidden max-w-[1200px] mx-auto px-5 sm:px-8 py-10 space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.06]">
         <div>
-          <h1 class="text-2xl font-bold text-white font-display">Batch Intelligence Catalog</h1>
-          <p class="text-xs text-slate-400 mt-1">Processed industrial SKUs, confidence distributions, and Unilog Excel export packages.</p>
+          <h1 class="text-2xl font-bold text-white">Batch intelligence catalog</h1>
+          <p class="text-xs text-[#9aa6b2] mt-1">Processed industrial SKUs, confidence distributions and export packages.</p>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="downloadUnilogExcelFromCatalog()" class="ent-btn-unilog text-xs">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-            <span>Download Unilog-Compliant Excel (.xlsx)</span>
-          </button>
-          <button onclick="showView('upload')" class="ent-btn-primary text-xs">⚡ Ingest New Batch</button>
+          <button onclick="downloadUnilogExcelFromCatalog()" class="ent-btn-unilog text-xs px-4 py-2">Download Unilog .xlsx</button>
+          <button onclick="showView('upload')" class="ent-btn-primary text-xs px-4 py-2">Ingest new batch</button>
         </div>
       </div>
-
       <div id="batch-cards-container" class="space-y-4"></div>
-
     </div>
 
-    <!-- ======================================================= -->
-    <!-- VIEW: HITL REVIEW QUEUE                                 -->
-    <!-- ======================================================= -->
-    <div id="queue-view" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-      
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+    <!-- ========================================================= -->
+    <!-- REVIEW QUEUE                                                -->
+    <!-- ========================================================= -->
+    <div id="queue-view" class="hidden max-w-[1200px] mx-auto px-5 sm:px-8 py-10 space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/[0.06]">
         <div>
           <div class="flex items-center gap-3">
-            <h1 class="text-2xl font-bold tracking-tight text-white font-display">Human-in-the-Loop Review Queue</h1>
-            <span class="ent-badge ent-badge-inferred">Trust Gateway &lt;0.90</span>
+            <h1 class="text-2xl font-bold text-white">Human-in-the-loop review queue</h1>
+            <span class="ent-badge ent-badge-inferred">Trust gateway &lt;0.90</span>
           </div>
-          <p class="text-xs text-slate-400 mt-1">Attributes flagged by routing triggers (Inferred sibling SKUs, disputes, physical constraint alerts) requiring sign-off.</p>
+          <p class="text-xs text-[#9aa6b2] mt-1">Attributes flagged for review: inferred siblings, disputes and boundary alerts.</p>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="openActiveProductReview()" class="ent-btn-accent px-3 py-1.5 text-xs flex items-center gap-1.5">
-            <span>Open Product Review</span>
-          </button>
-          <button onclick="loadQueue()" class="ent-btn-secondary px-3 py-1.5 text-xs flex items-center gap-1.5">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-            <span>Refresh Queue</span>
-          </button>
+          <button onclick="openActiveProductReview()" class="ent-btn-accent px-3 py-2 text-xs">Open product review</button>
+          <button onclick="loadQueue()" class="ent-btn-secondary px-3 py-2 text-xs">Refresh queue</button>
         </div>
       </div>
 
-      <!-- Filters Bar -->
       <div class="glass-card rounded-xl p-3 flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
         <div class="flex flex-wrap items-center gap-2 flex-1 w-full">
-          <input type="text" id="queue-search" placeholder="Search SKU, attribute, or value..." class="ent-input flex-1 min-w-[220px] text-xs">
-          
+          <input type="text" id="queue-search" placeholder="Search SKU, attribute or value..." class="ent-input flex-1 min-w-[220px] text-xs">
           <select id="queue-filter-severity" class="ent-input text-xs" onchange="loadQueue()">
-            <option value="">All Gating Triggers</option>
-            <option value="dispute">⚡ Multi-Pass Dispute</option>
-            <option value="forced_review">⚠️ Extraction Strength &lt; 0.5</option>
-            <option value="constraint_violation">🚫 Physical Constraint Alert</option>
-            <option value="inferred">🧩 Inferred Sibling (≤0.70)</option>
-            <option value="borderline">🔍 Borderline (50-89%)</option>
+            <option value="">All gating triggers</option>
+            <option value="dispute">Multi-pass dispute</option>
+            <option value="forced_review">Extraction strength &lt; 0.5</option>
+            <option value="constraint_violation">Physical constraint alert</option>
+            <option value="inferred">Inferred sibling (≤0.70)</option>
+            <option value="borderline">Borderline (50-89%)</option>
           </select>
         </div>
       </div>
 
-      <!-- Queue Table -->
-      <div class="glass-card-elevated rounded-xl overflow-hidden border border-slate-800">
+      <div class="glass-card-elevated rounded-xl overflow-hidden">
         <div class="overflow-x-auto scrollbar-ent">
           <table class="w-full text-left text-xs">
             <thead>
-              <tr class="bg-slate-900/90 border-b border-slate-800 text-slate-300 font-mono uppercase text-[11px]">
-                <th class="p-3.5 font-semibold">Product SKU</th>
-                <th class="p-3.5 font-semibold">Attribute</th>
-                <th class="p-3.5 font-semibold">Attribute Value</th>
-                <th class="p-3.5 font-semibold">UOM</th>
-                <th class="p-3.5 font-semibold">Type</th>
-                <th class="p-3.5 font-semibold">Confidence</th>
-                <th class="p-3.5 font-semibold">Source Link</th>
-                <th class="p-3.5 text-right font-semibold">Action</th>
+              <tr class="bg-[#0c0f15] border-b border-white/[0.06] text-[#9aa6b2] font-mono uppercase text-[10px]">
+                <th class="p-3 font-semibold">Product SKU</th>
+                <th class="p-3 font-semibold">Attribute</th>
+                <th class="p-3 font-semibold">Value</th>
+                <th class="p-3 font-semibold">UOM</th>
+                <th class="p-3 font-semibold">Type</th>
+                <th class="p-3 font-semibold">Confidence</th>
+                <th class="p-3 font-semibold">Source</th>
+                <th class="p-3 text-right font-semibold">Action</th>
               </tr>
             </thead>
-            <tbody id="queue-table-body" class="divide-y divide-slate-800/60 text-slate-200">
-              <!-- Rendered rows -->
-            </tbody>
+            <tbody id="queue-table-body" class="divide-y divide-white/[0.05] text-[#c3cbd5]"></tbody>
           </table>
         </div>
-
-        <div class="p-3.5 bg-slate-900/90 border-t border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400">
+        <div class="p-3 bg-[#0c0f15] border-t border-white/[0.06] flex items-center justify-between text-xs font-mono text-[#9aa6b2]">
           <span id="queue-summary-text">0 items in queue</span>
           <div class="flex items-center gap-2">
             <button id="btn-queue-prev" class="ent-btn-secondary px-2.5 py-1 text-xs" disabled>Previous</button>
@@ -1396,37 +1100,34 @@
           </div>
         </div>
       </div>
-
     </div>
 
   </main>
 
   <!-- ========================================================= -->
-  <!-- ENTERPRISE FOOTER                                         -->
+  <!-- FOOTER                                                      -->
   <!-- ========================================================= -->
-  <footer class="border-t border-slate-800/80 bg-slate-950 py-8 mt-auto text-xs text-slate-500">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono">
+  <footer class="border-t border-white/[0.06] bg-[#0a0d12] py-8 mt-auto text-xs text-[#667180]">
+    <div class="max-w-[1200px] mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono">
       <div class="flex items-center gap-2">
-        <span class="font-bold text-slate-300 font-sans">PASTE Platform</span>
-        <span>© 2026 — Zero-Hallucination Industrial Product Intelligence</span>
+        <span class="font-bold text-[#c3cbd5] font-sans">PASTE Platform</span>
+        <span>© 2026 · Zero-hallucination industrial product intelligence</span>
       </div>
-      <div class="flex items-center gap-4 text-slate-400 flex-wrap">
-        <span>UniHack 2026 / Unilog Certified</span>
-        <span>•</span>
-        <span>5-Tier Commercial Descriptions</span>
-        <span>•</span>
-        <span>Explicit Value &amp; UOM Separation</span>
-        <span>•</span>
-        <span>Unilog .xlsx Export</span>
+      <div class="flex items-center gap-4 text-[#667180] flex-wrap">
+        <span>Unilog 5-tier descriptions</span>
+        <span>·</span>
+        <span>Value &amp; UOM separation</span>
+        <span>·</span>
+        <span>.xlsx export</span>
       </div>
     </div>
   </footer>
 
-  <!-- Toast Hub -->
-  <div id="toast-hub" class="fixed top-20 right-5 z-[100] flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+  <!-- Toast hub -->
+  <div id="toast-hub" class="fixed top-20 inset-x-4 sm:inset-x-auto sm:right-5 sm:w-[380px] z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Interactive Client-Side & API Module -->
-  <script type="module">
+
+<script type="module">
     const API = '/api/v1';
     let currentQueue = [];
     let currentPage = 1;
@@ -2707,6 +2408,103 @@
       animate();
     }
 
+    // --- Interactive Trust Simulator ---
+    function updateSimScore() {
+      const sInput = document.getElementById('sim-slider-strength');
+      const aInput = document.getElementById('sim-slider-authority');
+      const mInput = document.getElementById('sim-slider-agreement');
+      if (!sInput || !aInput || !mInput) return;
+
+      const s = parseFloat(sInput.value);
+      const a = parseFloat(aInput.value);
+      const m = parseFloat(mInput.value);
+
+      // Labels
+      const sLabel = document.getElementById('sim-val-strength');
+      const aLabel = document.getElementById('sim-val-authority');
+      const mLabel = document.getElementById('sim-val-agreement');
+      
+      if (sLabel) {
+        let tag = s >= 1.0 ? '(Corroborated)' : (s >= 0.8 ? '(Near-Match)' : (s >= 0.5 ? '(Single-Pass)' : '(Dispute)'));
+        sLabel.textContent = `${s.toFixed(2)} ${tag}`;
+      }
+      if (aLabel) {
+        let tag = a >= 1.0 ? '(OEM Datasheet)' : (a >= 0.7 ? '(Distributor)' : (a >= 0.5 ? '(Sibling Graph)' : '(Model Estimated)'));
+        aLabel.textContent = `${a.toFixed(2)} ${tag}`;
+      }
+      if (mLabel) {
+        let tag = m >= 1.0 ? '(≥2 Sources Agree)' : '(Single Source)';
+        mLabel.textContent = `${m.toFixed(2)} ${tag}`;
+      }
+
+      // Mathematical Confidence Formula
+      let conf = s * a * m;
+      if (a <= 0.5) conf = Math.min(conf, 0.70); // Inferred cap
+      conf = Math.min(1.0, Math.max(0.0, conf));
+
+      const totalEl = document.getElementById('sim-total-score');
+      if (totalEl) totalEl.textContent = conf.toFixed(2);
+
+      // Decision Card
+      const card = document.getElementById('sim-routing-card');
+      const title = document.getElementById('sim-routing-title');
+      const desc = document.getElementById('sim-routing-desc');
+
+      if (card && title && desc) {
+        if (s <= 0.4) {
+          card.className = 'p-3.5 rounded-lg bg-rose-950/40 border border-rose-500/40 space-y-1';
+          title.className = 'text-rose-300 font-bold text-sm font-display flex items-center gap-2';
+          title.innerHTML = '<span>⚠️ FORCED REVIEW: PASS DISCREPANCY</span>';
+          desc.className = 'text-xs text-rose-300/90 leading-relaxed font-sans';
+          desc.textContent = 'Extraction passes disagree. Discrepancy collapsed to DISPUTE state for mandatory operator review.';
+          if (totalEl) totalEl.className = 'font-display text-4xl sm:text-5xl font-bold text-rose-400';
+        } else if (a <= 0.5) {
+          card.className = 'p-3.5 rounded-lg bg-amber-950/40 border border-amber-500/40 space-y-1';
+          title.className = 'text-amber-300 font-bold text-sm font-display flex items-center gap-2';
+          title.innerHTML = '<span>🔍 INFERRED ATTRIBUTE (≤0.70 CAP)</span>';
+          desc.className = 'text-xs text-amber-300/90 leading-relaxed font-sans';
+          desc.textContent = 'Derived from series sibling SKU knowledge graph. Strictly capped at ≤0.70 confidence and routed to review.';
+          if (totalEl) totalEl.className = 'font-display text-4xl sm:text-5xl font-bold text-amber-400';
+        } else if (conf >= 0.90) {
+          card.className = 'p-3.5 rounded-lg bg-emerald-950/40 border border-emerald-500/40 space-y-1';
+          title.className = 'text-emerald-300 font-bold text-sm font-display flex items-center gap-2';
+          title.innerHTML = '<span>✓ AUTO-PUBLISH READY</span>';
+          desc.className = 'text-xs text-emerald-400/90 leading-relaxed font-sans';
+          desc.textContent = 'Confidence ≥ 0.90 with official OEM authority. Field automatically exports to Unilog .xlsx & GS1 CSV.';
+          if (totalEl) totalEl.className = 'font-display text-4xl sm:text-5xl font-bold text-emerald-400';
+        } else {
+          card.className = 'p-3.5 rounded-lg bg-sky-950/40 border border-sky-500/40 space-y-1';
+          title.className = 'text-sky-300 font-bold text-sm font-display flex items-center gap-2';
+          title.innerHTML = '<span>📋 BORDERLINE REVIEW QUEUE</span>';
+          desc.className = 'text-xs text-sky-300/90 leading-relaxed font-sans';
+          desc.textContent = 'Score between 0.50 and 0.89. Requires operator validation before commerce publish.';
+          if (totalEl) totalEl.className = 'font-display text-4xl sm:text-5xl font-bold text-sky-400';
+        }
+      }
+    }
+
+    function setSimPreset(type) {
+      const sInput = document.getElementById('sim-slider-strength');
+      const aInput = document.getElementById('sim-slider-authority');
+      const mInput = document.getElementById('sim-slider-agreement');
+      if (!sInput || !aInput || !mInput) return;
+
+      if (type === 'proved') {
+        sInput.value = 1.0;
+        aInput.value = 1.0;
+        mInput.value = 1.0;
+      } else if (type === 'inferred') {
+        sInput.value = 1.0;
+        aInput.value = 0.5;
+        mInput.value = 0.7;
+      } else if (type === 'dispute') {
+        sInput.value = 0.4;
+        aInput.value = 1.0;
+        mInput.value = 0.7;
+      }
+      updateSimScore();
+    }
+
     // --- Realtime SSE ---
     function connectRealtime() {
       if (!('EventSource' in window)) return;
@@ -2748,6 +2546,8 @@
     window.clearPipelineLog = clearPipelineLog;
     window.downloadUnilogExcelFromActiveProduct = downloadUnilogExcelFromActiveProduct;
     window.downloadUnilogExcelFromCatalog = downloadUnilogExcelFromCatalog;
+    window.updateSimScore = updateSimScore;
+    window.setSimPreset = setSimPreset;
 
     // Boot & Init
     initPhysicsCanvas();
@@ -2755,6 +2555,43 @@
     loadSampleDataset('vfds');
     connectRealtime();
     loadQueue();
+    updateSimScore();
+  </script>
+
+  <script>
+    (function () {
+      var toggle = document.getElementById('menu-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('menu-icon-open');
+      var iconClose = document.getElementById('menu-icon-close');
+
+      if (toggle && menu) {
+        toggle.addEventListener('click', function () {
+          var open = menu.classList.toggle('hidden') === false;
+          toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+          if (iconOpen) iconOpen.classList.toggle('hidden', open);
+          if (iconClose) iconClose.classList.toggle('hidden', !open);
+        });
+        menu.addEventListener('click', function (e) {
+          if (e.target.closest('[data-nav]')) {
+            menu.classList.add('hidden');
+            toggle.setAttribute('aria-expanded', 'false');
+            if (iconOpen) iconOpen.classList.remove('hidden');
+            if (iconClose) iconClose.classList.add('hidden');
+          }
+        });
+      }
+
+      var desktopBadge = document.getElementById('nav-badge-queue');
+      var mobileBadge = document.getElementById('nav-badge-queue-mobile');
+      var mobileConn = document.getElementById('conn-text-mobile');
+      var connText = document.getElementById('conn-text');
+      if (mobileBadge && desktopBadge && !desktopBadge.classList.contains('hidden')) {
+        mobileBadge.textContent = desktopBadge.textContent;
+        mobileBadge.classList.remove('hidden');
+      }
+      if (mobileConn && connText) mobileConn.textContent = connText.textContent;
+    })();
   </script>
 </body>
 </html>
