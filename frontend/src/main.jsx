@@ -171,7 +171,7 @@ function App() {
 
         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
           <div className="badge badge-proved" style={{ display: 'flex', gap: '0.4rem', padding: '0.4rem 0.8rem' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px #10b981' }}></span>
+            <span className="live-dot" style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px #10b981' }}></span>
             E-COMMERCE FILTER: ACTIVE
           </div>
         </div>
