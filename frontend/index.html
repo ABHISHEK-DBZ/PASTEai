@@ -3,16 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< Updated upstream
   <title>PASTE — Industrial Product Intelligence</title>
   <meta name="description" content="Extract, normalize and verify industrial product specifications from PDFs and catalogs. Every attribute is proven, bounded and traceable to its source.">
 
-=======
-  <title>PASTE — AI-Powered Product Intelligence for Industrial Commerce</title>
-  
-  <!-- Tailwind CSS & Fonts -->
-  <script src="https://cdn.tailwindcss.com"></script>
->>>>>>> Stashed changes
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -186,7 +179,6 @@
     .pipeline-step-card.active { border-color: rgba(74, 125, 255, 0.55); background: rgba(74, 125, 255, 0.08); }
     .pipeline-step-card.completed { border-color: rgba(74, 125, 255, 0.45); background: rgba(74, 125, 255, 0.06); }
 
-<<<<<<< Updated upstream
     /* ---------- Links ---------- */
     .doc-link {
       display: inline-flex; align-items: center; gap: 0.4rem;
@@ -200,10 +192,56 @@
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #262e3a; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #333d4c; }
-    .scrollbar-ent::-webkit-scrollbar { width: 6px; height: 6px; }
-
-input[type=range] { accent-color: #4a7dff; }
+    /* ---------- Sliders ---------- */
+    .sim-range-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 9999px;
+      background: #141922;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      outline: none;
+      cursor: pointer;
+      margin: 0.5rem 0;
+      position: relative;
+      z-index: 10;
+    }
+    .sim-range-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #4a7dff;
+      border: 2.5px solid #ffffff;
+      box-shadow: 0 0 10px rgba(74, 125, 255, 0.7);
+      cursor: grab;
+      transition: transform 0.1s ease, background 0.15s ease;
+    }
+    .sim-range-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      background: #6b96ff;
+    }
+    .sim-range-slider::-webkit-slider-thumb:active {
+      cursor: grabbing;
+      transform: scale(1.25);
+      background: #82a8ff;
+    }
+    .sim-range-slider::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #4a7dff;
+      border: 2.5px solid #ffffff;
+      box-shadow: 0 0 10px rgba(74, 125, 255, 0.7);
+      cursor: grab;
+    }
+    .sim-range-slider::-moz-range-thumb:active {
+      cursor: grabbing;
+      transform: scale(1.25);
+    }
+    input[type=range] { accent-color: #4a7dff; }
 
     table { border-collapse: collapse; }
 
@@ -221,89 +259,9 @@ input[type=range] { accent-color: #4a7dff; }
     /* The launch CTA is only needed on the marketing landing page. */
     body:not(:has(#home-view:not(.hidden))) .app-cta {
       display: none;
-=======
-    input[type=range] { accent-color: #10b981; }
-
-    /* ============ POLISH LAYER (kept additive & non-invasive) ============ */
-
-    /* Global smooth scrolling + refined scrollbars */
-    html { scroll-behavior: smooth; }
-    ::-webkit-scrollbar { width: 10px; height: 10px; }
-    ::-webkit-scrollbar-track { background: #060a12; }
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(180deg, #1d2a45, #16324f);
-      border-radius: 6px;
-      border: 2px solid #060a12;
-    }
-    ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #2a3d66, #10b98155); }
-
-    /* Animated top affinity bar */
-    .top-affinity-bar {
-      position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 9999;
-      background: linear-gradient(90deg, transparent, #10b981, #00e5ff, #f59e0b, transparent);
-      background-size: 200% 100%;
-      animation: affinity-slide 6s linear infinite;
-      opacity: .9;
-    }
-    @keyframes affinity-slide { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
-
-    /* View fade-in on switch */
-    #home-view #hero { animation: view-in .5s cubic-bezier(.22,1,.36,1) both; }
-    @keyframes view-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-
-    /* Headings: gradient + soft rule */
-    .paste-heading {
-      background: linear-gradient(120deg, #ffffff 20%, #6ee7b7 60%, #67e8f9 100%);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-      -webkit-text-fill-color: transparent;
-    }
-    .paste-heading span, .paste-heading a, .paste-heading .ent-badge {
-      -webkit-text-fill-color: initial; color: inherit;
-    }
-    .heading-rule {
-      width: 72px; height: 3px; border-radius: 2px; margin: .5rem auto 0;
-      background: linear-gradient(90deg, #10b981, #00e5ff);
-      position: relative; overflow: visible;
-    }
-    .heading-rule::after {
-      content: ''; position: absolute; inset: 0;
-      background: inherit; filter: blur(6px); opacity: .7; animation: rule-pulse 3s ease-in-out infinite;
-    }
-    @keyframes rule-pulse { 0%,100% { opacity: .4; } 50% { opacity: .9; } }
-
-    /* Cards: deeper glass + lift */
-    .glass-card {
-      background: linear-gradient(180deg, rgba(16, 24, 44, .82), rgba(9, 14, 27, .88));
-      border: 1px solid rgba(30, 45, 74, .6);
-      transition: transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s ease, border-color .25s ease;
-      position: relative; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    }
-    .glass-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 18px 40px -12px rgba(0,0,0,.6), 0 0 24px rgba(16,185,129,.08);
-    }
-    .glass-card { box-shadow: 0 12px 28px -14px rgba(0,0,0,.6); }
-    .glass-card-elevated {
-      background: linear-gradient(180deg, rgba(16,24,39,.9), rgba(9,14,27,.94));
-      transition: transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s ease, border-color .25s ease;
-      position: relative; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-    }
-    .glass-card-elevated:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 22px 46px -14px rgba(0,0,0,.65), 0 0 28px rgba(0, 229, 255, .06);
     }
 
-    /* Navigation underline sweep */
-    .ent-nav-link { position: relative; }
-    .ent-nav-link::after {
-      content: ''; position: absolute; left: 50%; right: 50%; bottom: 2px;
-      height: 2px; border-radius: 2px; background: linear-gradient(90deg, #10b981, #00e5ff);
-      transition: left .25s cubic-bezier(.16,1,.3,1), right .25s cubic-bezier(.16,1,.3,1), opacity .2s;
-      opacity: 0;
-    }
-    .ent-nav-link:hover::after, .ent-nav-link.active::after { left: 20%; right: 20%; opacity: 1; }
-
-    /* Navbar/sidebar shell */
+    /* ---------- Navbar + sidebar shell ---------- */
     .paste-app-shell {
       display: flex;
       align-items: stretch;
@@ -318,27 +276,21 @@ input[type=range] { accent-color: #4a7dff; }
       height: calc(100vh - 4rem);
       flex: 0 0 252px;
       padding: 1rem .75rem;
-      border-right: 1px solid rgba(30, 45, 74, .82);
-      background: linear-gradient(180deg, rgba(6, 10, 18, .96), rgba(9, 15, 28, .92));
-      box-shadow: inset -1px 0 0 rgba(16, 185, 129, .08);
+      border-right: 1px solid rgba(255, 255, 255, .08);
+      background: linear-gradient(180deg, rgba(10, 13, 18, .98), rgba(13, 17, 25, .94));
       transition: width .22s cubic-bezier(.16,1,.3,1), flex-basis .22s cubic-bezier(.16,1,.3,1);
       z-index: 40;
     }
     body.sidebar-collapsed .paste-sidebar {
       width: 68px;
       flex-basis: 68px;
+      padding: 1rem .5rem;
     }
-    .paste-content {
-      min-width: 0;
-      flex: 1 1 auto;
-      transition: width .22s cubic-bezier(.16,1,.3,1);
-    }
-    .paste-nav-section {
-      margin-bottom: 1.25rem;
-    }
+    .paste-content { min-width: 0; flex: 1 1 auto; }
+    .paste-nav-section { margin-bottom: 1.25rem; }
     .paste-nav-heading {
       margin: .25rem .6rem .5rem;
-      color: rgba(148, 163, 184, .72);
+      color: #667180;
       font-family: 'JetBrains Mono', monospace;
       font-size: .64rem;
       font-weight: 700;
@@ -354,10 +306,16 @@ input[type=range] { accent-color: #4a7dff; }
       margin-bottom: .25rem;
       padding: .55rem .65rem;
       border: 1px solid transparent;
+      border-radius: .5rem;
       text-align: left;
-      white-space: nowrap;
     }
-    .paste-sidebar .ent-nav-link::before {
+    .paste-sidebar .ent-nav-link.active {
+      color: #cfe0ff;
+      border-color: rgba(74, 125, 255, .3);
+      background: rgba(74, 125, 255, .12);
+      box-shadow: 0 0 18px rgba(74, 125, 255, .08);
+    }
+    .paste-sidebar .ent-nav-link.active::before {
       content: '';
       position: absolute;
       left: -1px;
@@ -365,25 +323,33 @@ input[type=range] { accent-color: #4a7dff; }
       bottom: 9px;
       width: 3px;
       border-radius: 2px;
-      background: linear-gradient(180deg, #10b981, #00e5ff);
-      opacity: 0;
-      box-shadow: 0 0 10px rgba(16, 185, 129, .28);
+      background: #6b96ff;
+      box-shadow: 0 0 10px rgba(74, 125, 255, .35);
     }
-    .paste-sidebar .ent-nav-link.active::before { opacity: 1; }
-    .paste-sidebar .ent-nav-link.active {
-      color: #d1fae5;
-      background: linear-gradient(90deg, rgba(16, 185, 129, .16), rgba(0, 229, 255, .05));
-      border-color: rgba(16, 185, 129, .32);
-      box-shadow: 0 0 18px rgba(16, 185, 129, .08), inset 0 1px 0 rgba(255,255,255,.04);
-    }
-    .paste-sidebar .ent-nav-link::after { display: none; }
     .paste-nav-icon {
-      width: 1.25rem;
-      min-width: 1.25rem;
-      text-align: center;
-      color: #67e8f9;
-      font-size: .95rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      min-width: 1.75rem;
+      border-radius: 0.375rem;
+      background: rgba(74, 125, 255, 0.08);
+      border: 1px solid rgba(74, 125, 255, 0.2);
+      color: #9dbdff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .75rem;
+      font-weight: 700;
       line-height: 1;
+      text-align: center;
+      transition: all .15s ease;
+    }
+    .paste-sidebar .ent-nav-link:hover .paste-nav-icon,
+    .paste-sidebar .ent-nav-link.active .paste-nav-icon {
+      background: rgba(74, 125, 255, 0.2);
+      border-color: rgba(74, 125, 255, 0.45);
+      color: #ffffff;
+      box-shadow: 0 0 8px rgba(74, 125, 255, 0.3);
     }
     .paste-nav-label, .paste-nav-meta, .paste-nav-heading {
       transition: opacity .15s ease, transform .15s ease;
@@ -391,14 +357,25 @@ input[type=range] { accent-color: #4a7dff; }
     body.sidebar-collapsed .paste-nav-label,
     body.sidebar-collapsed .paste-nav-meta,
     body.sidebar-collapsed .paste-nav-heading {
-      opacity: 0;
-      pointer-events: none;
-      transform: translateX(-4px);
+      display: none !important;
     }
     body.sidebar-collapsed .paste-sidebar .ent-nav-link {
+      width: 44px;
+      height: 40px;
+      min-height: 40px;
+      margin: 0 auto .35rem auto;
+      padding: 0;
       justify-content: center;
-      padding-left: .45rem;
-      padding-right: .45rem;
+      gap: 0;
+    }
+    body.sidebar-collapsed .paste-sidebar .ent-nav-link.active::before {
+      display: none;
+    }
+    body.sidebar-collapsed .paste-nav-icon {
+      width: 2rem;
+      height: 2rem;
+      min-width: 2rem;
+      font-size: .8rem;
     }
     .paste-sidebar-toggle {
       display: flex;
@@ -409,17 +386,17 @@ input[type=range] { accent-color: #4a7dff; }
       min-height: 38px;
       margin-top: auto;
       border-radius: .5rem;
-      border: 1px solid rgba(42, 61, 102, .9);
-      background: rgba(15, 23, 42, .72);
-      color: #cbd5e1;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(16, 20, 27, .86);
+      color: #c3cbd5;
       font-size: .75rem;
       font-weight: 600;
       transition: all .16s ease;
     }
     .paste-sidebar-toggle:hover {
-      border-color: rgba(16, 185, 129, .45);
+      border-color: rgba(74, 125, 255, .35);
       color: #fff;
-      background: rgba(30, 41, 59, .8);
+      background: rgba(74, 125, 255, .1);
     }
     body.sidebar-collapsed .paste-sidebar-toggle-label { display: none; }
     body.sidebar-collapsed .paste-sidebar-toggle-icon { transform: rotate(180deg); }
@@ -430,8 +407,8 @@ input[type=range] { accent-color: #4a7dff; }
         padding-left: .5rem;
         padding-right: .5rem;
       }
-      .paste-nav-label, .paste-nav-meta, .paste-nav-heading { display: none; }
-      .paste-sidebar .ent-nav-link { justify-content: center; padding-left: .45rem; padding-right: .45rem; }
+      .paste-nav-label, .paste-nav-meta, .paste-nav-heading { display: none !important; }
+      .paste-sidebar .ent-nav-link { justify-content: center; padding-left: .45rem; padding-right: .45rem; width: 44px; margin: 0 auto .35rem auto; }
       .paste-sidebar-toggle-label { display: none; }
     }
     @media (max-width: 640px) {
@@ -444,7 +421,7 @@ input[type=range] { accent-color: #4a7dff; }
         flex-basis: auto;
         overflow-x: auto;
         border-right: 0;
-        border-bottom: 1px solid rgba(30, 45, 74, .82);
+        border-bottom: 1px solid rgba(255, 255, 255, .08);
       }
       body.sidebar-collapsed .paste-sidebar {
         width: 100%;
@@ -454,44 +431,6 @@ input[type=range] { accent-color: #4a7dff; }
       .paste-nav-section { display: flex; align-items: center; gap: .35rem; margin: 0; }
       .paste-sidebar .ent-nav-link { width: 42px; margin-bottom: 0; }
       .paste-sidebar-toggle { width: 42px; min-width: 42px; margin-top: 0; }
-    }
-
-    /* Buttons: subtle shine sweep */
-    .ent-btn-primary, .ent-btn-unilog, .ent-btn-accent { position: relative; overflow: hidden; }
-    .ent-btn-primary::before, .ent-btn-unilog::before, .ent-btn-accent::before {
-      content: ''; position: absolute; top: 0; bottom: 0; width: 45%; left: -60%;
-      background: linear-gradient(105deg, transparent, rgba(255,255,255,.30), transparent);
-      transform: skewX(-20deg); transition: left .55s ease;
-    }
-    .ent-btn-primary:hover::before, .ent-btn-unilog:hover::before, .ent-btn-accent:hover::before { left: 120%; }
-    .ent-input { transition: border-color .15s ease, box-shadow .2s ease, background .15s ease; }
-    .ent-input:hover { border-color: #34507e; }
-
-    /* Data rows & queue items */
-    .data-row { transition: background .18s ease, transform .18s ease; }
-    .data-row:hover td { background: rgba(16,185,129,.045); }
-    .data-row td { transition: background .18s ease; }
-
-    /* Toast pill refinement */
-    #toast-hub .toast-pill {
-      border-left: 3px solid #10b981;
-      background: rgba(8, 14, 26, .92); border-color: rgba(30, 45, 74, .8);
-    }
-
-    /* Light-mode-safe heading in dark theme only signature tagline */
-    .mono-tag {
-      display: inline-flex; align-items: center; gap: .45rem;
-      font-family: 'JetBrains Mono', monospace; font-size: .625rem; letter-spacing: .14em;
-      text-transform: uppercase; font-weight: 600;
-      color: rgba(148, 163, 184, .9);
-    }
-    .mono-tag::before { content: ''; width: 6px; height: 6px; border-radius: 99px; background: #10b981; box-shadow: 0 0 10px #10b981; animation: pulse-dot 2s ease-in-out infinite; }
-    @keyframes pulse-dot { 0%,100% { opacity: 1; transform: scale(1);} 50% { opacity: .4; transform: scale(.8);} }
-
-    /* Reduced motion respect */
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
->>>>>>> Stashed changes
     }
   </style>
 </head>
@@ -505,7 +444,7 @@ input[type=range] { accent-color: #4a7dff; }
   <!-- HEADER                                                     -->
   <!-- ========================================================= -->
   <header class="sticky top-0 z-50 border-b border-white/[0.06] bg-[#0a0d12]/90 backdrop-blur">
-    <div class="max-w-[1200px] mx-auto px-5 sm:px-8">
+    <div class="w-full px-4 sm:px-6">
       <div class="flex items-center justify-between h-16 gap-4">
 
         <div class="flex items-center gap-7 min-w-0">
@@ -513,24 +452,10 @@ input[type=range] { accent-color: #4a7dff; }
             <span class="w-8 h-8 rounded-lg bg-brand-500/15 border border-brand-500/40 flex items-center justify-center">
               <svg class="w-4.5 h-4.5 text-brand-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
             </span>
-<span class="flex flex-col leading-none">
+            <span class="flex flex-col leading-none">
               <span class="font-display font-bold text-base tracking-tight text-white">PASTE</span>
             </span>
           </a>
-
-<<<<<<< Updated upstream
-          <nav class="app-nav hidden md:flex items-center gap-1 min-w-0">
-            <button data-nav="home" onclick="showView('home')" class="ent-nav-link active">Overview</button>
-            <button data-nav="upload" onclick="showView('upload')" class="ent-nav-link">Ingest Studio</button>
-            <button data-nav="detail" onclick="openActiveProductReview()" class="ent-nav-link">Product Review</button>
-            <button data-nav="batch" onclick="showView('batch')" class="ent-nav-link">Batch Catalog</button>
-            <button data-nav="queue" onclick="showView('queue')" class="ent-nav-link flex items-center gap-1.5">
-              <span>Review Queue</span>
-              <span id="nav-badge-queue" class="hidden px-1.5 py-0.5 rounded-full text-[9px] bg-brand-500/20 text-brand-300 border border-brand-500/40 font-mono font-bold">0</span>
-            </button>
-          </nav>
-=======
->>>>>>> Stashed changes
         </div>
 
         <div class="flex items-center gap-3 shrink-0">
@@ -547,92 +472,61 @@ input[type=range] { accent-color: #4a7dff; }
             <span id="conn-text" class="font-medium">connecting</span>
           </div>
 
-<button onclick="showView('upload')" class="app-cta ent-btn-primary px-4 py-2 text-xs">
+          <button onclick="showView('upload')" class="app-cta ent-btn-primary px-4 py-2 text-xs">
             Launch Studio
           </button>
 
-          <button id="menu-toggle" class="app-nav md:hidden w-9 h-9 rounded-lg flex items-center justify-center text-[#9aa6b2] border border-white/[0.08] bg-[#10141b] hover:text-white hover:border-white/[0.18] transition-colors" aria-label="Menu" aria-expanded="false">
-            <svg id="menu-icon-open" class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-            <svg id="menu-icon-close" class="w-4.5 h-4.5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-          </button>
         </div>
 
       </div>
     </div>
 
-    <!-- Mobile menu panel -->
-    <div id="mobile-menu" class="app-nav hidden md:hidden border-t border-white/[0.06] bg-[#0d1119] px-5 pt-3 pb-5">
-      <nav class="flex flex-col">
-        <button data-nav="home" onclick="showView('home')" class="ent-nav-link text-left py-2.5">Overview</button>
-        <button data-nav="upload" onclick="showView('upload')" class="ent-nav-link text-left py-2.5">Ingest Studio</button>
-        <button data-nav="detail" onclick="openActiveProductReview()" class="ent-nav-link text-left py-2.5">Product Review</button>
-        <button data-nav="batch" onclick="showView('batch')" class="ent-nav-link text-left py-2.5">Batch Catalog</button>
-        <button data-nav="queue" onclick="showView('queue')" class="ent-nav-link text-left py-2.5 flex items-center gap-2">
-          <span>Review Queue</span>
-          <span id="nav-badge-queue-mobile" class="hidden px-1.5 py-0.5 rounded-full text-[9px] bg-brand-500/20 text-brand-300 border border-brand-500/40 font-mono font-bold">0</span>
-        </button>
-      </nav>
-      <div class="mt-4 pt-4 border-t border-white/[0.06] flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-mono text-[#9aa6b2]">
-        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-400"></span>OEM filter active</span>
-        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-400"></span><span id="conn-text-mobile">live realtime</span></span>
-      </div>
-    </div>
   </header>
 
-<<<<<<< Updated upstream
-  <main class="flex-1 w-full">
-=======
-  <!-- ========================================================= -->
-  <!-- MAIN CONTAINER WITH DYNAMIC VIEWS                         -->
-  <!-- ========================================================= -->
   <div class="paste-app-shell">
     <aside class="paste-sidebar" aria-label="Primary navigation">
       <div class="paste-sidebar-inner h-full flex flex-col">
         <div class="paste-nav-section">
           <div class="paste-nav-heading">WORKSPACE</div>
           <button data-nav="home" onclick="showView('home')" class="ent-nav-link active" title="Overview">
-            <span class="paste-nav-icon" aria-hidden="true">⌂</span>
+            <span class="paste-nav-icon" aria-hidden="true">OV</span>
             <span class="paste-nav-label">Overview</span>
           </button>
-          <button data-nav="upload" onclick="showView('upload')" class="ent-nav-link text-emerald-400 font-semibold" title="Ingest Studio">
-            <span class="paste-nav-icon" aria-hidden="true">⚡</span>
+          <button data-nav="upload" onclick="showView('upload')" class="ent-nav-link" title="Ingest Studio">
+            <span class="paste-nav-icon" aria-hidden="true">IN</span>
             <span class="paste-nav-label">Ingest Studio</span>
-            <span class="paste-nav-meta ml-auto px-1 py-0.2 rounded text-[9px] bg-emerald-950 text-emerald-300 border border-emerald-500/40 font-mono">Dynamic</span>
           </button>
           <button data-nav="detail" onclick="openActiveProductReview()" class="ent-nav-link" title="Product Review">
-            <span class="paste-nav-icon" aria-hidden="true">▣</span>
+            <span class="paste-nav-icon" aria-hidden="true">PR</span>
             <span class="paste-nav-label">Product Review</span>
-            <span class="paste-nav-meta ml-auto px-1 py-0.2 rounded text-[9px] bg-cyan-950 text-cyan-300 border border-cyan-500/40 font-mono">Unilog Spec</span>
           </button>
           <button data-nav="batch" onclick="showView('batch')" class="ent-nav-link" title="Batch Catalog">
-            <span class="paste-nav-icon" aria-hidden="true">▤</span>
+            <span class="paste-nav-icon" aria-hidden="true">BC</span>
             <span class="paste-nav-label">Batch Catalog</span>
           </button>
         </div>
         <div class="paste-nav-section">
           <div class="paste-nav-heading">TRUST</div>
           <button data-nav="queue" onclick="showView('queue')" class="ent-nav-link" title="HITL Queue">
-            <span class="paste-nav-icon" aria-hidden="true">◇</span>
+            <span class="paste-nav-icon" aria-hidden="true">HQ</span>
             <span class="paste-nav-label">HITL Queue</span>
-            <span id="nav-badge-queue" class="paste-nav-meta ml-auto px-1.5 py-0.2 rounded-full text-[10px] bg-amber-950/80 text-amber-300 border border-amber-500/40 font-mono font-bold hidden">0</span>
+            <span id="nav-badge-queue" class="paste-nav-meta ml-auto hidden px-1.5 py-0.5 rounded-full text-[9px] bg-brand-500/20 text-brand-300 border border-brand-500/40 font-mono font-bold">0</span>
           </button>
         </div>
         <button type="button" class="paste-sidebar-toggle" onclick="toggleSidebar()" title="Collapse sidebar" aria-label="Collapse sidebar" aria-expanded="true">
-          <span class="paste-sidebar-toggle-icon transition-transform" aria-hidden="true">‹</span>
+          <span class="paste-sidebar-toggle-icon transition-transform" aria-hidden="true">&lsaquo;</span>
           <span class="paste-sidebar-toggle-label">Collapse</span>
         </button>
       </div>
     </aside>
 
   <main class="paste-content flex-1 w-full">
->>>>>>> Stashed changes
 
     <!-- ========================================================= -->
     <!-- HOME                                                       -->
     <!-- ========================================================= -->
     <div id="home-view" class="pt-10 pb-20 space-y-16 sm:pt-14 sm:pb-24 sm:space-y-28">
 
-<<<<<<< Updated upstream
 <!-- Hero -->
       <section class="max-w-[1200px] mx-auto px-5 sm:px-8">
         <div class="max-w-3xl mx-auto text-center pt-6 sm:pt-10">
@@ -644,29 +538,6 @@ input[type=range] { accent-color: #4a7dff; }
           <p class="mt-6 text-[15px] sm:text-base text-[#9aa6b2] leading-relaxed mx-auto max-w-[52ch]">
             Extract, normalize and verify industrial specs from messy PDFs and legacy catalogs. Every attribute is mathematically scored and traced to a page and coordinates.
           </p>
-=======
-      <!-- HERO SECTION WITH INTERACTIVE PHYSICS CANVAS -->
-      <section id="hero" class="relative pt-10 sm:pt-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          
-          <!-- Hero Copy (7 cols) -->
-          <div class="lg:col-span-7 space-y-6 z-10">
-            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/60 border border-emerald-500/40 text-emerald-400 text-xs font-mono font-semibold">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              Product Intelligence Challenge • Industrial Commerce Solution
-            </div>
-
-            <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.12]">
-              Never present an <span class="bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400 bg-clip-text text-transparent underline decoration-amber-400/50 decoration-wavy decoration-2">inferred spec</span> as <span class="paste-heading">fact.</span>
-            </h1>
-
-            <p class="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl font-normal">
-              Industrial manufacturers manage fragmented product data across websites, catalogs, technical documents, and digital assets. Challenge: turn that limited information into
-              <strong class="text-white font-semibold">structured, commerce-ready product intelligence</strong> — accurately, at scale. PASTE combines
-              <em class="text-emerald-300 not-italic font-semibold">document intelligence + vision-language models + deterministic trust gates</em> so every emitted attribute is tagged
-              <span class="text-emerald-400 font-mono text-xs font-semibold bg-emerald-950/80 px-1 py-0.5 rounded border border-emerald-500/40">PROVED</span>, <span class="text-amber-400 font-mono text-xs font-semibold bg-amber-950/80 px-1 py-0.5 rounded border border-amber-500/40">INFERRED (≤0.70)</span>, <span class="text-blue-400 font-mono text-xs font-semibold bg-blue-950/80 px-1 py-0.5 rounded border border-blue-500/40">HUMAN</span>, or <span class="text-slate-400 font-mono text-xs font-semibold bg-slate-800 px-1 py-0.5 rounded border border-slate-700">UNKNOWN</span> with traceable evidence — never a hallucinated guess.
-            </p>
->>>>>>> Stashed changes
 
           <div class="mt-9 flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-3">
             <button onclick="showView('upload')" class="ent-btn-primary w-full sm:w-auto px-6 py-3 text-sm justify-center">
@@ -699,82 +570,12 @@ input[type=range] { accent-color: #4a7dff; }
         </div>
       </section>
 
-<<<<<<< Updated upstream
 <!-- 5-stage pipeline -->
       <section class="max-w-[1200px] mx-auto px-5 sm:px-8 space-y-10">
         <div class="max-w-2xl">
           <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">The 5-stage verification pipeline</h2>
           <p class="mt-3 text-sm text-[#9aa6b2] leading-relaxed">
             Every attribute passes through five deterministic checkpoints before reaching the commerce export gateway or the human review queue.
-=======
-      <!-- CHALLENGE → SOLUTION: HOW PASTE MEETS THE 4 EXPECTED OUTCOMES -->
-      <section id="solution" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        <div class="text-center space-y-2.5 max-w-3xl mx-auto">
-          <span class="ent-badge ent-badge-inferred text-xs">How We Solve the Challenge</span>
-          <h2 class="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white paste-heading">
-            Four Expected Outcomes · Delivered
-          </h2>
-          <div class="heading-rule"></div>
-          <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
-            The reviewers' checklist translated into concrete, working features — not slideware.
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Outcome 1 -->
-          <div class="glass-card rounded-xl p-5 space-y-3 relative group hover:border-emerald-500/60 hover:shadow-lg hover:shadow-emerald-500/10 transition-all">
-            <div class="w-8 h-8 rounded-lg bg-emerald-950 border border-emerald-500/40 text-emerald-400 font-mono font-bold text-xs flex items-center justify-center">1</div>
-            <h3 class="font-bold text-sm text-white font-display">Structured Intelligence from Limited Inputs</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              A single part number or datasheet fragment is enough: dual-pass VLM + rule extraction build complete attribute sets (value, UOM, taxonomy) from sparse source data.
-            </p>
-            <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800 font-medium">Document Intelligence + VLM</div>
-          </div>
-
-          <!-- Outcome 2 -->
-          <div class="glass-card rounded-xl p-5 space-y-3 relative group hover:border-cyan-500/60 hover:shadow-lg hover:shadow-cyan-500/10 transition-all">
-            <div class="w-8 h-8 rounded-lg bg-cyan-950 border border-cyan-500/40 text-cyan-400 font-mono font-bold text-xs flex items-center justify-center">2</div>
-            <h3 class="font-bold text-sm text-white font-display">Better Quality &amp; Consistency</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Deterministic normalization unifies units, aliases, and taxonomy to canonical industrial standards — every record is comparably structured and review-compliant.
-            </p>
-            <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800 font-medium">Canonical Normalization</div>
-          </div>
-
-          <!-- Outcome 3 -->
-          <div class="glass-card rounded-xl p-5 space-y-3 relative group hover:border-amber-500/60 hover:shadow-lg hover:shadow-amber-500/10 transition-all">
-            <div class="w-8 h-8 rounded-lg bg-amber-950 border border-amber-500/40 text-amber-400 font-mono font-bold text-xs flex items-center justify-center">3</div>
-            <h3 class="font-bold text-sm text-white font-display">Traceable Validation &amp; Enrichment</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Every value is PROVED / INFERRED / HUMAN / UNKNOWN with confidence scores and page–bounding-box citations. Inferred values never masquerade as verified facts.
-            </p>
-            <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800 font-medium">Traceable Provenance</div>
-          </div>
-
-          <!-- Outcome 4 -->
-          <div class="glass-card rounded-xl p-5 space-y-3 relative group hover:border-fuchsia-500/60 hover:shadow-lg hover:shadow-fuchsia-500/10 transition-all">
-            <div class="w-8 h-8 rounded-lg bg-fuchsia-950 border border-fuchsia-500/40 text-fuchsia-400 font-mono font-bold text-xs flex items-center justify-center">4</div>
-            <h3 class="font-bold text-sm text-white font-display">Efficient Scaling Across Catalogs</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Idempotent ingestion (SHA-256), sibling-SKU knowledge-graph inference, and a background job queue keep throughput high without compromising audit trails.
-            </p>
-            <div class="text-[11px] font-mono text-emerald-400 pt-2 border-t border-slate-800 font-medium">Knowledge Graph + Queues</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECTION 2: 5-STAGE PIPELINE ARCHITECTURE WALKTHROUGH -->
-      <section id="pipeline" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        
-        <div class="text-center space-y-2.5 max-w-3xl mx-auto">
-          <span class="ent-badge ent-badge-proved text-xs">Deterministic Architecture</span>
-          <h2 class="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white paste-heading">
-            The 5-Stage Verification &amp; Trust Pipeline
-          </h2>
-          <div class="heading-rule"></div>
-          <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
-            Every product attribute passes through 5 deterministic checkpoints before reaching the export gateway or the human verification queue.
->>>>>>> Stashed changes
           </p>
         </div>
 
@@ -819,7 +620,7 @@ input[type=range] { accent-color: #4a7dff; }
             <div>
               <h2 class="text-xl sm:text-2xl font-bold text-white">Confidence simulator</h2>
               <p class="text-xs sm:text-sm text-[#9aa6b2] mt-1">
-                <code class="text-brand-300 font-mono">confidence = strength × authority × agreement</code>
+                <code class="text-brand-300 font-mono">confidence = strength &times; authority &times; agreement</code>
               </p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
@@ -836,21 +637,21 @@ input[type=range] { accent-color: #4a7dff; }
                   <span class="text-[#c3cbd5] font-semibold">Extraction strength</span>
                   <span id="sim-val-strength" class="text-brand-300 font-bold">1.00 (Corroborated)</span>
                 </div>
-                <input id="sim-slider-strength" type="range" min="0.4" max="1.0" step="0.1" value="1.0" oninput="updateSimScore()" class="w-full">
+                <input id="sim-slider-strength" type="range" min="0.4" max="1.0" step="0.01" value="1.0" oninput="updateSimScore()" class="sim-range-slider w-full">
               </div>
               <div class="space-y-2">
                 <div class="flex justify-between text-xs font-mono">
                   <span class="text-[#c3cbd5] font-semibold">Source authority</span>
                   <span id="sim-val-authority" class="text-brand-300 font-bold">1.00 (OEM Datasheet)</span>
                 </div>
-                <input id="sim-slider-authority" type="range" min="0.3" max="1.0" step="0.1" value="1.0" oninput="updateSimScore()" class="w-full">
+                <input id="sim-slider-authority" type="range" min="0.3" max="1.0" step="0.01" value="1.0" oninput="updateSimScore()" class="sim-range-slider w-full">
               </div>
               <div class="space-y-2">
                 <div class="flex justify-between text-xs font-mono">
                   <span class="text-[#c3cbd5] font-semibold">Multi-source agreement</span>
                   <span id="sim-val-agreement" class="text-brand-300 font-bold">1.00 (≥2 Sources Agree)</span>
                 </div>
-                <input id="sim-slider-agreement" type="range" min="0.7" max="1.0" step="0.3" value="1.0" oninput="updateSimScore()" class="w-full">
+                <input id="sim-slider-agreement" type="range" min="0.7" max="1.0" step="0.01" value="1.0" oninput="updateSimScore()" class="sim-range-slider w-full">
               </div>
             </div>
 
@@ -991,18 +792,9 @@ input[type=range] { accent-color: #4a7dff; }
 
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/[0.06]">
         <div>
-<<<<<<< Updated upstream
           <h1 class="text-2xl sm:text-3xl font-bold text-white">Datasheet ingestion studio</h1>
           <p class="text-xs sm:text-sm text-[#9aa6b2] mt-1">
             Upload .xlsx, .csv or .pdf files and run the 5-stage pipeline in real time.
-=======
-          <div class="flex items-center gap-3">
-            <h1 class="text-2xl sm:text-3xl font-bold text-white font-display paste-heading">Dynamic Datasheet Ingestion Studio</h1>
-            <span class="ent-badge ent-badge-proved">Unilog Hackathon Ready</span>
-          </div>
-          <p class="text-xs sm:text-sm text-slate-400 mt-1">
-            Dynamic ingestion of evaluator-uploaded .xlsx, .csv, and .pdf files with strict manufacturer constraints and 5-stage automated pipeline execution.
->>>>>>> Stashed changes
           </p>
         </div>
         <div class="flex items-center gap-2">
@@ -1252,19 +1044,10 @@ input[type=range] { accent-color: #4a7dff; }
                 <span id="detail-leaf-category" class="px-2.5 py-0.5 rounded bg-brand-500/10 text-brand-300 border border-brand-500/40 font-semibold">Variable Frequency Drives (VFD)</span>
               </div>
             </div>
-<<<<<<< Updated upstream
             <div class="flex items-center gap-3 flex-wrap">
               <h1 id="detail-title" class="font-display text-2xl font-bold text-white">ABB — ACS580-01-018A-4</h1>
               <span id="detail-part-badge" class="ent-badge bg-[#0c0f15] text-brand-300 border-white/[0.1]">MPN: ACS580-01-018A-4</span>
               <span id="detail-mfg-badge" class="ent-badge bg-[#0c0f15] text-[#c3cbd5] border-white/[0.1]">Brand: ABB</span>
-=======
-
-            <!-- Product Identity & Meta -->
-            <div class="flex items-center gap-3 flex-wrap pt-1">
-              <h1 class="font-bold text-2xl text-white font-display paste-heading" id="detail-title">ABB — ACS580-01-018A-4</h1>
-              <span id="detail-part-badge" class="ent-badge font-mono bg-slate-900 text-emerald-400 border-slate-700 text-xs">MPN: ACS580-01-018A-4</span>
-              <span id="detail-mfg-badge" class="ent-badge font-mono bg-slate-900 text-cyan-400 border-slate-700 text-xs">Brand: ABB</span>
->>>>>>> Stashed changes
               <span id="detail-status-badge" class="ent-badge ent-badge-proved">REVIEW</span>
             </div>
           </div>
@@ -1474,13 +1257,8 @@ input[type=range] { accent-color: #4a7dff; }
     <div id="batch-view" class="hidden max-w-[1200px] mx-auto px-5 sm:px-8 py-10 space-y-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.06]">
         <div>
-<<<<<<< Updated upstream
           <h1 class="text-2xl font-bold text-white">Batch intelligence catalog</h1>
           <p class="text-xs text-[#9aa6b2] mt-1">Processed industrial SKUs, confidence distributions and export packages.</p>
-=======
-          <h1 class="text-2xl font-bold text-white font-display paste-heading">Batch Intelligence Catalog</h1>
-          <p class="text-xs text-slate-400 mt-1">Processed industrial SKUs, confidence distributions, and Unilog Excel export packages.</p>
->>>>>>> Stashed changes
         </div>
         <div class="flex items-center gap-2">
           <button onclick="downloadUnilogExcelFromCatalog()" class="ent-btn-unilog text-xs px-4 py-2">Download Unilog .xlsx</button>
@@ -1497,13 +1275,8 @@ input[type=range] { accent-color: #4a7dff; }
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/[0.06]">
         <div>
           <div class="flex items-center gap-3">
-<<<<<<< Updated upstream
             <h1 class="text-2xl font-bold text-white">Human-in-the-loop review queue</h1>
             <span class="ent-badge ent-badge-inferred">Trust gateway &lt;0.90</span>
-=======
-            <h1 class="text-2xl font-bold tracking-tight text-white font-display paste-heading">Human-in-the-Loop Review Queue</h1>
-            <span class="ent-badge ent-badge-inferred">Trust Gateway &lt;0.90</span>
->>>>>>> Stashed changes
           </div>
           <p class="text-xs text-[#9aa6b2] mt-1">Attributes flagged for review: inferred siblings, disputes and boundary alerts.</p>
         </div>
@@ -1561,35 +1334,18 @@ input[type=range] { accent-color: #4a7dff; }
   <!-- ========================================================= -->
   <!-- FOOTER                                                      -->
   <!-- ========================================================= -->
-<<<<<<< Updated upstream
   <footer class="border-t border-white/[0.06] bg-[#0a0d12] py-8 mt-auto text-xs text-[#667180]">
     <div class="max-w-[1200px] mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono">
-=======
-  <footer class="border-t border-slate-800/80 bg-slate-950 py-8 mt-auto text-xs text-slate-500 relative overflow-hidden">
-    <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-500/60 to-transparent"></div>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono">
->>>>>>> Stashed changes
       <div class="flex items-center gap-2">
         <span class="font-bold text-[#c3cbd5] font-sans">PASTE Platform</span>
         <span>© 2026 · Zero-hallucination industrial product intelligence</span>
       </div>
-<<<<<<< Updated upstream
       <div class="flex items-center gap-4 text-[#667180] flex-wrap">
         <span>Unilog 5-tier descriptions</span>
         <span>·</span>
         <span>Value &amp; UOM separation</span>
         <span>·</span>
         <span>.xlsx export</span>
-=======
-      <div class="flex items-center gap-4 text-slate-400 flex-wrap">
-        <span>Product Intelligence Challenge · AI Agents + Document Intelligence + VLM + Trust</span>
-        <span>•</span>
-        <span>5-Tier Commercial Descriptions</span>
-        <span>•</span>
-        <span>Explicit Value &amp; UOM Separation</span>
-        <span>•</span>
-        <span>Unilog .xlsx Export</span>
->>>>>>> Stashed changes
       </div>
     </div>
   </footer>
@@ -2150,7 +1906,7 @@ input[type=range] { accent-color: #4a7dff; }
 
       const totalSKUs = stagedBatch.length;
       logPipeline(`🚀 INITIATING 5-STAGE DETERMINISTIC PIPELINE FOR ${totalSKUs} SKUs...`);
-      logPipeline(`🔒 E-COMMERCE GATEWAY: ACTIVE (Amazon, eBay, Walmart strictly blocked)`);
+      logPipeline(`🔒’ E-COMMERCE GATEWAY: ACTIVE (Amazon, eBay, Walmart strictly blocked)`);
 
       // STAGE 1: SHA-256 Hash & Ingestion
       setStageVisual(1, 'active');
@@ -2893,11 +2649,24 @@ input[type=range] { accent-color: #4a7dff; }
     }
 
     // --- Interactive Trust Simulator ---
+    function updateSliderTrack(input) {
+      if (!input) return;
+      const min = parseFloat(input.min) || 0;
+      const max = parseFloat(input.max) || 1;
+      const val = parseFloat(input.value) || 0;
+      const pct = Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100));
+      input.style.background = `linear-gradient(to right, #4a7dff 0%, #4a7dff ${pct}%, #141922 ${pct}%, #141922 100%)`;
+    }
+
     function updateSimScore() {
       const sInput = document.getElementById('sim-slider-strength');
       const aInput = document.getElementById('sim-slider-authority');
       const mInput = document.getElementById('sim-slider-agreement');
       if (!sInput || !aInput || !mInput) return;
+
+      updateSliderTrack(sInput);
+      updateSliderTrack(aInput);
+      updateSliderTrack(mInput);
 
       const s = parseFloat(sInput.value);
       const a = parseFloat(aInput.value);
@@ -2909,21 +2678,21 @@ input[type=range] { accent-color: #4a7dff; }
       const mLabel = document.getElementById('sim-val-agreement');
       
       if (sLabel) {
-        let tag = s >= 1.0 ? '(Corroborated)' : (s >= 0.8 ? '(Near-Match)' : (s >= 0.5 ? '(Single-Pass)' : '(Dispute)'));
+        let tag = s >= 0.95 ? '(Corroborated)' : (s >= 0.75 ? '(Near-Match)' : (s >= 0.45 ? '(Single-Pass)' : '(Dispute)'));
         sLabel.textContent = `${s.toFixed(2)} ${tag}`;
       }
       if (aLabel) {
-        let tag = a >= 1.0 ? '(OEM Datasheet)' : (a >= 0.7 ? '(Distributor)' : (a >= 0.5 ? '(Sibling Graph)' : '(Model Estimated)'));
+        let tag = a >= 0.95 ? '(OEM Datasheet)' : (a >= 0.65 ? '(Distributor)' : (a >= 0.45 ? '(Sibling Graph)' : '(Model Estimated)'));
         aLabel.textContent = `${a.toFixed(2)} ${tag}`;
       }
       if (mLabel) {
-        let tag = m >= 1.0 ? '(≥2 Sources Agree)' : '(Single Source)';
+        let tag = m >= 0.95 ? '(≥2 Sources Agree)' : '(Single Source)';
         mLabel.textContent = `${m.toFixed(2)} ${tag}`;
       }
 
       // Mathematical Confidence Formula
       let conf = s * a * m;
-      if (a <= 0.5) conf = Math.min(conf, 0.70); // Inferred cap
+      if (a <= 0.55) conf = Math.min(conf, 0.70); // Inferred cap
       conf = Math.min(1.0, Math.max(0.0, conf));
 
       const totalEl = document.getElementById('sim-total-score');
@@ -2935,24 +2704,24 @@ input[type=range] { accent-color: #4a7dff; }
       const desc = document.getElementById('sim-routing-desc');
 
       if (card && title && desc) {
-        if (s <= 0.4) {
+        if (s <= 0.45) {
           card.className = 'p-3.5 rounded-lg bg-rose-950/40 border border-rose-500/40 space-y-1';
           title.className = 'text-rose-300 font-bold text-sm font-display flex items-center gap-2';
           title.innerHTML = '<span>⚠️ FORCED REVIEW: PASS DISCREPANCY</span>';
           desc.className = 'text-xs text-rose-300/90 leading-relaxed font-sans';
           desc.textContent = 'Extraction passes disagree. Discrepancy collapsed to DISPUTE state for mandatory operator review.';
           if (totalEl) totalEl.className = 'font-display text-4xl sm:text-5xl font-bold text-rose-400';
-        } else if (a <= 0.5) {
+        } else if (a <= 0.55) {
           card.className = 'p-3.5 rounded-lg bg-amber-950/40 border border-amber-500/40 space-y-1';
           title.className = 'text-amber-300 font-bold text-sm font-display flex items-center gap-2';
-          title.innerHTML = '<span>🔍 INFERRED ATTRIBUTE (≤0.70 CAP)</span>';
+          title.innerHTML = '<span>🔒 INFERRED ATTRIBUTE (≤0.70 CAP)</span>';
           desc.className = 'text-xs text-amber-300/90 leading-relaxed font-sans';
           desc.textContent = 'Derived from series sibling SKU knowledge graph. Strictly capped at ≤0.70 confidence and routed to review.';
           if (totalEl) totalEl.className = 'font-display text-4xl sm:text-5xl font-bold text-amber-400';
         } else if (conf >= 0.90) {
           card.className = 'p-3.5 rounded-lg bg-emerald-950/40 border border-emerald-500/40 space-y-1';
           title.className = 'text-emerald-300 font-bold text-sm font-display flex items-center gap-2';
-          title.innerHTML = '<span>✓ AUTO-PUBLISH READY</span>';
+          title.innerHTML = '<span>✔ AUTO-PUBLISH READY</span>';
           desc.className = 'text-xs text-emerald-400/90 leading-relaxed font-sans';
           desc.textContent = 'Confidence ≥ 0.90 with official OEM authority. Field automatically exports to Unilog .xlsx & GS1 CSV.';
           if (totalEl) totalEl.className = 'font-display text-4xl sm:text-5xl font-bold text-emerald-400';
@@ -2987,6 +2756,16 @@ input[type=range] { accent-color: #4a7dff; }
         mInput.value = 0.7;
       }
       updateSimScore();
+    }
+
+    function initSimulatorEvents() {
+      ['sim-slider-strength', 'sim-slider-authority', 'sim-slider-agreement'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('input', updateSimScore);
+          el.addEventListener('change', updateSimScore);
+        }
+      });
     }
 
     // --- Realtime SSE ---
@@ -3040,43 +2819,9 @@ input[type=range] { accent-color: #4a7dff; }
     loadSampleDataset('vfds');
     connectRealtime();
     loadQueue();
+    initSimulatorEvents();
     updateSimScore();
-  </script>
-
-  <script>
-    (function () {
-      var toggle = document.getElementById('menu-toggle');
-      var menu = document.getElementById('mobile-menu');
-      var iconOpen = document.getElementById('menu-icon-open');
-      var iconClose = document.getElementById('menu-icon-close');
-
-      if (toggle && menu) {
-        toggle.addEventListener('click', function () {
-          var open = menu.classList.toggle('hidden') === false;
-          toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-          if (iconOpen) iconOpen.classList.toggle('hidden', open);
-          if (iconClose) iconClose.classList.toggle('hidden', !open);
-        });
-        menu.addEventListener('click', function (e) {
-          if (e.target.closest('[data-nav]')) {
-            menu.classList.add('hidden');
-            toggle.setAttribute('aria-expanded', 'false');
-            if (iconOpen) iconOpen.classList.remove('hidden');
-            if (iconClose) iconClose.classList.add('hidden');
-          }
-        });
-      }
-
-      var desktopBadge = document.getElementById('nav-badge-queue');
-      var mobileBadge = document.getElementById('nav-badge-queue-mobile');
-      var mobileConn = document.getElementById('conn-text-mobile');
-      var connText = document.getElementById('conn-text');
-      if (mobileBadge && desktopBadge && !desktopBadge.classList.contains('hidden')) {
-        mobileBadge.textContent = desktopBadge.textContent;
-        mobileBadge.classList.remove('hidden');
-      }
-      if (mobileConn && connText) mobileConn.textContent = connText.textContent;
-    })();
   </script>
 </body>
 </html>
+
