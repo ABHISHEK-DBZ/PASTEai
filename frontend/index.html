@@ -245,19 +245,21 @@
 
     table { border-collapse: collapse; }
 
-    /* App chrome (nav + status pills) only appears once inside the product views.
+    /* App chrome (nav + status pills + sidebar) only appears once inside the product views.
        Hidden while the marketing landing page (home-view) is visible. */
     .app-nav, .app-pill {
       transition: opacity .2s ease;
     }
+    body.on-landing-page .app-nav,
+    body.on-landing-page .app-pill,
+    body.on-landing-page .paste-sidebar,
     body:has(#home-view:not(.hidden)) .app-nav,
-    body:has(#home-view:not(.hidden)) .app-pill {
-      opacity: 0;
-      pointer-events: none;
-      visibility: hidden;
+    body:has(#home-view:not(.hidden)) .app-pill,
+    body:has(#home-view:not(.hidden)) .paste-sidebar {
+      display: none !important;
     }
     /* The launch CTA is only needed on the marketing landing page. */
-    body:not(:has(#home-view:not(.hidden))) .app-cta {
+    body:not(:has(#home-view:not(.hidden))):not(.on-landing-page) .app-cta {
       display: none;
     }
 
@@ -435,7 +437,7 @@
   </style>
 </head>
 
-<body class="min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+<body class="min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white on-landing-page">
 
   <!-- Animated top affinity bar -->
   <div class="top-affinity-bar" aria-hidden="true"></div>
@@ -1405,6 +1407,9 @@
       $$('#home-view, #queue-view, #detail-view, #batch-view, #upload-view').forEach(el => el.classList.add('hidden'));
       const target = $(`#${view}-view`);
       if (target) target.classList.remove('hidden');
+
+      const isLanding = (view === 'home');
+      document.body.classList.toggle('on-landing-page', isLanding);
 
       $$('.ent-nav-link').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.nav === view);
