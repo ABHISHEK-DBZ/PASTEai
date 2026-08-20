@@ -237,7 +237,108 @@ function App() {
         </div>
       </div>
 
-      {/* 2. 5-TIER COMMERCIAL DESCRIPTIONS CARD */}
+      {/* 2. NORMALIZED ATTRIBUTE TABLE WITH EXPLICIT VALUE & UOM SEPARATION */}
+      <section className="cyber-card">
+        <div className="card-header">
+          <div>
+            <h2 className="card-title">
+              <span style={{ color: '#00e5ff' }}>●</span> Normalized Attributes Table with Explicit Value & UOM Separation
+            </h2>
+            <div style={{ color: '#94a3b8', fontSize: '0.75rem', marginTop: '0.25rem' }}>
+              Physical attributes are strictly split into distinct Attribute Value and Unit of Measure (UOM) columns. Sibling SKUs capped at ≤0.70.
+            </div>
+          </div>
+          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '0.75rem', color: '#94a3b8' }}>
+            {fields.length} attributes loaded
+          </div>
+        </div>
+
+        <div className="table-wrapper">
+          <table className="cyber-table">
+            <thead>
+              <tr>
+                <th>Attribute Label</th>
+                <th style={{ color: '#34d399' }}>Value</th>
+                <th style={{ color: '#38bdf8' }}>UOM</th>
+                <th>Confidence</th>
+                <th>Status</th>
+                <th style={{ color: '#fbbf24' }}>Provenance</th>
+                <th style={{ textAlign: 'right', position: 'sticky', right: 0, background: 'var(--card-solid)', zIndex: 2 }}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {fields.map(f => {
+                const isInf = f.field_type === 'INFERRED';
+                const confColors = getConfidenceColor(f.confidence);
+                return (
+                  <tr key={f.id}>
+                    <td>
+                      <div style={{ fontWeight: 700, color: '#fff' }}>{f.attribute_label || f.attribute_key}</div>
+                      <div style={{ fontSize: '0.7rem', color: '#64748b', fontFamily: 'JetBrains Mono' }}>{f.attribute_key}</div>
+                    </td>
+
+                    <td>
+                      <input
+                        type="text"
+                        className="cyber-input attr-val-input"
+                        value={f.value || ''}
+                        onChange={(e) => handleFieldChange(f.id, 'value', e.target.value)}
+                      />
+                    </td>
+
+                    <td>
+                      <input
+                        type="text"
+                        className="cyber-input attr-uom-input"
+                        value={f.unit || ''}
+                        onChange={(e) => handleFieldChange(f.id, 'unit', e.target.value)}
+                      />
+                    </td>
+
+                    <td>
+                      <span className={`badge ${f.confidence >= 0.9 ? 'badge-proved' : f.confidence >= 0.7 ? 'badge-inferred' : 'badge-dispute'}`} style={{ width: 'fit-content' }}>
+                        {Math.round((f.confidence || 0) * 100)}%
+                      </span>
+                    </td>
+
+                    <td>
+                      <span className={`badge ${isInf ? 'badge-inferred' : 'badge-proved'}`}>
+                        {f.field_type}{isInf ? ' (≤0.70)' : ''}
+                      </span>
+                    </td>
+
+                    <td>
+                      <a href="/sample_datasheet.pdf" target="_blank" rel="noreferrer" className="provenance-link">
+                        📄 OEM PDF ↗
+                      </a>
+                    </td>
+
+                    <td style={{ textAlign: 'right', position: 'sticky', right: 0, background: 'rgba(13, 21, 39, 0.95)', backdropFilter: 'blur(8px)', zIndex: 2 }}>
+                      {f.review_status === 'pending' ? (
+                        <div style={{ display: 'flex', gap: '0.35rem', justifyContent: 'flex-end' }}>
+                          <button className="btn btn-primary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => handleAcceptField(f.id)}>
+                            Accept
+                          </button>
+                          <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => handleSaveField(f.id)}>
+                            Save
+                          </button>
+                          <button className="btn btn-danger" style={{ padding: '0.25rem 0.4rem', fontSize: '0.75rem' }} onClick={() => handleRejectField(f.id)}>
+                            ✕
+                          </button>
+                        </div>
+                      ) : (
+                        <span className="badge badge-proved">{f.review_status.toUpperCase()}</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* 3. 5-TIER COMMERCIAL DESCRIPTIONS CARD */}
       <section className="cyber-card">
         <div className="card-header">
           <div>
@@ -337,7 +438,7 @@ function App() {
                 </div>
               </div>
               <textarea
-                rows={5}
+                rows={4}
                 className="cyber-input"
                 value={descriptions.long}
                 onChange={(e) => handleDescChange('long', e.target.value)}
@@ -359,126 +460,13 @@ function App() {
                 </div>
               </div>
               <textarea
-                rows={5}
+                rows={4}
                 className="cyber-input"
                 value={descriptions.mfg}
                 onChange={(e) => handleDescChange('mfg', e.target.value)}
               />
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* 3. NORMALIZED ATTRIBUTE TABLE WITH EXPLICIT VALUE & UOM SEPARATION */}
-      <section className="cyber-card">
-        <div className="card-header">
-          <div>
-            <h2 className="card-title">
-              <span style={{ color: '#00e5ff' }}>●</span> Normalized Attributes Table with Explicit Value & UOM Separation
-            </h2>
-            <div style={{ color: '#94a3b8', fontSize: '0.75rem', marginTop: '0.25rem' }}>
-              Physical attributes are strictly split into distinct Attribute Value and Unit of Measure (UOM) columns. Sibling SKUs capped at ≤0.70.
-            </div>
-          </div>
-          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '0.75rem', color: '#94a3b8' }}>
-            {fields.length} attributes loaded
-          </div>
-        </div>
-
-        <div className="table-wrapper">
-          <table className="cyber-table">
-            <thead>
-              <tr>
-                <th>Attribute Label</th>
-                <th style={{ color: '#34d399' }}>Normalized Value</th>
-                <th style={{ color: '#38bdf8' }}>UOM</th>
-                <th>Confidence Score</th>
-                <th>Status</th>
-                <th style={{ color: '#fbbf24' }}>Source Provenance</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {fields.map(f => {
-                const isInf = f.field_type === 'INFERRED';
-                const confColors = getConfidenceColor(f.confidence);
-                return (
-                  <tr key={f.id}>
-                    <td>
-                      <div style={{ fontWeight: 700, color: '#fff' }}>{f.attribute_label || f.attribute_key}</div>
-                      <div style={{ fontSize: '0.7rem', color: '#64748b', fontFamily: 'JetBrains Mono' }}>{f.attribute_key}</div>
-                    </td>
-
-                    <td>
-                      <input
-                        type="text"
-                        className="cyber-input attr-val-input"
-                        value={f.value || ''}
-                        onChange={(e) => handleFieldChange(f.id, 'value', e.target.value)}
-                      />
-                    </td>
-
-                    <td>
-                      <input
-                        type="text"
-                        className="cyber-input attr-uom-input"
-                        value={f.unit || ''}
-                        onChange={(e) => handleFieldChange(f.id, 'unit', e.target.value)}
-                      />
-                    </td>
-
-                    <td>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', minWidth: '90px' }}>
-                        <span className={`badge ${f.confidence >= 0.9 ? 'badge-proved' : f.confidence >= 0.7 ? 'badge-inferred' : 'badge-dispute'}`} style={{ width: 'fit-content' }}>
-                          {Math.round((f.confidence || 0) * 100)}%
-                        </span>
-                        <div style={{ width: '80px', height: '4px', background: 'rgba(30, 41, 59, 0.6)', borderRadius: '2px', overflow: 'hidden' }}>
-                          <div style={{
-                            width: `${(f.confidence || 0) * 100}%`,
-                            height: '100%',
-                            background: confColors.color,
-                            borderRadius: '2px',
-                            transition: 'width 0.5s ease',
-                            boxShadow: `0 0 6px ${confColors.color}66`
-                          }} />
-                        </div>
-                      </div>
-                    </td>
-
-                    <td>
-                      <span className={`badge ${isInf ? 'badge-inferred' : 'badge-proved'}`}>
-                        {f.field_type}{isInf ? ' (≤0.70)' : ''}
-                      </span>
-                    </td>
-
-                    <td>
-                      <a href="/sample_datasheet.pdf" target="_blank" rel="noreferrer" className="provenance-link">
-                        📄 OEM Datasheet ↗
-                      </a>
-                    </td>
-
-                    <td style={{ textAlign: 'right' }}>
-                      {f.review_status === 'pending' ? (
-                        <div style={{ display: 'flex', gap: '0.35rem', justifyContent: 'flex-end' }}>
-                          <button className="btn btn-primary" style={{ padding: '0.3rem 0.6rem', fontSize: '0.75rem' }} onClick={() => handleAcceptField(f.id)}>
-                            Accept
-                          </button>
-                          <button className="btn btn-secondary" style={{ padding: '0.3rem 0.6rem', fontSize: '0.75rem' }} onClick={() => handleSaveField(f.id)}>
-                            Save
-                          </button>
-                          <button className="btn btn-danger" style={{ padding: '0.3rem 0.5rem', fontSize: '0.75rem' }} onClick={() => handleRejectField(f.id)}>
-                            ✕
-                          </button>
-                        </div>
-                      ) : (
-                        <span className="badge badge-proved">{f.review_status.toUpperCase()}</span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
         </div>
       </section>
 

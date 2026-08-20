@@ -1028,43 +1028,43 @@
     <!-- ========================================================= -->
     <!-- PRODUCT REVIEW                                              -->
     <!-- ========================================================= -->
-    <div id="detail-view" class="hidden max-w-[1200px] mx-auto px-5 sm:px-8 py-10 space-y-6">
+    <div id="detail-view" class="hidden max-w-[1400px] mx-auto px-4 sm:px-6 py-4 space-y-3.5">
 
-      <!-- Product header -->
-      <div class="glass-card-elevated rounded-2xl p-6 space-y-5">
-        <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
-          <div class="space-y-2.5">
-            <div class="flex items-center gap-2 flex-wrap text-xs font-mono">
-              <span class="text-[#667180]">Taxonomy:</span>
-              <div id="detail-taxonomy-breadcrumb" class="flex items-center gap-1.5 flex-wrap">
+      <!-- Product header (Compact & Sleek) -->
+      <div class="glass-card-elevated rounded-xl p-3.5 sm:p-4 space-y-2.5 border border-white/[0.08]">
+        <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+          <div class="space-y-1.5">
+            <div class="flex items-center gap-1.5 flex-wrap text-xs font-mono">
+              <span class="text-[#667180] text-[11px]">Taxonomy:</span>
+              <div id="detail-taxonomy-breadcrumb" class="flex items-center gap-1 flex-wrap text-[11px]">
                 <span class="px-2 py-0.5 rounded bg-[#0c0f15] text-[#9aa6b2] border border-white/[0.07]">Industrial Automation</span>
                 <span class="text-[#44505f]">›</span>
                 <span class="px-2 py-0.5 rounded bg-[#0c0f15] text-[#9aa6b2] border border-white/[0.07]">Drives</span>
                 <span class="text-[#44505f]">›</span>
-                <span id="detail-leaf-category" class="px-2.5 py-0.5 rounded bg-brand-500/10 text-brand-300 border border-brand-500/40 font-semibold">Variable Frequency Drives (VFD)</span>
+                <span id="detail-leaf-category" class="px-2 py-0.5 rounded bg-brand-500/10 text-brand-300 border border-brand-500/40 font-semibold">Variable Frequency Drives (VFD)</span>
               </div>
             </div>
-            <div class="flex items-center gap-3 flex-wrap">
-              <h1 id="detail-title" class="font-display text-2xl font-bold text-white">ABB — ACS580-01-018A-4</h1>
-              <span id="detail-part-badge" class="ent-badge bg-[#0c0f15] text-brand-300 border-white/[0.1]">MPN: ACS580-01-018A-4</span>
-              <span id="detail-mfg-badge" class="ent-badge bg-[#0c0f15] text-[#c3cbd5] border-white/[0.1]">Brand: ABB</span>
-              <span id="detail-status-badge" class="ent-badge ent-badge-proved">REVIEW</span>
+            <div class="flex items-center gap-2.5 flex-wrap">
+              <h1 id="detail-title" class="font-display text-xl sm:text-2xl font-bold text-white tracking-tight">ABB — ACS580-01-018A-4</h1>
+              <span id="detail-part-badge" class="ent-badge bg-[#0c0f15] text-brand-300 border-white/[0.1] text-[10px]">MPN: ACS580-01-018A-4</span>
+              <span id="detail-mfg-badge" class="ent-badge bg-[#0c0f15] text-[#c3cbd5] border-white/[0.1] text-[10px]">Brand: ABB</span>
+              <span id="detail-status-badge" class="ent-badge ent-badge-proved text-[10px]">REVIEW</span>
             </div>
           </div>
           <div class="flex items-center gap-2 flex-wrap">
-            <button onclick="downloadUnilogExcelFromActiveProduct()" class="ent-btn-unilog text-xs px-4 py-2">
+            <button onclick="downloadUnilogExcelFromActiveProduct()" class="ent-btn-unilog text-xs px-3.5 py-1.5">
               Download Unilog Excel
             </button>
-            <button onclick="acceptAllCurrentProduct()" class="ent-btn-primary text-xs px-3 py-2">Accept All</button>
-            <button onclick="exportCurrentJsonLd()" class="ent-btn-secondary text-xs px-3 py-2">JSON-LD</button>
-            <button onclick="exportCurrentGs1()" class="ent-btn-secondary text-xs px-3 py-2">GS1 CSV</button>
+            <button onclick="acceptAllCurrentProduct()" class="ent-btn-primary text-xs px-3 py-1.5">Accept All</button>
+            <button onclick="exportCurrentJsonLd()" class="ent-btn-secondary text-xs px-2.5 py-1.5">JSON-LD</button>
+            <button onclick="exportCurrentGs1()" class="ent-btn-secondary text-xs px-2.5 py-1.5">GS1 CSV</button>
           </div>
         </div>
 
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-white/[0.06] text-xs font-mono">
-          <div class="flex items-center gap-3 flex-wrap">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-white/[0.06] text-[11px] font-mono">
+          <div class="flex items-center gap-2 flex-wrap">
             <span class="text-[#667180]">Verified datasheet:</span>
-            <a id="btn-open-source-pdf" href="/sample_datasheet.pdf" target="_blank" class="doc-link">
+            <a id="btn-open-source-pdf" href="/sample_datasheet.pdf" target="_blank" class="doc-link text-[11px] py-0.5 px-2">
               OEM Datasheet PDF
               <span>↗</span>
             </a>
@@ -1077,158 +1077,37 @@
         </div>
       </div>
 
-      <!-- 5-tier descriptions -->
-      <section class="glass-card-elevated rounded-2xl p-6 sm:p-7 space-y-6">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/[0.06]">
+      <!-- 1. NORMALIZED ATTRIBUTES & COMPACT EVIDENCE (Immediately visible on initial screen) -->
+      <section class="space-y-2.5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <div class="flex items-center gap-3 flex-wrap">
+            <div class="flex items-center gap-2.5">
               <span class="w-2.5 h-2.5 rounded-full bg-brand-400"></span>
-              <h2 class="text-lg font-bold text-white">5-tier commercial descriptions</h2>
-              <span class="ent-badge bg-brand-500/10 text-brand-300 border-brand-500/40">Unilog spec</span>
+              <h2 class="text-base sm:text-lg font-bold text-white tracking-tight">Normalized attributes</h2>
+              <span class="ent-badge bg-brand-500/10 text-brand-300 border-brand-500/40 font-mono text-[10px]">Value · UOM split</span>
             </div>
-            <p class="text-xs text-[#9aa6b2] mt-1">Live character-limit enforcement per tier.</p>
+            <p class="text-[11px] text-[#9aa6b2] mt-0.5">Physical attributes are split into explicit value and UOM columns. Sibling-inferred values are capped at ≤0.70.</p>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="autoSynthesizeDescriptions()" class="ent-btn-secondary text-xs px-3 py-1.5">
-              Auto-synthesize from specs
-            </button>
-            <button onclick="copyAllDescriptions()" id="btn-copy-all-desc" class="ent-btn-secondary text-xs px-3 py-1.5">
-              Copy all
-            </button>
+            <span id="attr-count-summary" class="text-xs font-mono text-brand-300 font-semibold bg-brand-500/10 px-2.5 py-1 rounded-md border border-brand-500/30">0 normalized attributes</span>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          <div class="lg:col-span-6 panel p-4 space-y-2.5">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-white font-mono">1 · Mobile description</span>
-                <span class="text-[10px] text-[#667180] font-mono">max 80 chars</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span id="badge-desc-mobile" class="ent-badge char-badge-ok font-mono text-[11px] px-2 py-0.5">0 / 80 chars</span>
-                <button onclick="copyText('desc-mobile', 'Mobile description copied')" class="icon-btn" title="Copy">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                </button>
-              </div>
-            </div>
-            <input type="text" id="desc-mobile" class="ent-input w-full font-mono text-xs text-white" placeholder="e.g. ABB ACS580-01-018A-4 7.5kW 400V IP21 VFD" oninput="handleDescInput('mobile', 80)">
-            <div class="flex items-center justify-between text-[11px] font-mono text-[#667180]">
-              <span>Limit: 80 chars</span>
-              <span id="status-desc-mobile" class="text-brand-300">Within limit</span>
-            </div>
-          </div>
-
-          <div class="lg:col-span-6 panel p-4 space-y-2.5">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-white font-mono">2 · In-search description</span>
-                <span class="text-[10px] text-[#667180] font-mono">max 150 chars</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span id="badge-desc-search" class="ent-badge char-badge-ok font-mono text-[11px] px-2 py-0.5">0 / 150 chars</span>
-                <button onclick="copyText('desc-search', 'In-search description copied')" class="icon-btn" title="Copy">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                </button>
-              </div>
-            </div>
-            <input type="text" id="desc-search" class="ent-input w-full font-mono text-xs text-white" placeholder="e.g. ABB ACS580-01-018A-4 7.5 kW VFD, 400V AC, 17.7A, IP21" oninput="handleDescInput('search', 150)">
-            <div class="flex items-center justify-between text-[11px] font-mono text-[#667180]">
-              <span>Limit: 150 chars</span>
-              <span id="status-desc-search" class="text-brand-300">Within limit</span>
-            </div>
-          </div>
-
-          <div class="lg:col-span-12 panel p-4 space-y-2.5">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-white font-mono">3 · Short description</span>
-                <span class="text-[10px] text-[#667180] font-mono">max 250 chars</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span id="badge-desc-short" class="ent-badge char-badge-ok font-mono text-[11px] px-2 py-0.5">0 / 250 chars</span>
-                <button onclick="copyText('desc-short', 'Short description copied')" class="icon-btn" title="Copy">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                </button>
-              </div>
-            </div>
-            <textarea id="desc-short" rows="2" class="ent-input w-full font-mono text-xs text-white leading-relaxed resize-y" placeholder="e.g. Heavy-duty industrial VFD model ACS580-01-018A-4 by ABB, rated 7.5 kW at 400V AC with IP21 protection." oninput="handleDescInput('short', 250)"></textarea>
-            <div class="flex items-center justify-between text-[11px] font-mono text-[#667180]">
-              <span>Limit: 250 chars</span>
-              <span id="status-desc-short" class="text-brand-300">Within limit</span>
-            </div>
-          </div>
-
-          <div class="lg:col-span-6 panel p-4 space-y-2.5">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-white font-mono">4 · Long / retail description</span>
-                <span class="ent-badge bg-brand-500/10 text-brand-300 border-brand-500/40 text-[10px]">Bulleted specs</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span id="badge-desc-long" class="ent-badge char-badge-ok font-mono text-[11px] px-2 py-0.5">0 chars</span>
-                <button onclick="copyText('desc-long', 'Long description copied')" class="icon-btn" title="Copy">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                </button>
-              </div>
-            </div>
-            <textarea id="desc-long" rows="5" class="ent-input w-full font-mono text-xs text-white leading-relaxed resize-y scrollbar-ent" placeholder="• Part Number: ABB ACS580-01-018A-4&#10;• Power Rating: 7.5 kW (10 hp)&#10;• Operating Voltage: 400V AC 3-Phase" oninput="handleDescInput('long', 0)"></textarea>
-            <div class="flex items-center justify-between text-[11px] font-mono text-[#667180]">
-              <span>Structured spec layout</span>
-              <span class="text-[#9aa6b2]">Unilog retail format</span>
-            </div>
-          </div>
-
-          <div class="lg:col-span-6 panel p-4 space-y-2.5">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-white font-mono">5 · Marketing description</span>
-                <span class="ent-badge bg-brand-500/10 text-brand-300 border-brand-500/40 text-[10px]">OEM copy</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span id="badge-desc-mfg" class="ent-badge char-badge-ok font-mono text-[11px] px-2 py-0.5">0 chars</span>
-                <button onclick="copyText('desc-mfg', 'Marketing description copied')" class="icon-btn" title="Copy">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                </button>
-              </div>
-            </div>
-            <textarea id="desc-mfg" rows="5" class="ent-input w-full font-mono text-xs text-white leading-relaxed resize-y scrollbar-ent" placeholder="Official ABB ACS580 series technical specification, verified against OEM engineering drawings." oninput="handleDescInput('mfg', 0)"></textarea>
-            <div class="flex items-center justify-between text-[11px] font-mono text-[#667180]">
-              <span>Direct OEM copy</span>
-              <span class="text-brand-300">Zero hallucination guarantee</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Normalized attributes -->
-      <section class="space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <div class="flex items-center gap-3">
-              <span class="w-2.5 h-2.5 rounded-full bg-brand-400"></span>
-              <h2 class="text-lg font-bold text-white">Normalized attributes</h2>
-              <span class="ent-badge bg-brand-500/10 text-brand-300 border-brand-500/40 font-mono text-[11px]">Value · UOM split</span>
-            </div>
-            <p class="text-xs text-[#9aa6b2] mt-1">Physical attributes are split into explicit value and UOM columns. Sibling-inferred values are capped at ≤0.70.</p>
-          </div>
-          <span id="attr-count-summary" class="text-xs font-mono text-[#9aa6b2]">0 normalized attributes</span>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          <div class="lg:col-span-8 space-y-4">
-            <div class="glass-card-elevated rounded-xl overflow-hidden">
-              <div class="overflow-x-auto scrollbar-ent">
-                <table class="w-full text-left text-xs">
-                  <thead>
-                    <tr class="bg-[#0c0f15] border-b border-white/[0.06] text-[#9aa6b2] font-mono uppercase text-[10px]">
-                      <th class="p-3 font-semibold">Attribute</th>
-                      <th class="p-3 font-semibold">Value</th>
-                      <th class="p-3 font-semibold">UOM</th>
-                      <th class="p-3 font-semibold">Confidence</th>
-                      <th class="p-3 font-semibold">Status</th>
-                      <th class="p-3 font-semibold">Provenance</th>
-                      <th class="p-3 text-right font-semibold">Action</th>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
+          <!-- Left: Normalized Attributes Table (col-span-8) -->
+          <div class="lg:col-span-8 space-y-2">
+            <div class="glass-card-elevated rounded-xl overflow-hidden border border-white/[0.08] shadow-lg">
+              <div class="overflow-x-auto scrollbar-ent max-h-[390px] overflow-y-auto">
+                <table class="w-full text-left text-xs border-collapse table-auto">
+                  <thead class="sticky top-0 z-10">
+                    <tr class="bg-[#0c0f15] border-b border-white/[0.08] text-[#9aa6b2] font-mono uppercase text-[10px] tracking-wider backdrop-blur-sm">
+                      <th class="py-2 px-2.5 font-semibold">Attribute</th>
+                      <th class="py-2 px-2 font-semibold text-emerald-400">Value</th>
+                      <th class="py-2 px-2 font-semibold text-cyan-300">UOM</th>
+                      <th class="py-2 px-2 font-semibold">Confidence</th>
+                      <th class="py-2 px-2 font-semibold">Status</th>
+                      <th class="py-2 px-2 font-semibold">Provenance</th>
+                      <th class="py-2 px-2.5 text-right font-semibold sticky right-0 bg-[#0c0f15] z-10">Action</th>
                     </tr>
                   </thead>
                   <tbody id="attribute-table-body" class="divide-y divide-white/[0.05] text-[#c3cbd5]"></tbody>
@@ -1237,13 +1116,150 @@
             </div>
           </div>
 
-          <div class="lg:col-span-4 space-y-4">
-            <div class="glass-card-elevated rounded-xl p-4 space-y-3">
-              <div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
-                <span class="text-xs font-bold font-mono text-white uppercase tracking-wider">Evidence &amp; source coordinates</span>
-                <a id="btn-open-source-pdf-side" href="/sample_datasheet.pdf" target="_blank" class="doc-link">Open PDF ↗</a>
+          <!-- Right: Evidence & source coordinates (Compact reduced size, col-span-4) -->
+          <div class="lg:col-span-4">
+            <div class="glass-card-elevated rounded-xl p-3 border border-white/[0.08] shadow-lg flex flex-col max-h-[390px]">
+              <div class="flex items-center justify-between pb-2 border-b border-white/[0.06] mb-2 shrink-0">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                  <span class="text-[11px] font-bold font-mono text-white uppercase tracking-wider">Evidence &amp; Coordinates</span>
+                </div>
+                <a id="btn-open-source-pdf-side" href="/sample_datasheet.pdf" target="_blank" class="doc-link text-[10px] py-0.5 px-2">Open PDF ↗</a>
               </div>
-              <div id="detail-evidence-container" class="space-y-2.5 text-xs font-mono"></div>
+              <div id="detail-evidence-container" class="space-y-1.5 overflow-y-auto scrollbar-ent pr-0.5 flex-1 max-h-[340px]"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 5-TIER COMMERCIAL DESCRIPTIONS (Collapsible below Normalized Attributes) -->
+      <section class="glass-card-elevated rounded-xl p-3.5 sm:p-4 border border-white/[0.07] space-y-3">
+        <div class="flex items-center justify-between cursor-pointer select-none" onclick="toggle5TierDescriptions()">
+          <div class="flex items-center gap-2.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-brand-400"></span>
+            <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+              5-tier commercial descriptions
+              <span class="ent-badge bg-brand-500/10 text-brand-300 border-brand-500/40 text-[10px]">Unilog spec</span>
+            </h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="event.stopPropagation(); autoSynthesizeDescriptions()" class="ent-btn-secondary text-[11px] px-2.5 py-1" title="Auto-synthesize from specs">
+              ⚡ Auto-synthesize
+            </button>
+            <button onclick="event.stopPropagation(); copyAllDescriptions()" id="btn-copy-all-desc" class="ent-btn-secondary text-[11px] px-2.5 py-1" title="Copy all descriptions">
+              📋 Copy all
+            </button>
+            <button id="toggle-desc-icon-btn" class="icon-btn text-slate-400 hover:text-white" title="Toggle 5-Tier Descriptions">
+              <svg id="toggle-desc-icon" class="w-4 h-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div id="tier-descriptions-body" class="space-y-3 pt-2 border-t border-white/[0.06]">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
+            <!-- 1. Mobile -->
+            <div class="lg:col-span-6 panel p-3 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs font-bold text-white font-mono">1 · Mobile description</span>
+                  <span class="text-[10px] text-[#667180] font-mono">max 80 chars</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span id="badge-desc-mobile" class="ent-badge char-badge-ok font-mono text-[10px] px-1.5 py-0.2">0 / 80</span>
+                  <button onclick="copyText('desc-mobile', 'Mobile description copied')" class="icon-btn" title="Copy">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  </button>
+                </div>
+              </div>
+              <input type="text" id="desc-mobile" class="ent-input w-full font-mono text-xs text-white h-7 px-2 py-0.5" placeholder="e.g. ABB ACS580-01-018A-4 7.5kW 400V IP21 VFD" oninput="handleDescInput('mobile', 80)">
+              <div class="flex items-center justify-between text-[10px] font-mono text-[#667180]">
+                <span>Limit: 80 chars</span>
+                <span id="status-desc-mobile" class="text-brand-300">Within limit</span>
+              </div>
+            </div>
+
+            <!-- 2. In-search -->
+            <div class="lg:col-span-6 panel p-3 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs font-bold text-white font-mono">2 · In-search description</span>
+                  <span class="text-[10px] text-[#667180] font-mono">max 150 chars</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span id="badge-desc-search" class="ent-badge char-badge-ok font-mono text-[10px] px-1.5 py-0.2">0 / 150</span>
+                  <button onclick="copyText('desc-search', 'In-search description copied')" class="icon-btn" title="Copy">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  </button>
+                </div>
+              </div>
+              <input type="text" id="desc-search" class="ent-input w-full font-mono text-xs text-white h-7 px-2 py-0.5" placeholder="e.g. ABB ACS580-01-018A-4 7.5 kW VFD, 400V AC, 17.7A, IP21" oninput="handleDescInput('search', 150)">
+              <div class="flex items-center justify-between text-[10px] font-mono text-[#667180]">
+                <span>Limit: 150 chars</span>
+                <span id="status-desc-search" class="text-brand-300">Within limit</span>
+              </div>
+            </div>
+
+            <!-- 3. Short -->
+            <div class="lg:col-span-12 panel p-3 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs font-bold text-white font-mono">3 · Short description</span>
+                  <span class="text-[10px] text-[#667180] font-mono">max 250 chars</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span id="badge-desc-short" class="ent-badge char-badge-ok font-mono text-[10px] px-1.5 py-0.2">0 / 250</span>
+                  <button onclick="copyText('desc-short', 'Short description copied')" class="icon-btn" title="Copy">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  </button>
+                </div>
+              </div>
+              <textarea id="desc-short" rows="2" class="ent-input w-full font-mono text-xs text-white leading-relaxed resize-y py-1 px-2" placeholder="e.g. Heavy-duty industrial VFD model ACS580-01-018A-4 by ABB..." oninput="handleDescInput('short', 250)"></textarea>
+              <div class="flex items-center justify-between text-[10px] font-mono text-[#667180]">
+                <span>Limit: 250 chars</span>
+                <span id="status-desc-short" class="text-brand-300">Within limit</span>
+              </div>
+            </div>
+
+            <!-- 4. Long / retail -->
+            <div class="lg:col-span-6 panel p-3 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs font-bold text-white font-mono">4 · Long / retail description</span>
+                  <span class="ent-badge bg-brand-500/10 text-brand-300 border-brand-500/40 text-[9px] px-1.5 py-0.2">Bulleted specs</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span id="badge-desc-long" class="ent-badge char-badge-ok font-mono text-[10px] px-1.5 py-0.2">0 chars</span>
+                  <button onclick="copyText('desc-long', 'Long description copied')" class="icon-btn" title="Copy">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  </button>
+                </div>
+              </div>
+              <textarea id="desc-long" rows="3" class="ent-input w-full font-mono text-xs text-white leading-relaxed resize-y scrollbar-ent py-1 px-2" placeholder="• Part Number: ABB ACS580-01-018A-4&#10;• Power Rating: 7.5 kW" oninput="handleDescInput('long', 0)"></textarea>
+              <div class="flex items-center justify-between text-[10px] font-mono text-[#667180]">
+                <span>Structured spec layout</span>
+                <span class="text-[#9aa6b2]">Unilog retail format</span>
+              </div>
+            </div>
+
+            <!-- 5. Marketing description -->
+            <div class="lg:col-span-6 panel p-3 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs font-bold text-white font-mono">5 · Marketing description</span>
+                  <span class="ent-badge bg-brand-500/10 text-brand-300 border-brand-500/40 text-[9px] px-1.5 py-0.2">OEM copy</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span id="badge-desc-mfg" class="ent-badge char-badge-ok font-mono text-[10px] px-1.5 py-0.2">0 chars</span>
+                  <button onclick="copyText('desc-mfg', 'Marketing description copied')" class="icon-btn" title="Copy">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  </button>
+                </div>
+              </div>
+              <textarea id="desc-mfg" rows="3" class="ent-input w-full font-mono text-xs text-white leading-relaxed resize-y scrollbar-ent py-1 px-2" placeholder="Official ABB ACS580 series technical specification..." oninput="handleDescInput('mfg', 0)"></textarea>
+              <div class="flex items-center justify-between text-[10px] font-mono text-[#667180]">
+                <span>Direct OEM copy</span>
+                <span class="text-brand-300">Zero hallucination guarantee</span>
+              </div>
             </div>
           </div>
         </div>
@@ -2058,6 +2074,26 @@
       renderEvidence(evidenceSources, fields, product);
     }
 
+    function toggle5TierDescriptions() {
+      const body = $('#tier-descriptions-body');
+      const icon = $('#toggle-desc-icon');
+      if (!body) return;
+      const isHidden = body.classList.contains('hidden');
+      if (isHidden) {
+        body.classList.remove('hidden');
+        if (icon) icon.style.transform = 'rotate(180deg)';
+      } else {
+        body.classList.add('hidden');
+        if (icon) icon.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    function highlightEvidenceForField(fieldId) {
+      activeFieldId = fieldId;
+      renderAttributeTable(currentFields, currentProduct, fieldId);
+      renderEvidence(null, currentFields, currentProduct, fieldId);
+    }
+
     function renderAttributeTable(fields, product, highlightFieldId = null) {
       const tbody = $('#attribute-table-body');
       if (!tbody) return;
@@ -2065,7 +2101,7 @@
       if ($('#attr-count-summary')) $('#attr-count-summary').textContent = `${fields.length} normalized attributes`;
 
       if (!fields.length) {
-        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-500 font-mono">No attributes extracted for this product.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-slate-500 font-mono text-xs">No attributes extracted for this product.</td></tr>';
         return;
       }
 
@@ -2073,83 +2109,83 @@
 
       tbody.innerHTML = fields.map(f => {
         const isTarget = f.id === highlightFieldId || f.id === activeFieldId;
-        const rowClass = isTarget ? 'bg-emerald-950/40 border-l-2 border-emerald-500 ring-1 ring-emerald-500/30' : 'hover:bg-slate-900/60';
+        const rowClass = isTarget ? 'bg-brand-950/40 border-l-2 border-brand-400 ring-1 ring-brand-400/30' : 'hover:bg-slate-900/60';
         const sourceRef = (f.sources && f.sources[0] && f.sources[0].ref) ? f.sources[0].ref : 'page_1 [x:120, y:240, w:180, h:30]';
         const authorityPct = (f.sources && f.sources[0] && f.sources[0].authority != null) ? Math.round(f.sources[0].authority * 100) : 100;
         const isInf = f.field_type === 'INFERRED';
 
         return `
-          <tr class="${rowClass} transition">
+          <tr class="${rowClass} transition cursor-pointer" onclick="highlightEvidenceForField('${f.id}')">
             <!-- Attribute Label Column -->
-            <td class="p-3.5">
-              <div class="font-bold text-white text-xs">${esc(f.attribute_label || f.attribute_key)}</div>
+            <td class="py-2 px-2.5">
+              <div class="font-bold text-white text-xs leading-snug">${esc(f.attribute_label || f.attribute_key)}</div>
               <div class="text-[10px] text-slate-400 font-mono">${esc(f.attribute_key)}</div>
             </td>
 
             <!-- Normalized Value Column (Editable) -->
-            <td class="p-3.5">
+            <td class="py-2 px-2">
               <input 
                 type="text" 
                 id="attr-val-${f.id}" 
                 value="${esc(f.value || '')}" 
-                class="ent-input font-mono text-xs font-bold text-emerald-400 w-28 bg-slate-950/90 border-slate-700"
+                class="ent-input font-mono text-xs font-bold text-emerald-400 w-20 h-7 px-1.5 py-0.5 bg-slate-950/90 border-slate-700 focus:border-emerald-400"
                 placeholder="value"
+                onclick="event.stopPropagation()"
               >
             </td>
 
             <!-- UOM (Unit of Measure) Column (Editable) -->
-            <td class="p-3.5">
+            <td class="py-2 px-2">
               <input 
                 type="text" 
                 id="attr-uom-${f.id}" 
                 value="${esc(f.unit || '')}" 
-                class="ent-input font-mono text-xs font-bold text-cyan-300 w-20 bg-slate-950/90 border-slate-700"
+                class="ent-input font-mono text-xs font-bold text-cyan-300 w-14 h-7 px-1.5 py-0.5 bg-slate-950/90 border-slate-700 focus:border-cyan-300"
                 placeholder="UOM"
+                onclick="event.stopPropagation()"
               >
             </td>
 
             <!-- Confidence Score Column -->
-            <td class="p-3.5 font-mono">
+            <td class="py-2 px-2 font-mono whitespace-nowrap">
               ${formatConfidence(f.confidence)}
             </td>
 
             <!-- Status Column (PROVED / INFERRED ≤0.70) -->
-            <td class="p-3.5">
+            <td class="py-2 px-2 whitespace-nowrap">
               ${badgeForType(f.field_type)}
             </td>
 
-            <!-- Source Provenance & Page Link Column -->
-            <td class="p-3.5">
-              <div class="space-y-0.5">
-                <a 
-                  href="${pdfUrl}" 
-                  target="_blank" 
-                  class="text-xs font-mono text-amber-300 hover:text-amber-200 hover:underline flex items-center gap-1 bg-amber-950/50 px-2 py-0.8 rounded border border-amber-500/30 w-fit"
-                  title="Click to open verified manufacturer datasheet in new tab"
-                >
-                  <span>📄 OEM Datasheet</span>
-                  <span class="text-[10px] text-slate-400">↗</span>
-                </a>
-                <div class="text-[10px] text-slate-400 font-mono">${esc(sourceRef)} • Auth: ${authorityPct}%</div>
-              </div>
+            <!-- Source Provenance Column -->
+            <td class="py-2 px-2 whitespace-nowrap">
+              <a 
+                href="${pdfUrl}" 
+                target="_blank" 
+                onclick="event.stopPropagation()"
+                class="text-[10px] font-mono text-amber-300 hover:text-amber-200 hover:underline inline-flex items-center gap-1 bg-amber-950/40 px-1.5 py-0.5 rounded border border-amber-500/30 w-fit"
+                title="Click to open verified manufacturer datasheet in new tab"
+              >
+                <span>📄 OEM PDF</span>
+                <span class="text-[8px] text-slate-400">↗</span>
+              </a>
             </td>
 
-            <!-- Verification Action Column -->
-            <td class="p-3.5 text-right">
+            <!-- Verification Action Column (Sticky right-0, always visible on page) -->
+            <td class="py-2 px-2.5 text-right whitespace-nowrap sticky right-0 bg-[#0c0f15]/95 backdrop-blur-sm z-10">
               ${f.review_status === 'pending' ? `
-                <div class="flex items-center justify-end gap-1.5">
-                  <button class="ent-btn-primary px-2.5 py-1 text-[11px]" onclick="acceptField('${f.id}')" title="Accept as proved">
+                <div class="flex items-center justify-end gap-1">
+                  <button class="ent-btn-primary px-2 py-0.5 text-[10px] font-medium" onclick="event.stopPropagation(); acceptField('${f.id}')" title="Accept as proved">
                     Accept
                   </button>
-                  <button class="ent-btn-secondary px-2.5 py-1 text-[11px]" onclick="saveField('${f.id}')" title="Save edited value and UOM">
+                  <button class="ent-btn-secondary px-1.5 py-0.5 text-[10px]" onclick="event.stopPropagation(); saveField('${f.id}')" title="Save edited value and UOM">
                     Save
                   </button>
-                  <button class="ent-btn-danger px-2 py-1 text-[11px]" onclick="rejectField('${f.id}')" title="Reject attribute">
+                  <button class="ent-btn-danger px-1.5 py-0.5 text-[10px]" onclick="event.stopPropagation(); rejectField('${f.id}')" title="Reject attribute">
                     ✕
                   </button>
                 </div>
               ` : `
-                <span class="ent-badge ${f.review_status === 'accepted' || f.review_status === 'edited' ? 'ent-badge-proved' : 'ent-badge-dispute'}">
+                <span class="ent-badge text-[10px] px-2 py-0.5 ${f.review_status === 'accepted' || f.review_status === 'edited' ? 'ent-badge-proved' : 'ent-badge-dispute'}">
                   ${esc((f.review_status || 'PROVED').toUpperCase())}
                 </span>
               `}
@@ -2159,7 +2195,7 @@
       }).join('');
     }
 
-    function renderEvidence(evidenceSources, fields, product) {
+    function renderEvidence(evidenceSources, fields, product, highlightFieldId = null) {
       const container = $('#detail-evidence-container');
       if (!container) return;
 
@@ -2172,6 +2208,7 @@
           if (f.sources && f.sources.length) {
             f.sources.forEach(s => {
               sources.push({
+                fieldId: f.id,
                 ref: `${f.attribute_label || f.attribute_key} (${s.ref || 'page_1'})`,
                 authority: s.authority != null ? s.authority : 1.0,
                 evidence_text: s.evidence_text || `${f.attribute_label}: ${f.value} ${f.unit || ''}`
@@ -2183,25 +2220,29 @@
 
       if (!sources.length) {
         container.innerHTML = `
-          <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 text-slate-400 text-xs font-mono">
+          <div class="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800 text-slate-400 text-[11px] font-mono">
             Direct datasheet document linked. Click "Open PDF ↗" to view the OEM original.
           </div>
         `;
         return;
       }
 
-      container.innerHTML = sources.slice(0, 5).map(s => `
-        <div class="p-3 rounded-lg bg-slate-950/80 border border-slate-800 space-y-1.5 font-mono text-xs">
-          <div class="text-emerald-400 font-bold flex items-center justify-between">
-            <a href="${pdfUrl}" target="_blank" class="hover:underline flex items-center gap-1">
-              <span>${esc(s.ref)}</span>
-              <span class="text-[10px] text-slate-400">↗</span>
-            </a>
-            <span class="text-slate-400 font-normal text-[10px]">Auth: ${Math.round((s.authority || 1) * 100)}%</span>
+      container.innerHTML = sources.map(s => {
+        const isMatched = highlightFieldId && s.fieldId === highlightFieldId;
+        const cardBorder = isMatched ? 'border-brand-400/80 bg-brand-950/40 ring-1 ring-brand-400/40' : 'border-white/[0.06] bg-slate-950/90 hover:border-brand-500/40';
+        return `
+          <div class="p-2 rounded-lg ${cardBorder} transition space-y-1 font-mono">
+            <div class="text-emerald-400 font-bold flex items-center justify-between text-[11px]">
+              <a href="${pdfUrl}" target="_blank" class="hover:underline flex items-center gap-1 truncate max-w-[170px]" title="${esc(s.ref)}">
+                <span class="truncate">${esc(s.ref)}</span>
+                <span class="text-[9px] text-slate-400 shrink-0">↗</span>
+              </a>
+              <span class="text-slate-400 font-normal text-[9px] bg-slate-900 px-1.5 py-0.2 rounded border border-slate-800 shrink-0">Auth ${Math.round((s.authority || 1) * 100)}%</span>
+            </div>
+            <div class="p-1.5 rounded bg-slate-900/90 text-[10px] text-slate-300 border border-white/[0.04] overflow-hidden text-ellipsis line-clamp-2 hover:line-clamp-none transition-all leading-snug font-mono" title="${esc(s.evidence_text || 'Dual-pass OCR confirmed')}">${esc(s.evidence_text || 'Dual-pass OCR confirmed')}</div>
           </div>
-          <pre class="p-2 rounded bg-slate-900 text-[11px] text-slate-300 border border-slate-800 overflow-auto scrollbar-ent max-h-24 leading-relaxed">${esc(s.evidence_text || 'Dual-pass OCR confirmed')}</pre>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     // --- Action Handlers for Field Edits ---
@@ -2812,6 +2853,8 @@
     window.downloadUnilogExcelFromCatalog = downloadUnilogExcelFromCatalog;
     window.updateSimScore = updateSimScore;
     window.setSimPreset = setSimPreset;
+    window.toggle5TierDescriptions = toggle5TierDescriptions;
+    window.highlightEvidenceForField = highlightEvidenceForField;
 
     // Boot & Init
     initPhysicsCanvas();
